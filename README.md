@@ -1,8 +1,17 @@
-# EZNEW.NET-简单、易用、灵活、高效的.NET应用开发框架
+# EZNEW.Framework
 
-+ 让领域驱动思想在开发中得到真正的落地实施
-+ 聚焦系统业务设计，开发高质量软件产品
-+ 模块化功能封装，方便自定义和功能扩展
-+ 低使用门槛，快速上手，显著提高开发效率
+Provides tools and libraries commonly used in.net development, including code generation, expression tools, extension methods, dependency injection management, network tools, object transformation management, secure encryption, serialization, commonly used custom data types, and more.
 
-详细文档：[https://eznew-net.github.io/Docs](https://eznew-net.github.io/Docs)
+# Reporting issues and bugs
+
+If you have any questions or Suggestions, you can report to us via email, and we will reply to you as soon as possible, or you can contact [Ice Lee](https://github.com/lidingbin) via GitHub
+
+# Related projects
+
+These are some other repos for related projects:
+
+  * [EZNEW.Develop](https://github.com/eznew-net/EZNEW.Develop)-a .NET domain-driven development framework
+  * [EZNEW.Data](https://github.com/eznew-net/EZNEW.Data)-provide data access support for EZNEW.Develop
+  * [EZNEW.Data.SqlServer](https://github.com/eznew-net/EZNEW.Data.SqlServer)-provides support for SQLServer database access
+  * [EZNEW.Data.MySQL](https://github.com/eznew-net/EZNEW.Data.MySQL)-provides support for MySQL database access
+  * [Demo](https://github.com/eznew-net/Demo)-demo application

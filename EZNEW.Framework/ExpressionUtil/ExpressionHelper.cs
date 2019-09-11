@@ -348,7 +348,11 @@ namespace EZNEW.Framework.ExpressionUtil
                     childExpression = GetLastChildExpression((expression as InvocationExpression).Expression);
                     break;
                 case ExpressionType.MemberAccess:
-                    childExpression = GetLastChildExpression((expression as MemberExpression).Expression);
+                    var memberExpression = expression as MemberExpression;
+                    if (memberExpression?.Expression != null)
+                    {
+                        childExpression = GetLastChildExpression(memberExpression.Expression);
+                    }
                     break;
                 case ExpressionType.ArrayLength:
                 case ExpressionType.Convert:

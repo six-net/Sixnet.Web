@@ -8,8 +8,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using EZNEW.Framework.Extension;
-using EZNEW.Framework.Net.Upload;
 using EZNEW.Framework.Serialize;
+using EZNEW.Framework.Upload;
 
 namespace EZNEW.Framework.Net.Http
 {
@@ -399,7 +399,7 @@ namespace EZNEW.Framework.Net.Http
                 return new UploadResult()
                 {
                     Success = false,
-                    ErrorMsg = "url is null or empty"
+                    ErrorMessage = "url is null or empty"
                 };
             }
             if (files == null || files.Count <= 0)
@@ -407,7 +407,7 @@ namespace EZNEW.Framework.Net.Http
                 return new UploadResult()
                 {
                     Success = false,
-                    ErrorMsg = "not set any files to upload"
+                    ErrorMessage = "not set any files to upload"
                 };
             }
 
@@ -424,7 +424,12 @@ namespace EZNEW.Framework.Net.Http
                 RequestParameters = parameters,
                 UseCookie = true
             }).ConfigureAwait(false);
-            return JsonSerialize.JsonToObject<UploadResult>(responseVal);
+            var result = JsonSerialize.JsonToObject<UploadResult>(responseVal);
+            result?.Files?.ForEach(f =>
+            {
+                f.Target = UploadTarget.Remote;
+            });
+            return result;
         }
 
         /// <summary>
@@ -440,7 +445,7 @@ namespace EZNEW.Framework.Net.Http
             {
                 return new UploadResult()
                 {
-                    ErrorMsg = "not set any files to upload",
+                    ErrorMessage = "not set any files to upload",
                     Success = false
                 };
             }

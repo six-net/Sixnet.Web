@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EZNEW.Framework.Extension;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -131,7 +134,8 @@ namespace EZNEW.Framework.IoC
         /// <param name="defaultServices">default services</param>
         /// <param name="container">DI container</param>
         /// <param name="serviceRegisterAction">service register action</param>
-        public static void Init(IServiceCollection defaultServices = null, IDIContainer container = null, Action<IDIContainer> serviceRegisterAction = null)
+        /// <param name="registerDefaultProjectService">register default project service</param>
+        public static void Init(IServiceCollection defaultServices = null, IDIContainer container = null, Action<IDIContainer> serviceRegisterAction = null, bool registerDefaultProjectService = true)
         {
             defaultServices = defaultServices ?? new ServiceCollection();
             container = container ?? new ServiceProviderContainer();
@@ -143,6 +147,10 @@ namespace EZNEW.Framework.IoC
             serviceRegisterAction?.Invoke(container);
             SetDefaultServiceCollection(defaultServices);
             Container = container;
+            if (registerDefaultProjectService)
+            {
+                RegisterDefaultProjectService();
+            }
         }
 
         /// <summary>
@@ -273,6 +281,87 @@ namespace EZNEW.Framework.IoC
                 provider = BuildServiceProviderFromServiceCollection();
             }
             return provider;
+        }
+
+        /// <summary>
+        /// register default project service
+        /// </summary>
+        static void RegisterDefaultProjectService()
+        {
+            string appPath = Directory.GetCurrentDirectory();
+            string binPath = Path.Combine(appPath, "bin");
+            if (Directory.Exists(binPath))
+            {
+                appPath = binPath;
+                var debugPath = Path.Combine(appPath, "Debug");
+                var relaeasePath = Path.Combine(appPath, "Release");
+                DateTime debugLastWriteTime = DateTime.MinValue;
+                DateTime releaseLastWriteTime = DateTime.MinValue;
+                if (Directory.Exists(debugPath))
+                {
+                    debugLastWriteTime = Directory.GetLastWriteTime(debugPath);
+                }
+                if (Directory.Exists(relaeasePath))
+                {
+                    releaseLastWriteTime = Directory.GetLastWriteTime(relaeasePath);
+                }
+                appPath = debugLastWriteTime >= releaseLastWriteTime ? debugPath : relaeasePath;
+                var frameworkName = Assembly.GetEntryAssembly().GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
+                if (frameworkName.IsNullOrEmpty())
+                {
+                    return;
+                }
+                var frameworkNameArray = frameworkName.Split(new string[] { ".NETCoreApp,Version=v" }, StringSplitOptions.RemoveEmptyEntries);
+                if (frameworkNameArray.IsNullOrEmpty())
+                {
+                    return;
+                }
+                var frameworkVersion = frameworkNameArray[0];
+                appPath = Path.Combine(appPath, "netcoreapp" + frameworkVersion);
+            }
+            List<Type> types = new List<Type>();
+            if (!Directory.Exists(appPath))
+            {
+                appPath = Directory.GetCurrentDirectory();
+            }
+            var files = new DirectoryInfo(appPath).GetFiles("*.dll")?.Where(c =>
+                                                                            c.Name.IndexOf("DataAccess") >= 0
+                                                                            || c.Name.IndexOf("Business") >= 0
+                                                                            || c.Name.IndexOf("Repository") >= 0
+                                                                            || c.Name.IndexOf("Service") >= 0
+                                                                            || c.Name.IndexOf("Domain") >= 0) ?? new List<FileInfo>(0);
+            foreach (var file in files)
+            {
+                types.AddRange(Assembly.LoadFrom(file.FullName).GetTypes());
+            }
+
+            foreach (Type type in types)
+            {
+                if (!type.IsInterface)
+                {
+                    continue;
+                }
+                string typeName = type.Name;
+                if (typeName.EndsWith("Service") || typeName.EndsWith("Business") || typeName.EndsWith("DbAccess") || typeName.EndsWith("Repository"))
+                {
+                    Type realType = types.FirstOrDefault(t => t.Name != type.Name && !t.IsInterface && type.IsAssignableFrom(t));
+                    if (realType != null)
+                    {
+                        List<Type> behaviors = new List<Type>();
+                        Register(type, realType, behaviors: behaviors);
+                    }
+                }
+                if (typeName.EndsWith("DataAccess"))
+                {
+                    List<Type> relateTypes = types.Where(t => t.Name != type.Name && !t.IsInterface && type.IsAssignableFrom(t)).ToList();
+                    if (relateTypes != null && relateTypes.Count > 0)
+                    {
+                        Type providerType = relateTypes.FirstOrDefault(c => c.Name.EndsWith("CacheDataAccess"));
+                        providerType = providerType ?? relateTypes.First();
+                        Register(type, providerType);
+                    }
+                }
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ namespace EZNEW.Framework.Extension
     /// </summary>
     public static class TypeExtension
     {
+        static readonly Type AllowNullType = typeof(System.Nullable<>);
+
         #region generate dictionary by enum
 
         /// <summary>
@@ -18,7 +20,7 @@ namespace EZNEW.Framework.Extension
         /// </summary>
         /// <param name="enumType">enum type</param>
         /// <returns>dictionary</returns>
-        public static Dictionary<int,string> GetEnumValueAndNames(this Type enumType)
+        public static Dictionary<int, string> GetEnumValueAndNames(this Type enumType)
         {
             if (enumType == null)
             {
@@ -31,6 +33,20 @@ namespace EZNEW.Framework.Extension
                 enumValues.Add(val, Enum.GetName(enumType, val));
             }
             return enumValues;
+        }
+
+        #endregion
+
+        #region allow set null value
+
+        /// <summary>
+        /// allow set null value
+        /// </summary>
+        /// <param name="type">type</param>
+        /// <returns></returns>
+        public static bool AllowNull(this Type type)
+        {
+            return !type.IsValueType || (type.IsGenericType && AllowNullType.Equals(type.GetGenericTypeDefinition()));
         }
 
         #endregion

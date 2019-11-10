@@ -54,7 +54,7 @@ namespace EZNEW.Framework.Extension
             Dictionary<string, string> valueDictionary = new Dictionary<string, string>(nowPropertyCollection.Count);
             foreach (PropertyDescriptor ps in nowPropertyCollection)
             {
-                valueDictionary.Add(ps.Name, ps.GetValue(value).ToString());
+                valueDictionary.Add(ps.Name, ps.GetValue(value)?.ToString() ?? string.Empty);
             }
             return valueDictionary;
         }
@@ -70,11 +70,7 @@ namespace EZNEW.Framework.Extension
         /// <returns>string value</returns>
         public static string TooString(this object obj)
         {
-            if (obj == null)
-            {
-                return string.Empty;
-            }
-            return obj.ToString();
+            return obj?.ToString() ?? string.Empty;
         }
 
         #endregion

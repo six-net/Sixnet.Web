@@ -36,6 +36,7 @@ namespace EZNEW.Framework.ValueType
         }
 
         #endregion
+
         #region fields
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace EZNEW.Framework.ValueType
 
         #endregion
 
-        #region Propertys
+        #region propertys
 
         /// <summary>
         /// get or set amount

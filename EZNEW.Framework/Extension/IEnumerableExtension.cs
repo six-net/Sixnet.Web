@@ -15,56 +15,6 @@ namespace EZNEW.Framework.Extension
     {
         #region determines whether the collection is null or empty
 
-        ///// <summary>
-        ///// determines whether the collection is null or empty
-        ///// </summary>
-        ///// <param name="objCollection">collection</param>
-        ///// <returns>determined result</returns>
-        //public static bool IsNullOrEmpty(this IEnumerable<object> objCollection)
-        //{
-        //    return objCollection == null || !objCollection.Any();
-        //}
-
-        ///// <summary>
-        ///// determines whether the collection is null or empty
-        ///// </summary>
-        ///// <param name="objCollection">collection</param>
-        ///// <returns>determined result</returns>
-        //public static bool IsNullOrEmpty(this IEnumerable<string> objCollection)
-        //{
-        //    return objCollection == null || !objCollection.Any();
-        //}
-
-        ///// <summary>
-        ///// determines whether the collection is null or empty
-        ///// </summary>
-        ///// <param name="objCollection">collection</param>
-        ///// <returns>determined result</returns>
-        //public static bool IsNullOrEmpty(this IEnumerable<Guid> objCollection)
-        //{
-        //    return objCollection == null || !objCollection.Any();
-        //}
-
-        ///// <summary>
-        ///// determines whether the collection is null or empty
-        ///// </summary>
-        ///// <param name="objCollection">collection</param>
-        ///// <returns>determined result</returns>
-        //public static bool IsNullOrEmpty(this IEnumerable<int> objCollection)
-        //{
-        //    return objCollection == null || !objCollection.Any();
-        //}
-
-        ///// <summary>
-        ///// determines whether the collection is null or empty
-        ///// </summary>
-        ///// <param name="objCollection">collection</param>
-        ///// <returns>determined result</returns>
-        //public static bool IsNullOrEmpty(this IEnumerable<long> objCollection)
-        //{
-        //    return objCollection == null || !objCollection.Any();
-        //}
-
         /// <summary>
         /// determines whether the collection is null or empty
         /// </summary>
@@ -78,30 +28,6 @@ namespace EZNEW.Framework.Extension
 
         #endregion
 
-        #region determines whether the array is null or empty
-
-        /// <summary>
-        /// determines whether the array is null or empty
-        /// </summary>
-        /// <param name="objArray">array</param>
-        /// <returns>determined result</returns>
-        public static bool IsNullOrEmpty(this int[] objArray)
-        {
-            return objArray == null || objArray.Length < 1;
-        }
-
-        /// <summary>
-        /// determines whether the array is null or empty
-        /// </summary>
-        /// <param name="objArray">array</param>
-        /// <returns>determined result</returns>
-        public static bool IsNullOrEmpty(this Guid[] objArray)
-        {
-            return objArray == null || objArray.Length < 1;
-        }
-
-        #endregion
-
         #region dictionary extension methods
 
         #region Dynamic
@@ -109,38 +35,31 @@ namespace EZNEW.Framework.Extension
         /// <summary>
         /// set value to the dictionary,update current value if the key already exists or add if not
         /// </summary>
-        /// <param name="dic">dictionary</param>
+        /// <param name="dict">dictionary</param>
         /// <param name="name">key name</param>
         /// <param name="value">value</param>
-        public static void SetValue(this IDictionary<dynamic, dynamic> dic, dynamic name, dynamic value)
+        public static void SetValue(this IDictionary<dynamic, dynamic> dict, dynamic name, dynamic value)
         {
-            if (dic == null)
+            if (dict == null)
             {
                 return;
             }
-            if (dic.ContainsKey(name))
-            {
-                dic[name] = value;
-            }
-            else
-            {
-                dic.Add(name, value);
-            }
+            dict[name] = value;
         }
 
         /// <summary>
         /// get value from the dictionary,return default value if the key doesn't exists
         /// </summary>
         /// <typeparam name="T">data type</typeparam>
-        /// <param name="dic">dictionary</param>
+        /// <param name="dict">dictionary</param>
         /// <param name="name">key name</param>
         /// <returns></returns>
-        public static T GetValue<T>(this IDictionary<dynamic, dynamic> dic, dynamic name)
+        public static T GetValue<T>(this IDictionary<dynamic, dynamic> dict, dynamic name)
         {
             dynamic value = default(T);
-            if (dic != null && dic.ContainsKey(name))
+            if (dict != null && dict.ContainsKey(name))
             {
-                value = dic[name];
+                value = dict[name];
             }
             var type = typeof(T);
             var typeCode = Type.GetTypeCode(type);
@@ -158,23 +77,16 @@ namespace EZNEW.Framework.Extension
         /// <summary>
         /// set value to the dictionary,update current value if the key already exists or add if not
         /// </summary>
-        /// <param name="dic">dictionary</param>
+        /// <param name="dict">dictionary</param>
         /// <param name="name">key name</param>
         /// <param name="value">value</param>
-        public static void SetValue(this IDictionary<string, dynamic> dic, string name, dynamic value)
+        public static void SetValue(this IDictionary<string, dynamic> dict, string name, dynamic value)
         {
-            if (dic == null)
+            if (dict == null)
             {
                 return;
             }
-            if (dic.ContainsKey(name))
-            {
-                dic[name] = value;
-            }
-            else
-            {
-                dic.Add(name, value);
-            }
+            dict[name] = value;
         }
 
         /// <summary>
@@ -196,14 +108,7 @@ namespace EZNEW.Framework.Extension
             {
                 realValue = string.Empty;
             }
-            if (dic.ContainsKey(name))
-            {
-                dic[name] = realValue;
-            }
-            else
-            {
-                dic.Add(name, realValue);
-            }
+            dic[name] = realValue;
         }
 
         /// <summary>

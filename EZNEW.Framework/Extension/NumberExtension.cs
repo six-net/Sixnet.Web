@@ -148,8 +148,8 @@ namespace EZNEW.Framework.Extension
 
             #endregion
 
-            double bili = Math.Round(nowWidth / nowHeight, 2);
-            double newHeight = Math.Ceiling(width / bili);
+            double rate = Math.Round(nowWidth / nowHeight, 2);
+            double newHeight = Math.Ceiling(width / rate);
             return newHeight;
         }
 
@@ -175,8 +175,8 @@ namespace EZNEW.Framework.Extension
 
             #endregion
 
-            double bili = Math.Round(nowWidth / nowHeight, 2);
-            double newWidth = Math.Ceiling(height * bili);
+            double rate = Math.Round(nowWidth / nowHeight, 2);
+            double newWidth = Math.Ceiling(height * rate);
             return newWidth;
         }
 

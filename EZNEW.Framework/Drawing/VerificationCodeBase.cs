@@ -5,6 +5,9 @@ using System.Text;
 
 namespace EZNEW.Framework.Drawing
 {
+    /// <summary>
+    /// verification code base
+    /// </summary>
     public abstract class VerificationCodeBase
     {
         #region fields

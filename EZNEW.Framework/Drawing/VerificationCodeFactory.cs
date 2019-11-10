@@ -5,6 +5,9 @@ using System.Text;
 
 namespace EZNEW.Framework.Drawing
 {
+    /// <summary>
+    /// verification code factory
+    /// </summary>
     public static class VerificationCodeFactory
     {
         /// <summary>

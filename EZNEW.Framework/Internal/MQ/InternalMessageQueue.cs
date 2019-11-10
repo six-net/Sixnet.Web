@@ -12,7 +12,7 @@ namespace EZNEW.Framework.Internal.MQ
     /// </summary>
     public class InternalMessageQueue
     {
-        static readonly BlockingCollection<IInternalMessageQueueItem> InternalQueue = null;
+        static readonly BlockingCollection<IInternalMessageQueueCommand> InternalQueue = null;
         static readonly object consumerLock = new object();
         static Action consumeAction = null;
         static int currentConsumer = 0;
@@ -24,7 +24,7 @@ namespace EZNEW.Framework.Internal.MQ
 
         static InternalMessageQueue()
         {
-            InternalQueue = new BlockingCollection<IInternalMessageQueueItem>();
+            InternalQueue = new BlockingCollection<IInternalMessageQueueCommand>();
             consumeAction = () =>
             {
                 foreach (var cmd in InternalQueue.GetConsumingEnumerable())
@@ -40,14 +40,14 @@ namespace EZNEW.Framework.Internal.MQ
         /// <summary>
         /// enqueue message
         /// </summary>
-        /// <param name="items">commands</param>
-        public static void Enqueue(params IInternalMessageQueueItem[] items)
+        /// <param name="commands">commands</param>
+        public static void Enqueue(params IInternalMessageQueueCommand[] commands)
         {
-            if (items.IsNullOrEmpty())
+            if (commands.IsNullOrEmpty())
             {
                 return;
             }
-            foreach (var cmd in items)
+            foreach (var cmd in commands)
             {
                 InternalQueue.TryAdd(cmd);
             }

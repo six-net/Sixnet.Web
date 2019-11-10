@@ -11,7 +11,7 @@ namespace EZNEW.Framework.Net.Http
     public class HttpRequestOption
     {
         /// <summary>
-        /// 是否启用Cookie
+        /// whether cookies are enabled
         /// </summary>
         public bool UseCookie
         {
@@ -19,7 +19,7 @@ namespace EZNEW.Framework.Net.Http
         }
 
         /// <summary>
-        /// 请求消息
+        /// http request message
         /// </summary>
         public HttpRequestMessage RequestMessage
         {
@@ -27,7 +27,7 @@ namespace EZNEW.Framework.Net.Http
         }
 
         /// <summary>
-        /// 请求参数
+        /// http request parameters
         /// </summary>
         public Dictionary<string, string> RequestParameters
         {
@@ -35,7 +35,7 @@ namespace EZNEW.Framework.Net.Http
         }
 
         /// <summary>
-        /// 请求文件
+        /// http request files
         /// </summary>
         public Dictionary<string, byte[]> RequestFiles
         {
@@ -43,7 +43,7 @@ namespace EZNEW.Framework.Net.Http
         }
 
         /// <summary>
-        /// 超时时间(以秒为单位，默认300秒)
+        /// timeout (in seconds, default 300 seconds)
         /// </summary>
         public int TimeOutSeconds
         {

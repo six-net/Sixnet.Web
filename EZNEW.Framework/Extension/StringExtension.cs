@@ -25,7 +25,7 @@ namespace EZNEW.Framework.Extension
         /// <returns>encrypy value</returns>
         public static string MD5(this string value)
         {
-            return EZNEW.Framework.Security.MD5.Encrypt(value);
+            return Security.MD5.Encrypt(value);
         }
 
         #endregion
@@ -300,7 +300,7 @@ namespace EZNEW.Framework.Extension
 
             #endregion
 
-            return value.Where(s => !s.IsChineseLetter()).ToList().Count <= 0;
+            return value.All(c => c.IsChineseLetter());
         }
 
         #endregion
@@ -379,7 +379,7 @@ namespace EZNEW.Framework.Extension
         /// <returns></returns>
         public static string ReplaceByRegex(this string value, string pattern, string replaceValue)
         {
-            if (value.IsNullOrEmpty()|| pattern.IsNullOrEmpty())
+            if (value.IsNullOrEmpty() || pattern.IsNullOrEmpty())
             {
                 return value;
             }

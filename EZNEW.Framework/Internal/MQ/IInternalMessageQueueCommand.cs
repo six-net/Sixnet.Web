@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EZNEW.Framework.Internal.MQ
 {
@@ -14,7 +15,7 @@ namespace EZNEW.Framework.Internal.MQ
         /// <summary>
         /// run internal message queue command
         /// </summary>
-        void Run(); 
+        void Run();
 
         #endregion
     }

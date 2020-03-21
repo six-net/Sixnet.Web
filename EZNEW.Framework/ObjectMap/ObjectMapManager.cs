@@ -1,4 +1,5 @@
-﻿using EZNEW.Framework.IoC;
+﻿using EZNEW.Framework.Fault;
+using EZNEW.Framework.IoC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace EZNEW.Framework.ObjectMap
         {
             if (ObjectMapper == null)
             {
-                return default(T);
+                throw new EZNEWException("ObjectMapManager.ObjectMapper is not initialized");
             }
             return ObjectMapper.MapTo<T>(sourceObj);
         }

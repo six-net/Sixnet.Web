@@ -92,121 +92,28 @@ namespace EZNEW.Framework.ValueType
         /// <typeparam name="T">target data type</typeparam>
         /// <param name="value">object</param>
         /// <returns>target data object</returns>
-        public static T ConvertToSimpleType<T>(object value)
+        public static T Convert<T>(object value)
         {
             if (value == null)
             {
                 return default(T);
             }
-            var type = typeof(T);
-            var typeCode = Type.GetTypeCode(type);
-            var stringValue = value.ToString();
-            dynamic data = default(T);
-            switch (typeCode)
+            return Convert(value, typeof(T));
+        }
+
+        /// <summary>
+        /// convert data type
+        /// </summary>
+        /// <param name="targetType">data type</param>
+        /// <param name="value">value</param>
+        /// <returns></returns>
+        public static dynamic Convert(object value, Type targetType)
+        {
+            if (value == null)
             {
-                case TypeCode.Boolean:
-                    bool boolVal = false;
-                    if (bool.TryParse(stringValue, out boolVal))
-                    {
-                        data = boolVal;
-                    }
-                    break;
-                case TypeCode.Byte:
-                    byte byteVal = 0;
-                    if (byte.TryParse(stringValue, out byteVal))
-                    {
-                        data = byteVal;
-                    }
-                    break;
-                case TypeCode.Char:
-                    char charVal;
-                    if (Char.TryParse(stringValue, out charVal))
-                    {
-                        data = charVal;
-                    }
-                    break;
-                case TypeCode.DateTime:
-                    DateTime datetimeVal;
-                    if (DateTime.TryParse(stringValue, out datetimeVal))
-                    {
-                        data = datetimeVal;
-                    }
-                    break;
-                case TypeCode.Decimal:
-                    Decimal decimalVal = 0.00M;
-                    if (Decimal.TryParse(stringValue, out decimalVal))
-                    {
-                        data = decimalVal;
-                    }
-                    break;
-                case TypeCode.Double:
-                    Double doubleVal = 0.00;
-                    if (Double.TryParse(stringValue, out doubleVal))
-                    {
-                        data = doubleVal;
-                    }
-                    break;
-                case TypeCode.Int16:
-                    Int16 int16Val = 0;
-                    if (Int16.TryParse(stringValue, out int16Val))
-                    {
-                        data = int16Val;
-                    }
-                    break;
-                case TypeCode.Int32:
-                    Int32 int32Val = 0;
-                    if (Int32.TryParse(stringValue, out int32Val))
-                    {
-                        data = int32Val;
-                    }
-                    break;
-                case TypeCode.Int64:
-                    Int64 int64Val = 0;
-                    if (Int64.TryParse(stringValue, out int64Val))
-                    {
-                        data = int64Val;
-                    }
-                    break;
-                case TypeCode.SByte:
-                    SByte sbyteVal = 0;
-                    if (SByte.TryParse(stringValue, out sbyteVal))
-                    {
-                        data = sbyteVal;
-                    }
-                    break;
-                case TypeCode.Single:
-                    Single singleVal = 0;
-                    if (Single.TryParse(stringValue, out singleVal))
-                    {
-                        data = singleVal;
-                    }
-                    break;
-                case TypeCode.String:
-                    data = stringValue;
-                    break;
-                case TypeCode.UInt16:
-                    UInt16 uint16Val = 0;
-                    if (UInt16.TryParse(stringValue, out uint16Val))
-                    {
-                        data = uint16Val;
-                    }
-                    break;
-                case TypeCode.UInt32:
-                    UInt32 uint32Val = 0;
-                    if (UInt32.TryParse(stringValue, out uint32Val))
-                    {
-                        data = uint32Val;
-                    }
-                    break;
-                case TypeCode.UInt64:
-                    UInt64 uint64Val = 0;
-                    if (UInt64.TryParse(stringValue, out uint64Val))
-                    {
-                        data = uint64Val;
-                    }
-                    break;
+                return null;
             }
-            return data;
+            return System.Convert.ChangeType(value, targetType);
         }
 
         /// <summary>

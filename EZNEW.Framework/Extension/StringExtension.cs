@@ -388,5 +388,53 @@ namespace EZNEW.Framework.Extension
         }
 
         #endregion
+
+        #region string to binary
+
+        /// <summary>
+        /// convert string value to binary string
+        /// </summary>
+        /// <param name="value">original value</param>
+        /// <returns></returns>
+        public static string ToBinary(this string value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            byte[] data = Encoding.Unicode.GetBytes(value);
+            StringBuilder result = new StringBuilder(data.Length * 8);
+            foreach (byte b in data)
+            {
+                result.Append(Convert.ToString(b, 2).PadLeft(8, '0'));
+            }
+            return result.ToString();
+        }
+
+        #endregion
+
+        #region binary to string
+
+        /// <summary>
+        /// binary to string
+        /// </summary>
+        /// <param name="binaryString">binary string</param>
+        /// <returns></returns>
+        public static string ToOriginalString(this string binaryString)
+        {
+            if (binaryString.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+            CaptureCollection captures = Regex.Match(binaryString, @"([01]{8})+").Groups[1].Captures;
+            byte[] data = new byte[captures.Count];
+            for (int i = 0; i < captures.Count; i++)
+            {
+                data[i] = Convert.ToByte(captures[i].Value, 2);
+            }
+            return Encoding.Unicode.GetString(data, 0, data.Length);
+        }
+
+        #endregion
     }
 }

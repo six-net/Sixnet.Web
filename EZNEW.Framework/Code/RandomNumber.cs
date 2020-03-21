@@ -34,7 +34,7 @@ namespace EZNEW.Framework.Code
         /// <param name="maxLength">number max length(must be between 1 to 10)</param>
         /// <param name="constraintMaxLength">constraint number length equal maxLength</param>
         /// <returns>random number</returns>
-        public static int GetRandomNumber(int maxLength, bool constraintMaxLength = false)
+        public static int GetRandomNumberByLength(int maxLength, bool constraintMaxLength = false)
         {
             if (maxLength <= 0)
             {
@@ -76,6 +76,17 @@ namespace EZNEW.Framework.Code
             string minValueString = new string('0', numberLength - 1);
             return Convert.ToInt32("1" + minValueString);
 
+        }
+
+        /// <summary>
+        /// get a random number
+        /// </summary>
+        /// <param name="max">max value</param>
+        /// <param name="min">min value</param>
+        /// <returns></returns>
+        public static int GetRandomNumber(int max, int min = 0)
+        {
+            return random.Next(min, max + 1);
         }
 
         #endregion

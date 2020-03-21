@@ -85,7 +85,7 @@ namespace EZNEW.Framework.Extension
         /// <returns>target object</returns>
         public static T MapTo<T>(this object source)
         {
-            return ObjectMapManager.ObjectMapper.MapTo<T>(source);
+            return ObjectMapManager.MapTo<T>(source);
         }
 
         #endregion

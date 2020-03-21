@@ -30,7 +30,7 @@ namespace EZNEW.Framework.Extension
 
         #region dictionary extension methods
 
-        #region Dynamic
+        #region dynamic
 
         /// <summary>
         /// set value to the dictionary,update current value if the key already exists or add if not
@@ -61,18 +61,16 @@ namespace EZNEW.Framework.Extension
             {
                 value = dict[name];
             }
-            var type = typeof(T);
-            var typeCode = Type.GetTypeCode(type);
-            if (typeCode == TypeCode.String && value == default(T))
+            if (!(value is T))
             {
-                value = string.Empty;
+                return DataConverter.Convert<T>(value);
             }
             return value;
         }
 
         #endregion
 
-        #region Dynamic
+        #region string
 
         /// <summary>
         /// set value to the dictionary,update current value if the key already exists or add if not
@@ -92,48 +90,35 @@ namespace EZNEW.Framework.Extension
         /// <summary>
         /// get value from the dictionary,return default value if the key doesn't exists
         /// </summary>
-        /// <param name="dic">dictionary</param>
+        /// <param name="dict">dictionary</param>
         /// <param name="name">key name</param>
         /// <param name="value">value</param>
-        public static void SetValue<T>(this IDictionary<string, dynamic> dic, string name, T value)
+        public static void SetValue<T>(this IDictionary<string, dynamic> dict, string name, T value)
         {
-            if (dic == null)
+            if (dict == null)
             {
                 return;
             }
-            dynamic realValue = value;
-            var type = typeof(T);
-            var typeCode = Type.GetTypeCode(type);
-            if (typeCode == TypeCode.String && realValue == default(T))
-            {
-                realValue = string.Empty;
-            }
-            dic[name] = realValue;
+            dict[name] = value;
         }
 
         /// <summary>
         /// get value from the dictionary,return default value if the key doesn't exists
         /// </summary>
         /// <typeparam name="T">data type</typeparam>
-        /// <param name="dic">dictionary</param>
+        /// <param name="dict">dictionary</param>
         /// <param name="name">key name</param>
         /// <returns></returns>
-        public static T GetValue<T>(this IDictionary<string, dynamic> dic, string name)
+        public static T GetValue<T>(this IDictionary<string, dynamic> dict, string name)
         {
             dynamic value = default(T);
-            if (dic != null && dic.ContainsKey(name))
+            if (dict != null && dict.ContainsKey(name))
             {
-                value = dic[name];
-            }
-            var type = typeof(T);
-            var typeCode = Type.GetTypeCode(type);
-            if (typeCode == TypeCode.String && value == default(T))
-            {
-                value = string.Empty;
+                value = dict[name];
             }
             if (!(value is T))
             {
-                return DataConverter.ConvertToSimpleType<T>(value);
+                return DataConverter.Convert<T>(value);
             }
             return value;
         }

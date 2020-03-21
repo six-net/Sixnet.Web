@@ -29,7 +29,10 @@ namespace EZNEW.Framework.Internal.MQ
             {
                 foreach (var cmd in InternalQueue.GetConsumingEnumerable())
                 {
-                    cmd?.Run();
+                    if (cmd != null)
+                    {
+                        cmd.Run();
+                    }
                 }
             };
             StartConsume();

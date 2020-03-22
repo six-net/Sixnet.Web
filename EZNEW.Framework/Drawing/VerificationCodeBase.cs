@@ -18,29 +18,31 @@ namespace EZNEW.Framework.Drawing
 
         protected int minLength = 1;//min length
 
-        protected int maxLenght = 10;//max length
+        protected int maxLenght = 50;//max length
 
         protected VerificationCodeType codeType = VerificationCodeType.NumberAndLetter;//type
 
+        protected int interfereNum = 3; //interfere num
+
         protected static readonly char[] charArray = { '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
-        protected int fontSize = 12;
+        protected int fontSize = 30;
 
         protected int spaceBetween = 1;
 
         protected Color backgroundColor = Color.White;
 
-        protected Color fontColor = Color.Black;
+        protected Color? fontColor = null;//use random color if null
 
-        protected static readonly string[] fontFamilys = { "Arial", "Georgia" };
+        protected Color? interfereColor = null;//use random color if null
 
-        protected static readonly Color[] colors = new Color[] { Color.Black, Color.Red, Color.DarkBlue, Color.Green, Color.Orange, Color.Brown, Color.DarkCyan, Color.Purple };
+        protected string frontFamilyName = "";//front family name
 
         protected static readonly Random random = new Random();
 
         #endregion
 
-        #region Propertys
+        #region propertys
 
         /// <summary>
         /// get or set code length
@@ -115,6 +117,7 @@ namespace EZNEW.Framework.Drawing
 
         /// <summary>
         /// get or set background
+        /// use White by default
         /// </summary>
         public Color BackgroundColor
         {
@@ -130,8 +133,9 @@ namespace EZNEW.Framework.Drawing
 
         /// <summary>
         /// get or set font color
+        /// use random colors if set to null value
         /// </summary>
-        public Color FontColor
+        public Color? FontColor
         {
             get
             {
@@ -144,9 +148,55 @@ namespace EZNEW.Framework.Drawing
 
         }
 
+        /// <summary>
+        /// interfere num
+        /// </summary>
+        public int InterfereNum
+        {
+            get
+            {
+                return interfereNum;
+            }
+            set
+            {
+                interfereNum = value;
+            }
+        }
+
+        /// <summary>
+        /// get or set interfere line color
+        /// use random colors if set to null value
+        /// </summary>
+        public Color? InterfereColor
+        {
+            get
+            {
+                return interfereColor;
+            }
+            set
+            {
+                interfereColor = value;
+            }
+        }
+
+        /// <summary>
+        /// front family name
+        /// </summary>
+        public string FrontFamilyName
+        {
+            get
+            {
+                return frontFamilyName;
+            }
+            set
+            {
+                frontFamilyName = value;
+            }
+        }
+
         #endregion
 
-        #region Methods
+        #region methods
 
         #region set code length
 

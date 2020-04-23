@@ -9,6 +9,7 @@ namespace EZNEW.Framework.Paging
     /// <summary>
     /// Paging Query Condition
     /// </summary>
+    [Serializable]
     public class PagingFilter
     {
         #region fields

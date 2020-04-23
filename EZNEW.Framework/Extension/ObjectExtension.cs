@@ -181,7 +181,7 @@ namespace EZNEW.Framework.Extension
         {
             if (sourceObj == null)
             {
-                return default(T);
+                return default;
             }
             using (MemoryStream memoryStream = new MemoryStream())
             {

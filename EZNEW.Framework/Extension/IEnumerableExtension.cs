@@ -126,5 +126,24 @@ namespace EZNEW.Framework.Extension
         #endregion
 
         #endregion
+
+        #region make list
+
+        /// <summary>
+        /// make list
+        /// </summary>
+        /// <param name="values">vlaues</param>
+        /// <returns></returns>
+        public static IEnumerable MakeList(IEnumerable values)
+        {
+            IEnumerable valueList = values;
+            if (values == null)
+            {
+                return values;
+            }
+            return null;
+        }
+
+        #endregion
     }
 }

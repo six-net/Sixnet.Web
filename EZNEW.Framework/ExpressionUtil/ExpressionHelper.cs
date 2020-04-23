@@ -321,13 +321,17 @@ namespace EZNEW.Framework.ExpressionUtil
         {
             if (expression == null)
             {
-                return null;
+                return expression;
             }
             Expression childExpression = expression;
+            if (expression.CanReduce)
+            {
+                return GetLastChildExpression(childExpression.Reduce());
+            }
             switch (expression.NodeType)
             {
                 case ExpressionType.Lambda:
-                    childExpression = GetLastChildExpression((expression as LambdaExpression).Body);
+                    childExpression = GetLastChildExpression((expression as LambdaExpression)?.Body);
                     break;
                 case ExpressionType.Constant:
                 case ExpressionType.Parameter:
@@ -345,7 +349,7 @@ namespace EZNEW.Framework.ExpressionUtil
                 default:
                     break;
                 case ExpressionType.Invoke:
-                    childExpression = GetLastChildExpression((expression as InvocationExpression).Expression);
+                    childExpression = GetLastChildExpression((expression as InvocationExpression)?.Expression);
                     break;
                 case ExpressionType.MemberAccess:
                     var memberExpression = expression as MemberExpression;
@@ -363,13 +367,13 @@ namespace EZNEW.Framework.ExpressionUtil
                 case ExpressionType.Quote:
                 case ExpressionType.TypeAs:
                 case ExpressionType.UnaryPlus:
-                    childExpression = GetLastChildExpression((expression as UnaryExpression).Operand);
+                    childExpression = GetLastChildExpression((expression as UnaryExpression)?.Operand);
                     break;
                 case ExpressionType.Call:
-                    childExpression = GetLastChildExpression((expression as MethodCallExpression).Object);
+                    childExpression = GetLastChildExpression((expression as MethodCallExpression)?.Object);
                     break;
             }
-            return childExpression;
+            return childExpression ?? expression;
         }
 
         #endregion

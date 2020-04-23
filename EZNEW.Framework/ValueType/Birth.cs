@@ -16,20 +16,21 @@ namespace EZNEW.Framework.ValueType
 
         private int _age;//age
         private Constellation _constellation;//constellation
-        private static readonly Dictionary<Constellation, Tuple<DateTime, DateTime>> constellationDic = new Dictionary<Constellation, Tuple<DateTime, DateTime>>()
+        static TimeSpan Zero = TimeSpan.FromMilliseconds(0);
+        private static readonly Dictionary<Constellation, Tuple<DateTimeOffset, DateTimeOffset>> constellationDic = new Dictionary<Constellation, Tuple<DateTimeOffset, DateTimeOffset>>()
         {
-            { Constellation.Aquarius,new Tuple<DateTime, DateTime>(new DateTime(2000,1,20),new DateTime(2000,2,18))},
-            { Constellation.Pisces,new Tuple<DateTime, DateTime>(new DateTime(2000,2,19),new DateTime(2000,3,20))},
-            { Constellation.Aries,new Tuple<DateTime, DateTime>(new DateTime(2000,3,21),new DateTime(2000,4,19))},
-            { Constellation.Taurus,new Tuple<DateTime, DateTime>(new DateTime(2000,4,20),new DateTime(2000,5,20))},
-            { Constellation.Gemini,new Tuple<DateTime, DateTime>(new DateTime(2000,5,21),new DateTime(2000,6,21))},
-            { Constellation.Cacer,new Tuple<DateTime, DateTime>(new DateTime(2000,6,22),new DateTime(2000,7,22))},
-            { Constellation.Leo,new Tuple<DateTime, DateTime>(new DateTime(2000,7,23),new DateTime(2000,8,22))},
-            { Constellation.Virgo,new Tuple<DateTime, DateTime>(new DateTime(2000,8,23),new DateTime(2000,9,22))},
-            { Constellation.Libra,new Tuple<DateTime, DateTime>(new DateTime(2000,9,23),new DateTime(2000,10,23))},
-            { Constellation.Scorpio,new Tuple<DateTime, DateTime>(new DateTime(2000,10,24),new DateTime(2000,11,22))},
-            { Constellation.Sagittarius,new Tuple<DateTime, DateTime>(new DateTime(2000,11,23),new DateTime(2000,12,21))},
-            { Constellation.Capricom,new Tuple<DateTime, DateTime>(new DateTime(2000,12,22),new DateTime(2000,1,19))},
+            { Constellation.Aquarius,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,1,20,0,0,0,Zero),new DateTimeOffset(2000,2,18,0,0,0,Zero))},
+            { Constellation.Pisces,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,2,19,0,0,0,Zero),new DateTimeOffset(2000,3,20,0,0,0,Zero))},
+            { Constellation.Aries,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,3,21,0,0,0,Zero),new DateTimeOffset(2000,4,19,0,0,0,Zero))},
+            { Constellation.Taurus,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,4,20,0,0,0,Zero),new DateTimeOffset(2000,5,20,0,0,0,Zero))},
+            { Constellation.Gemini,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,5,21,0,0,0,Zero),new DateTimeOffset(2000,6,21,0,0,0,Zero))},
+            { Constellation.Cacer,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,6,22,0,0,0,Zero),new DateTimeOffset(2000,7,22,0,0,0,Zero))},
+            { Constellation.Leo,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,7,23,0,0,0,Zero),new DateTimeOffset(2000,8,22,0,0,0,Zero))},
+            { Constellation.Virgo,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,8,23,0,0,0,Zero),new DateTimeOffset(2000,9,22,0,0,0,Zero))},
+            { Constellation.Libra,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,9,23,0,0,0,Zero),new DateTimeOffset(2000,10,23,0,0,0,Zero))},
+            { Constellation.Scorpio,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,10,24,0,0,0,Zero),new DateTimeOffset(2000,11,22,0,0,0,Zero))},
+            { Constellation.Sagittarius,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,11,23,0,0,0,Zero),new DateTimeOffset(2000,12,21,0,0,0,Zero))},
+            { Constellation.Capricom,new Tuple<DateTimeOffset, DateTimeOffset>(new DateTimeOffset(2000,12,22,0,0,0,Zero),new DateTimeOffset(2000,1,19,0,0,0,Zero))},
         };
 
         #endregion
@@ -40,7 +41,7 @@ namespace EZNEW.Framework.ValueType
         /// instance a Birth object
         /// </summary>
         /// <param name="birthDate">birth datetime</param>
-        public Birth(DateTime birthDate)
+        public Birth(DateTimeOffset birthDate)
         {
             BirthDate = birthDate;
             _constellation = GetConstellation(birthDate);
@@ -61,7 +62,7 @@ namespace EZNEW.Framework.ValueType
         /// <summary>
         /// get birth datetime
         /// </summary>
-        public DateTime BirthDate { get; }
+        public DateTimeOffset BirthDate { get; }
 
         /// <summary>
         /// get constellation
@@ -83,12 +84,12 @@ namespace EZNEW.Framework.ValueType
         /// </summary>
         /// <param name="dateTime">datetime</param>
         /// <returns>Constellation</returns>
-        public static Constellation GetConstellation(DateTime dateTime)
+        public static Constellation GetConstellation(DateTimeOffset dateTime)
         {
             int month = dateTime.Month;
             int day = dateTime.Day;
             var constell = Constellation.Gemini;
-            var constellDate = new DateTime(2000, month, day);
+            var constellDate = new DateTimeOffset(2000, month, day, 0, 0, 0, Zero);
             var constellItem = constellationDic.FirstOrDefault(c => c.Value.Item1 <= constellDate && c.Value.Item2 >= constellDate);
             constell = constellItem.Key;
             return constell;
@@ -99,9 +100,9 @@ namespace EZNEW.Framework.ValueType
         /// </summary>
         /// <param name="dateTime">birth date</param>
         /// <returns>age</returns>
-        public static int GetAge(DateTime dateTime)
+        public static int GetAge(DateTimeOffset dateTime)
         {
-            var nowDate = DateTime.Now.Date;
+            var nowDate = DateTimeOffset.Now.Date;
             var birthDate = dateTime.Date;
             if (nowDate < birthDate.AddYears(1))
             {

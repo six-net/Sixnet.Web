@@ -400,7 +400,7 @@ namespace EZNEW.Framework.Upload
                 FullPath = fileFullPath,
                 Suffix = Path.GetExtension(fileName).Trim('.'),
                 RelativePath = relativePath,
-                UploadDate = DateTime.Now,
+                UploadDate = DateTimeOffset.Now,
                 OriginalFileName = fileOption.FileName,
                 Target = UploadTarget.Local
             };

@@ -332,7 +332,14 @@ namespace EZNEW.Framework.IoC
                                                                             || c.Name.IndexOf("Domain") >= 0) ?? new List<FileInfo>(0);
             foreach (var file in files)
             {
-                types.AddRange(Assembly.LoadFrom(file.FullName).GetTypes());
+                try
+                {
+                    types.AddRange(Assembly.LoadFrom(file.FullName).GetTypes());
+                }
+                catch (Exception ex)
+                {
+                }
+
             }
 
             foreach (Type type in types)

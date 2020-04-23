@@ -67,9 +67,9 @@ namespace EZNEW.Framework.Extension
             {
                 i *= ((int)b + 1);
             }
-            string code = string.Format("{0:x}", i - DateTime.Now.Ticks);
+            string code = string.Format("{0:x}", i - DateTimeOffset.Now.Ticks);
             return code;
-        } 
+        }
 
         #endregion
     }

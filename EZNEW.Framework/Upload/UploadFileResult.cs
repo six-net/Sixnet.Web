@@ -77,7 +77,7 @@ namespace EZNEW.Framework.Upload
         /// <summary>
         /// upload date
         /// </summary>
-        public DateTime UploadDate
+        public DateTimeOffset UploadDate
         {
             get; set;
         }

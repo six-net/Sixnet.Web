@@ -1,6 +1,6 @@
-# EZNEW.Framework
+# EZNEW.Web
 
-Provides tools and libraries commonly used in.net development, including code generation, expression tools, extension methods, dependency injection management, network tools, object transformation management, secure encryption, serialization, commonly used custom data types, and more.
+provides tools and components commonly used in ASP.NET development
 
 # Reporting issues and bugs
 
@@ -12,6 +12,7 @@ These are some other repos for related projects:
 
   * [EZNEW.Develop](https://github.com/eznew-net/EZNEW.Develop)-a .NET domain-driven development framework
   * [EZNEW.Data](https://github.com/eznew-net/EZNEW.Data)-provide data access support for EZNEW.Develop
-  * [EZNEW.Data.SqlServer](https://github.com/eznew-net/EZNEW.Data.SqlServer)-provides support for SQLServer database access
   * [EZNEW.Data.MySQL](https://github.com/eznew-net/EZNEW.Data.MySQL)-provides support for MySQL database access
-  * [Demo](https://github.com/eznew-net/Demo)-demo application
+  * [EZNEW.Data.SqlServer](https://github.com/eznew-net/EZNEW.Data.SqlServer)-provides support for SQLServer database access
+  * [EZNEW.Framework](https://github.com/eznew-net/EZNEW.Framework)-common development tool libraries
+  * [Demo](https://github.com/eznew-net/Demo)-an example application for the EZNEW.NET development framework

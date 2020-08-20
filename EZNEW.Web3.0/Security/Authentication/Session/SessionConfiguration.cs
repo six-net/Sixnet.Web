@@ -13,18 +13,12 @@ namespace EZNEW.Web.Security.Authentication.Session
         /// Gets or sets the expire times
         /// Default is 2h
         /// </summary>
-        public TimeSpan Expires
-        {
-            get; set;
-        } = TimeSpan.FromHours(2);
+        public TimeSpan Expires { get; set; } = TimeSpan.FromHours(2);
 
         /// <summary>
         /// Gets or sets session claim name
         /// </summary>
-        public string SessionClaimName
-        {
-            get; set;
-        } = "eznew_auth_session_name";
+        public string SessionClaimName { get; set; } = "eznew_auth_session_name";
 
         /// <summary>
         /// Gets session configuration

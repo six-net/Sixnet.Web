@@ -10,27 +10,16 @@ namespace EZNEW.Web.Utility
         /// <summary>
         /// Gets or sets the cookie key
         /// </summary>
-        public string Key
-        {
-            get;
-            set;
-        }
+        public string Key { get; set; }
 
         /// <summary>
         /// Gets or sets the cookie value
         /// </summary>
-        public string Value
-        {
-            get;
-            set;
-        }
+        public string Value { get; set; }
 
         /// <summary>
         /// Gets or sets cookie options
         /// </summary>
-        public CookieOptions Option
-        {
-            get;set;
-        }
+        public CookieOptions Option { get; set; }
     }
 }

@@ -13,41 +13,26 @@ namespace EZNEW.Web.Security.Authorization
         /// <summary>
         /// Gets or sets the controller code
         /// </summary>
-        public string ControllerCode
-        {
-            get; set;
-        }
+        public string ControllerCode { get; set; }
 
         /// <summary>
         /// Gets or sets the action code
         /// </summary>
-        public string ActionCode
-        {
-            get; set;
-        }
+        public string ActionCode { get; set; }
 
         /// <summary>
         /// Gets or sets the request method
         /// </summary>
-        public string Method
-        {
-            get; set;
-        }
+        public string Method { get; set; }
 
         /// <summary>
         /// Gets or sets the application info
         /// </summary>
-        public ApplicationInfo Application
-        {
-            get; set;
-        }
+        public ApplicationInfo Application { get; set; }
 
         /// <summary>
         /// Gets or sets the claims
         /// </summary>
-        public Dictionary<string, string> Claims
-        {
-            get; set;
-        }
+        public Dictionary<string, string> Claims { get; set; }
     }
 }

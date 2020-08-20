@@ -12,18 +12,12 @@ namespace EZNEW.Web.Security.Authentication.Cookie
         /// <summary>
         /// Gets or sets whether force validate principal
         /// </summary>
-        internal static bool ForceValidatePrincipal
-        {
-            get; set;
-        } = false;
+        internal static bool ForceValidatePrincipal { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the validate principal operation
         /// </summary>
-        internal static Func<CookieValidatePrincipalContext, Task<bool>> OnValidatePrincipalAsync
-        {
-            get; set;
-        }
+        internal static Func<CookieValidatePrincipalContext, Task<bool>> OnValidatePrincipalAsync { get; set; }
 
         /// <summary>
         /// Validate principal

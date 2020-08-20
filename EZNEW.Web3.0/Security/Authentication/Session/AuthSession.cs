@@ -31,46 +31,31 @@ namespace EZNEW.Web.Security.Authentication.Session
         /// Gets or sets the claims
         /// </summary>
         [JsonProperty(PropertyName = "claims")]
-        public Dictionary<string, string> Claims
-        {
-            get; set;
-        }
+        public Dictionary<string, string> Claims { get; set; }
 
         /// <summary>
         /// Gets or sets the properties items
         /// </summary>
         [JsonProperty(PropertyName = "properties_items")]
-        public Dictionary<string, string> PropertiesItems
-        {
-            get; set;
-        }
+        public Dictionary<string, string> PropertiesItems { get; set; }
 
         /// <summary>
         /// Gets or sets the expires
         /// </summary>
         [JsonProperty(PropertyName = "expires")]
-        public DateTimeOffset Expires
-        {
-            get; set;
-        }
+        public DateTimeOffset Expires { get; set; }
 
         /// <summary>
         /// Gets or sets the session token
         /// </summary>
         [JsonProperty(PropertyName = "session_token")]
-        public string SessionToken
-        {
-            get; set;
-        }
+        public string SessionToken { get; set; }
 
         /// <summary>
         /// Gets or sets the session id
         /// </summary>
         [JsonProperty(PropertyName = "session_id")]
-        public string SessionId
-        {
-            get; set;
-        }
+        public string SessionId { get; set; }
 
         /// <summary>
         /// Gets or sets the subject id

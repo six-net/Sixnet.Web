@@ -8,9 +8,6 @@
         /// <summary>
         /// Gets or sets the display name
         /// </summary>
-        public string DisplayName
-        {
-            get; set;
-        }
+        public string DisplayName { get; set; }
     }
 }

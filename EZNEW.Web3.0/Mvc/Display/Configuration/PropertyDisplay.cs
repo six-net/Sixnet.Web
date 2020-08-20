@@ -11,18 +11,12 @@ namespace EZNEW.Web.Mvc.Display.Configuration
         /// Gets or sets the property name
         /// </summary>
         [JsonProperty(PropertyName = "name")]
-        public string Name
-        {
-            get;set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the display info
         /// </summary>
         [JsonProperty(PropertyName = "display")]
-        public DisplayInfo Display
-        {
-            get;set;
-        }
+        public DisplayInfo Display { get; set; }
     }
 }

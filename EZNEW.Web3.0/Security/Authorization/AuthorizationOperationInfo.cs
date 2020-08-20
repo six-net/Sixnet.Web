@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EZNEW.Web.Mvc.View.Extension
+namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Authorize operation
+    /// Authorization operation info
     /// </summary>
-    public class AuthorizeOperation
+    public class AuthorizationOperationInfo
     {
+        /// <summary>
+        /// Gets or sets the operation name
+        /// </summary>
+        public string Name { get; set; }
+
         /// <summary>
         /// Gets or sets the controller code
         /// </summary>
@@ -20,14 +25,8 @@ namespace EZNEW.Web.Mvc.View.Extension
         public string ActionCode { get; set; }
 
         /// <summary>
-        /// Gets or sets the request method
+        /// Gets or sets whether allow access without authorized
         /// </summary>
-        public string Method { get; set; } = "GET";
-
-        public AuthorizeOperation(string controllerCode, string actionCode)
-        {
-            ControllerCode = controllerCode;
-            ActionCode = actionCode;
-        }
+        public bool Public { get; set; }
     }
 }

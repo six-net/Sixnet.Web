@@ -22,10 +22,7 @@ namespace EZNEW.Web.Security.Authentication
         /// <summary>
         /// Gets or sets the user id
         /// </summary>
-        public TIdentityKey Id
-        {
-            get; set;
-        }
+        public TIdentityKey Id { get; set; }
 
         /// <summary>
         /// Gets or sets the authentication type
@@ -52,26 +49,17 @@ namespace EZNEW.Web.Security.Authentication
         /// <summary>
         /// Gets or sets the name
         /// </summary>
-        public string Name
-        {
-            get; set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the real name
         /// </summary>
-        public string RealName
-        {
-            get; set;
-        }
+        public string RealName { get; set; }
 
         /// <summary>
         /// Gets or sets whether is admin
         /// </summary>
-        public bool IsAdmin
-        {
-            get; set;
-        }
+        public bool IsAdmin { get; set; }
 
         #endregion
 

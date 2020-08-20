@@ -7,6 +7,7 @@ namespace EZNEW.Web.Mvc.View.Extension
     /// <summary>
     /// Defines button Size
     /// </summary>
+    [Serializable]
     public enum ButtonSize
     {
         Normal = 2,
@@ -17,6 +18,7 @@ namespace EZNEW.Web.Mvc.View.Extension
     /// <summary>
     /// Defines forbid style
     /// </summary>
+    [Serializable]
     public enum ForbidStyle
     {
         Remove = 2,

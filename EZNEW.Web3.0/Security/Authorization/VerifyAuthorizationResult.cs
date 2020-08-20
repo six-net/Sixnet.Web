@@ -11,10 +11,7 @@ namespace EZNEW.Web.Security.Authorization
         /// <summary>
         /// Gets or sets the authorization verification status
         /// </summary>
-        public AuthorizationVerificationStatus Status
-        {
-            get; set;
-        }
+        public AuthorizationVerificationStatus Status { get; set; }
 
         /// <summary>
         /// Gets or sets whether allow to access

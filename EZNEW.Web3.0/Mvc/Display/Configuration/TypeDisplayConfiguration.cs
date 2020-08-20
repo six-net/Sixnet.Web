@@ -12,18 +12,12 @@ namespace EZNEW.Web.Mvc.Display.Configuration
         /// Gets or sets the model type full name
         /// </summary>
         [JsonProperty(PropertyName = "typeName")]
-        public string ModelTypeFullName
-        {
-            get; set;
-        }
+        public string ModelTypeFullName { get; set; }
 
         /// <summary>
         /// Gets or sets the property display configs
         /// </summary>
         [JsonProperty(PropertyName = "displays")]
-        public List<PropertyDisplay> Propertys
-        {
-            get; set;
-        }
+        public List<PropertyDisplay> Propertys { get; set; }
     }
 }

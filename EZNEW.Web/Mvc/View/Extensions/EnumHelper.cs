@@ -52,20 +52,20 @@ namespace EZNEW.Web.Mvc
 
             if (!IsValidForEnumHelper(type))
             {
-                throw new ArgumentException("type is not a enum");
+                throw new ArgumentException("Type is not a enum");
             }
             bool hasSelectedValue = selectedValues != null && selectedValues.Count > 0;
             List<SelectListItem> selectList = new List<SelectListItem>();
             Type checkedType = Nullable.GetUnderlyingType(type) ?? type;
-            const BindingFlags BindingFlags = BindingFlags.DeclaredOnly | BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static;
-            foreach (FieldInfo field in checkedType.GetFields(BindingFlags))
+            var valueAndNames = checkedType.GetEnumValueAndNames();
+            foreach (var item in valueAndNames)
             {
-                string fieldValue = field.GetRawConstantValue().ToString();
+                string value = item.Key.ToString();
                 selectList.Add(new SelectListItem
                 {
-                    Text = GetDisplayName(field),
-                    Value = fieldValue,
-                    Selected = hasSelectedValue ? selectedValues.Contains(fieldValue) : hasSelectedValue
+                    Text = item.Value,
+                    Value = value,
+                    Selected = hasSelectedValue ? selectedValues.Contains(value) : hasSelectedValue
                 });
             }
             return selectList;
@@ -100,26 +100,6 @@ namespace EZNEW.Web.Mvc
         {
             FlagsAttribute attribute = type.GetCustomAttribute<FlagsAttribute>(inherit: false);
             return attribute != null;
-        }
-
-        #endregion
-
-        #region GetDisplayName
-
-        // Return non-empty name specified in a [Display] attribute for the given field, if any; field's name otherwise
-        private static string GetDisplayName(FieldInfo field)
-        {
-            DisplayAttribute display = field.GetCustomAttribute<DisplayAttribute>(inherit: false);
-            if (display != null)
-            {
-                string name = display.GetName();
-                if (!string.IsNullOrEmpty(name))
-                {
-                    return name;
-                }
-            }
-
-            return field.Name;
         }
 
         #endregion

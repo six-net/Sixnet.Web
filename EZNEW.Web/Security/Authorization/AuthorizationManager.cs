@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.Linq;
+using System.IO;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 using EZNEW.DependencyInjection;
 using EZNEW.Serialize;
 using EZNEW.Selection;
 using EZNEW.Http;
+using EZNEW.Logging;
+using EZNEW.Application;
+using EZNEW.Configuration;
 
 namespace EZNEW.Web.Security.Authorization
 {
@@ -99,6 +106,90 @@ namespace EZNEW.Web.Security.Authorization
                 return string.Empty;
             }
             return DataSelectionProvider.Get(AuthorizationConfiguration.ServerSelectMode);
+        }
+
+        /// <summary>
+        /// Resolve default operation
+        /// </summary>
+        /// <returns>Return default operations</returns>
+        public static List<AuthorizationOperationGroupInfo> ResolveDefaultOperation()
+        {
+            List<AuthorizationOperationGroupInfo> operationGroups = new List<AuthorizationOperationGroupInfo>();
+            try
+            {
+                var files = new DirectoryInfo(ApplicationManager.ApplicationExecutableDirectory).GetFiles("*.dll", SearchOption.AllDirectories)
+    .Where(c => !ConfigurationOptions.ConfigurationExcludeFileRegex.IsMatch(c.FullName));
+                var controllerBaseType = typeof(ControllerBase);
+                foreach (var file in files)
+                {
+                    foreach (var type in Assembly.LoadFrom(file.FullName).GetTypes())
+                    {
+                        if (!controllerBaseType.IsAssignableFrom(type))
+                        {
+                            continue;
+                        }
+                        var operationGroupAttrs = type.GetCustomAttributes<AuthorizationOperationGroupAttribute>(false);
+                        if (operationGroupAttrs.IsNullOrEmpty())
+                        {
+                            continue;
+                        }
+                        var firstGroupAttr = operationGroupAttrs.First();
+                        if (string.IsNullOrWhiteSpace(firstGroupAttr.Name))
+                        {
+                            continue;
+                        }
+                        AuthorizationOperationGroupInfo operationGroup = operationGroups.FirstOrDefault(c => c.Name == firstGroupAttr.Name) ?? new AuthorizationOperationGroupInfo()
+                        {
+                            Name = firstGroupAttr.Name,
+                        };
+                        operationGroup.Operations ??= new List<AuthorizationOperationInfo>();
+                        var actions = type.GetMethods();
+                        foreach (var action in actions)
+                        {
+                            var operationAttrs = action.GetCustomAttributes<AuthorizationOperationAttribute>(false);
+                            if (operationAttrs.IsNullOrEmpty())
+                            {
+                                continue;
+                            }
+                            var firstOperationAttr = operationAttrs.First();
+                            operationGroup.Operations.Add(new AuthorizationOperationInfo()
+                            {
+                                Name = firstOperationAttr.Name,
+                                ActionCode = action.Name,
+                                ControllerCode = type.Name.LSplit("Controller")[0],
+                                Public = firstOperationAttr.Public
+                            });
+                        }
+                        AuthorizationOperationGroupInfo parentGroup = null;
+                        if (!string.IsNullOrWhiteSpace(firstGroupAttr.Parent))
+                        {
+                            parentGroup = operationGroups.FirstOrDefault(c => c.Name == firstGroupAttr.Parent);
+                            if (parentGroup == null)
+                            {
+                                parentGroup = new AuthorizationOperationGroupInfo()
+                                {
+                                    Name = firstGroupAttr.Parent,
+                                    ChildGroups = new List<AuthorizationOperationGroupInfo>()
+                                };
+                                operationGroups.Add(parentGroup);
+                            }
+                        }
+                        if (parentGroup != null)
+                        {
+                            parentGroup.ChildGroups.Add(operationGroup);
+                        }
+                        else
+                        {
+                            operationGroups.Add(operationGroup);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError(nameof(AuthorizationManager), ex, ex.Message);
+            }
+            return operationGroups;
         }
     }
 }

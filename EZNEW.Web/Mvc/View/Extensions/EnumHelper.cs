@@ -57,6 +57,7 @@ namespace EZNEW.Web.Mvc
             bool hasSelectedValue = selectedValues != null && selectedValues.Count > 0;
             List<SelectListItem> selectList = new List<SelectListItem>();
             Type checkedType = Nullable.GetUnderlyingType(type) ?? type;
+
             var valueAndNames = checkedType.GetEnumValueAndNames();
             foreach (var item in valueAndNames)
             {
@@ -68,6 +69,18 @@ namespace EZNEW.Web.Mvc
                     Selected = hasSelectedValue ? selectedValues.Contains(value) : hasSelectedValue
                 });
             }
+
+            //const BindingFlags BindingFlags = BindingFlags.DeclaredOnly | BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static;
+            //foreach (FieldInfo field in checkedType.GetFields(BindingFlags))
+            //{
+            //    string fieldValue = field.GetRawConstantValue().ToString();
+            //    selectList.Add(new SelectListItem
+            //    {
+            //        Text = GetDisplayName(field),
+            //        Value = fieldValue,
+            //        Selected = hasSelectedValue ? selectedValues.Contains(fieldValue) : hasSelectedValue
+            //    });
+            //}
             return selectList;
         }
 

@@ -56,6 +56,25 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         }
 
         /// <summary>
+        /// Create auth link
+        /// </summary>
+        /// <param name="htmlHelper">Html helper</param>
+        /// <param name="text">Text</param>
+        /// <param name="controllerCode">Controller code</param>
+        /// <param name="actionCode">Action code</param>
+        /// <param name="htmlAttributes">Html attributes</param>
+        /// <returns>Return </returns>
+        public static IHtmlContent AuthLink(this IHtmlHelper htmlHelper, string text, string controllerCode, string actionCode, object htmlAttributes = null)
+        {
+            return AuthLink(htmlHelper, new AuthButtonOptions()
+            {
+                Text = text,
+                AuthorizeOperation = new AuthorizeOperation(controllerCode, actionCode),
+                HtmlAttributes = htmlAttributes?.ObjectToDcitionary()
+            });
+        }
+
+        /// <summary>
         /// Dropdown auth link
         /// </summary>
         /// <param name="htmlHelper">Html helper</param>

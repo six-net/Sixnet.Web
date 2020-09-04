@@ -10,12 +10,12 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>eznew.snk</AssemblyOriginatorKeyFile>
-    <Version>4.1.0</Version>
-    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <Version>4.1.1</Version>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
     <Copyright>Copyright © DingBin.Li</Copyright>
     <PackageProjectUrl>https://github.com/eznew-net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/eznew-net/EZNEW.Web</RepositoryUrl>
-    <FileVersion>4.1.0.20</FileVersion>
+    <FileVersion>4.1.1.03</FileVersion>
     <Authors>DingBin.Li</Authors>
     <Company>EZNEW</Company>
     <Description>ASP.NET development tool library</Description>

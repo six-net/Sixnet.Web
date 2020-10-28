@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace EZNEW.Web.Mvc
@@ -9,8 +11,9 @@ namespace EZNEW.Web.Mvc
     {
         //1:controller name
         //0:view name
-        Dictionary<string, IEnumerable<string>> ViewLocationDict = null;
-        static List<string> DefaultViewLocations = new List<string>()
+        //2:area name
+        readonly Dictionary<string, IEnumerable<string>> ViewLocationCollection = null;
+        static readonly List<string> DefaultViewLocations = new List<string>()
         {
             "/Views/{1}/{0}.cshtml",
             "/Views/Shared/{0}.cshtml",
@@ -27,31 +30,48 @@ namespace EZNEW.Web.Mvc
             {
                 throw new ArgumentNullException(nameof(assignableFromController));
             }
-            var allControllerList = assignableFromController.Assembly.GetTypes().Where(c => assignableFromController.IsAssignableFrom(c)).ToList();
-            ViewLocationDict = new Dictionary<string, IEnumerable<string>>(allControllerList.Count);
-            foreach (var c in allControllerList)
+            var allControllers = assignableFromController.Assembly.GetTypes().Where(c => assignableFromController.IsAssignableFrom(c)).ToList();
+            ViewLocationCollection = new Dictionary<string, IEnumerable<string>>(allControllers.Count);
+            foreach (var controller in allControllers)
             {
-                var controllerNamespace = c.Namespace ?? string.Empty;
-                if (controllerNamespace.EndsWith("Controllers"))
+                var areaAttribute = controller.GetCustomAttribute<AreaAttribute>();
+                List<string> conttrollerViewLocations = new List<string>(7);
+                if (areaAttribute != null)
                 {
-                    continue;
+                    conttrollerViewLocations.Add("/Areas/{2}/Views/{1}/{0}.cshtml");
+                    conttrollerViewLocations.Add("/Areas/{2}/Views/Shared/{0}.cshtml");
                 }
-                var namespaceArray = controllerNamespace.LSplit("Controllers");
-                var groupName = string.Join("/", namespaceArray[namespaceArray.Length - 1].LSplit("."));
-                ViewLocationDict[c.Name.LSplit("Controller")[0]] = DefaultViewLocations.Union(new List<string>(2)
+                var controllerNamespace = controller.Namespace ?? string.Empty;
+                var groupName = string.Empty;
+                if (!controllerNamespace.EndsWith("Controllers"))
                 {
-                    $"/Views/{groupName.Trim('.')}/{{1}}/{{0}}.cshtml",
-                    $"/Views/{groupName.Trim('.')}/{{0}}.cshtml"
-                });
+                    var namespaceArray = controllerNamespace.LSplit("Controllers");
+                    groupName = string.Join("/", namespaceArray[namespaceArray.Length - 1].LSplit("."));
+                }
+                if (!string.IsNullOrWhiteSpace(groupName))
+                {
+                    if (areaAttribute != null)
+                    {
+                        conttrollerViewLocations.Add($"/Areas/{{2}}/Views/{groupName.Trim('.')}/{{1}}/{{0}}.cshtml");
+                        conttrollerViewLocations.Add($"/Areas/{{2}}/Views/{groupName.Trim('.')}/{{0}}.cshtml");
+                    }
+                    conttrollerViewLocations.Add($"/Views/{groupName.Trim('.')}/{{1}}/{{0}}.cshtml");
+                    conttrollerViewLocations.Add($"/Views/{groupName.Trim('.')}/{{0}}.cshtml");
+                }
+                if (!conttrollerViewLocations.IsNullOrEmpty())
+                {
+                    conttrollerViewLocations.AddRange(DefaultViewLocations);
+                    ViewLocationCollection[controller.Name.LSplit("Controller")[0]] = conttrollerViewLocations;
+                }
             }
         }
 
         public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
         {
             var controllerName = context.ControllerName;
-            if (ViewLocationDict.ContainsKey(controllerName))
+            if (ViewLocationCollection.ContainsKey(controllerName))
             {
-                return ViewLocationDict[controllerName];
+                return ViewLocationCollection[controllerName];
             }
             return viewLocations;
         }

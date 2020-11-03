@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Reflection;
 using System.Linq;
 using System.IO;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
+using EZNEW.Configuration;
 using EZNEW.DependencyInjection;
 using EZNEW.Serialize;
 using EZNEW.Selection;
 using EZNEW.Http;
-using EZNEW.Logging;
 using EZNEW.Application;
-using EZNEW.Configuration;
+using EZNEW.Logging;
+using System.Reflection;
 
 namespace EZNEW.Web.Security.Authorization
 {
@@ -28,7 +28,7 @@ namespace EZNEW.Web.Security.Authorization
 
         /// <summary>
         /// Data selection provider
-        /// </summary>
+        /// </summary> 
         static readonly DataSelectionProvider<string> DataSelectionProvider = null;
 
         static AuthorizationManager()
@@ -42,64 +42,64 @@ namespace EZNEW.Web.Security.Authorization
         }
 
         /// <summary>
-        /// Gets or sets verify authorization operation
+        /// Authorize proxy
         /// </summary>
-        static Func<VerifyAuthorizationOption, VerifyAuthorizationResult> AuthorizationVerifyProxy;
+        static Func<AuthorizeOptions, AuthorizeResult> AuthorizeProxy;
 
         /// <summary>
-        /// Configure authorization verify operation
+        /// Configure the authorization
         /// </summary>
-        /// <param name="authorizationVerifyOperation">Authorization verify operation</param>
-        public static void ConfigureAuthorizationVerify(Func<VerifyAuthorizationOption, VerifyAuthorizationResult> authorizationVerifyOperation)
+        /// <param name="authorizeAcion">Authorize action</param>
+        public static void ConfigureAuthorization(Func<AuthorizeOptions, AuthorizeResult> authorizeAcion)
         {
-            AuthorizationVerifyProxy = authorizationVerifyOperation;
+            AuthorizeProxy = authorizeAcion;
         }
 
         /// <summary>
-        /// Verify authorization
+        /// Authorize
         /// </summary>
-        /// <param name="authorizationOption">Authorization option</param>
-        /// <returns>Return verify authorization reuslt</returns>
-        public static async Task<VerifyAuthorizationResult> VerifyAuthorizeAsync(VerifyAuthorizationOption authorizationOption)
+        /// <param name="authorizeOptions">Authorize options</param>
+        /// <returns>Return the authorize reuslt</returns>
+        public static async Task<AuthorizeResult> AuthorizeAsync(AuthorizeOptions authorizeOptions)
         {
-            if (authorizationOption == null)
+            if (authorizeOptions == null)
             {
-                return VerifyAuthorizationResult.ForbidResult();
+                return AuthorizeResult.ForbidResult();
             }
             if (!AuthorizationConfiguration.RemoteVerify)
             {
-                if (AuthorizationVerifyProxy == null)
+                if (AuthorizeProxy == null)
                 {
-                    throw new ArgumentNullException(nameof(AuthorizationVerifyProxy));
+                    throw new ArgumentNullException(nameof(AuthorizeProxy));
                 }
-                return AuthorizationVerifyProxy(authorizationOption) ?? VerifyAuthorizationResult.ForbidResult();
+                return AuthorizeProxy(authorizeOptions) ?? AuthorizeResult.ForbidResult();
             }
-            string server = SelectRemoteVerifyServer();
+            string server = SelectRemoteServer();
             if (string.IsNullOrWhiteSpace(server))
             {
                 throw new ArgumentNullException(nameof(AuthorizationConfiguration.Servers));
             }
-            var result = await HttpHelper.PostJsonAsync(server, authorizationOption).ConfigureAwait(false);
+            var result = await HttpHelper.PostJsonAsync(server, authorizeOptions).ConfigureAwait(false);
             var stringValue = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
-            VerifyAuthorizationResult verifyResult = JsonSerializeHelper.JsonToObject<VerifyAuthorizationResult>(stringValue);
-            return verifyResult ?? VerifyAuthorizationResult.ForbidResult();
+            AuthorizeResult verifyResult = JsonSerializeHelper.JsonToObject<AuthorizeResult>(stringValue);
+            return verifyResult ?? AuthorizeResult.ForbidResult();
         }
 
         /// <summary>
-        /// Verify authorize
+        /// Authorize
         /// </summary>
-        /// <param name="authorizationOption">Authorization option</param>
-        /// <returns></returns>
-        public static VerifyAuthorizationResult VerifyAuthorize(VerifyAuthorizationOption authorizationOption)
+        /// <param name="authorizeOptions">Authorize options</param>
+        /// <returns>Return the authorize reuslt</returns>
+        public static AuthorizeResult Authorize(AuthorizeOptions authorizeOptions)
         {
-            return VerifyAuthorizeAsync(authorizationOption).Result;
+            return AuthorizeAsync(authorizeOptions).Result;
         }
 
         /// <summary>
-        /// Select a remote verify server
+        /// Select a remote server
         /// </summary>
         /// <returns>Return remote server address</returns>
-        static string SelectRemoteVerifyServer()
+        static string SelectRemoteServer()
         {
             if (DataSelectionProvider == null || AuthorizationConfiguration == null)
             {
@@ -109,16 +109,17 @@ namespace EZNEW.Web.Security.Authorization
         }
 
         /// <summary>
-        /// Resolve default operation
+        /// Resolve default authorizations
         /// </summary>
-        /// <returns>Return default operations</returns>
-        public static List<AuthorizationOperationGroupInfo> ResolveDefaultOperation()
+        /// <returns>Return the default authorizations</returns>
+        public static List<AuthorizationGroupInfo> ResolveDefaultAuthorizations()
         {
-            List<AuthorizationOperationGroupInfo> operationGroups = new List<AuthorizationOperationGroupInfo>();
+            List<AuthorizationGroupInfo> operationGroups = new List<AuthorizationGroupInfo>();
             try
             {
-                var files = new DirectoryInfo(ApplicationManager.ApplicationExecutableDirectory).GetFiles("*.dll", SearchOption.AllDirectories)
-    .Where(c => !ConfigurationOptions.ConfigurationExcludeFileRegex.IsMatch(c.FullName));
+                var files = new DirectoryInfo(ApplicationManager.ApplicationExecutableDirectory)
+                    .GetFiles("*.dll", SearchOption.AllDirectories)
+                    .Where(c => !ConfigurationOptions.ConfigurationExcludeFileRegex.IsMatch(c.FullName));
                 var controllerBaseType = typeof(ControllerBase);
                 foreach (var file in files)
                 {
@@ -128,48 +129,46 @@ namespace EZNEW.Web.Security.Authorization
                         {
                             continue;
                         }
-                        var operationGroupAttrs = type.GetCustomAttributes<AuthorizationOperationGroupAttribute>(false);
-                        if (operationGroupAttrs.IsNullOrEmpty())
+                        var operationGroupAttr = type.GetCustomAttribute<AuthorizationGroupAttribute>(false);
+                        if (string.IsNullOrWhiteSpace(operationGroupAttr?.Name))
                         {
                             continue;
                         }
-                        var firstGroupAttr = operationGroupAttrs.First();
-                        if (string.IsNullOrWhiteSpace(firstGroupAttr.Name))
+                        var areaAttr = type.GetCustomAttribute<AreaAttribute>(true);
+                        string areName = areaAttr?.RouteKey ?? string.Empty;
+                        AuthorizationGroupInfo operationGroup = operationGroups.FirstOrDefault(c => c.Name == operationGroupAttr.Name) ?? new AuthorizationGroupInfo()
                         {
-                            continue;
-                        }
-                        AuthorizationOperationGroupInfo operationGroup = operationGroups.FirstOrDefault(c => c.Name == firstGroupAttr.Name) ?? new AuthorizationOperationGroupInfo()
-                        {
-                            Name = firstGroupAttr.Name,
+                            Name = operationGroupAttr.Name,
                         };
-                        operationGroup.Operations ??= new List<AuthorizationOperationInfo>();
+                        operationGroup.Actions ??= new List<AuthorizationActionInfo>();
                         var actions = type.GetMethods();
                         foreach (var action in actions)
                         {
-                            var operationAttrs = action.GetCustomAttributes<AuthorizationOperationAttribute>(false);
+                            var operationAttrs = action.GetCustomAttributes<AuthorizationActionAttribute>(false);
                             if (operationAttrs.IsNullOrEmpty())
                             {
                                 continue;
                             }
                             var firstOperationAttr = operationAttrs.First();
-                            operationGroup.Operations.Add(new AuthorizationOperationInfo()
+                            operationGroup.Actions.Add(new AuthorizationActionInfo()
                             {
                                 Name = firstOperationAttr.Name,
-                                ActionCode = action.Name,
-                                ControllerCode = type.Name.LSplit("Controller")[0],
+                                Action = action.Name,
+                                Area = areName,
+                                Controller = type.Name.LSplit("Controller")[0],
                                 Public = firstOperationAttr.Public
                             });
                         }
-                        AuthorizationOperationGroupInfo parentGroup = null;
-                        if (!string.IsNullOrWhiteSpace(firstGroupAttr.Parent))
+                        AuthorizationGroupInfo parentGroup = null;
+                        if (!string.IsNullOrWhiteSpace(operationGroupAttr.Parent))
                         {
-                            parentGroup = operationGroups.FirstOrDefault(c => c.Name == firstGroupAttr.Parent);
+                            parentGroup = operationGroups.FirstOrDefault(c => c.Name == operationGroupAttr.Parent);
                             if (parentGroup == null)
                             {
-                                parentGroup = new AuthorizationOperationGroupInfo()
+                                parentGroup = new AuthorizationGroupInfo()
                                 {
-                                    Name = firstGroupAttr.Parent,
-                                    ChildGroups = new List<AuthorizationOperationGroupInfo>()
+                                    Name = operationGroupAttr.Parent,
+                                    ChildGroups = new List<AuthorizationGroupInfo>()
                                 };
                                 operationGroups.Add(parentGroup);
                             }

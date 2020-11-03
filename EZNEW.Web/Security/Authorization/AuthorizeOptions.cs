@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using EZNEW.Application;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Verify authorization option
+    /// Authorize options
     /// </summary>
     [Serializable]
-    public class VerifyAuthorizationOption
+    public class AuthorizeOptions
     {
+        /// <summary>
+        /// Gets or sets the area name
+        /// </summary>
+        public string Area { get; set; }
+
         /// <summary>
         /// Gets or sets the controller code
         /// </summary>
-        public string ControllerCode { get; set; }
+        public string Controller { get; set; }
 
         /// <summary>
         /// Gets or sets the action code
         /// </summary>
-        public string ActionCode { get; set; }
+        public string Action { get; set; }
 
         /// <summary>
         /// Gets or sets the request method
@@ -34,5 +40,10 @@ namespace EZNEW.Web.Security.Authorization
         /// Gets or sets the claims
         /// </summary>
         public Dictionary<string, string> Claims { get; set; }
+
+        /// <summary>
+        /// Gets or sets the action context
+        /// </summary>
+        public ActionContext ActionContext { get; set; }
     }
 }

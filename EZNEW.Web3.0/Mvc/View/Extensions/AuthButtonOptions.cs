@@ -3,7 +3,7 @@
 namespace EZNEW.Web.Mvc.View.Extension
 {
     /// <summary>
-    /// Auth Button Options
+    /// Auth button options
     /// </summary>
     public class AuthButtonOptions
     {
@@ -23,9 +23,9 @@ namespace EZNEW.Web.Mvc.View.Extension
         public ForbidStyle ForbidStyle { get; set; } = ForbidStyle.Disable;
 
         /// <summary>
-        /// Gets or sets thhe authorize operation
+        /// Gets or sets the action options
         /// </summary>
-        public AuthorizeOperation AuthorizeOperation { get; set; }
+        public AuthorizationActionOptions ActionOptions { get; set; }
 
         /// <summary>
         /// Gets or sets whether use now verify result

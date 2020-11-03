@@ -29,12 +29,15 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             }
             if (!options.UseNowVerifyResult)
             {
-                var allowAccess = AuthorizationManager.VerifyAuthorize(new VerifyAuthorizationOption()
+                var allowAccess = AuthorizationManager.Authorize(new AuthorizeOptions()
                 {
-                    ActionCode = options.AuthorizeOperation?.ActionCode,
-                    ControllerCode = options.AuthorizeOperation?.ControllerCode,
+                    Action = options.ActionOptions?.Action,
+                    Controller = options.ActionOptions?.Controller,
                     Application = ApplicationManager.Current,
-                    Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value)
+                    Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value),
+                    ActionContext = htmlHelper?.ViewContext,
+                    Method = options.ActionOptions?.Method,
+                    Area = options.ActionOptions?.Area
                 })?.AllowAccess ?? false;
                 if (!allowAccess)
                 {
@@ -70,7 +73,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             options.HtmlAttributes ??= new Dictionary<string, object>();
             options.HtmlAttributes["action"] = urlHelper.Action(actionCode, controlerCode);
             options.Text = text;
-            options.AuthorizeOperation = new AuthorizeOperation(controlerCode, actionCode);
+            options.ActionOptions = new AuthorizationActionOptions(controlerCode, actionCode);
             return htmlHelper.AuthHtmlElement("li", options);
         }
     }

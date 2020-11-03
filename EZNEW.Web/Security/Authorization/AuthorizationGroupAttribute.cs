@@ -4,8 +4,8 @@ using System.Text;
 
 namespace EZNEW.Web.Security.Authorization
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class AuthorizationOperationGroupAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class AuthorizationGroupAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the operation group name

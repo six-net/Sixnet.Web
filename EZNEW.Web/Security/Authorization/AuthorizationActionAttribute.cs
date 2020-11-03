@@ -4,18 +4,18 @@ using System.Text;
 
 namespace EZNEW.Web.Security.Authorization
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public class AuthorizationOperationAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class AuthorizationActionAttribute : Attribute
     {
         /// <summary>
-        /// Gets or sets the operation name
+        /// Gets or sets the action name
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the operation group name
+        /// Gets or sets the group name
         /// </summary>
-        public string GroupName { get; set; }
+        public string Group { get; set; }
 
         /// <summary>
         /// Gets or sets whether allow access without authorized

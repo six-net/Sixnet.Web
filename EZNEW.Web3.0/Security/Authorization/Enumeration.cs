@@ -3,10 +3,10 @@
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Defines authorize verify value
+    /// Defines authorization status
     /// </summary>
     [Serializable]
-    public enum AuthorizationVerificationStatus
+    public enum AuthorizationStatus
     {
         /// <summary>
         /// not log in

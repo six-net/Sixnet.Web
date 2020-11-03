@@ -25,12 +25,15 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             }
             if (!options.UseNowVerifyResult)
             {
-                var allowAccess = AuthorizationManager.VerifyAuthorize(new VerifyAuthorizationOption()
+                var allowAccess = AuthorizationManager.Authorize(new AuthorizeOptions()
                 {
-                    ActionCode = options.AuthorizeOperation?.ActionCode,
-                    ControllerCode = options.AuthorizeOperation?.ControllerCode,
+                    Action = options.ActionOptions?.Action,
+                    Controller = options.ActionOptions?.Controller,
+                    Area = options.ActionOptions?.Area,
                     Application = ApplicationManager.Current,
-                    Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value)
+                    Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value),
+                    ActionContext = htmlHelper?.ViewContext,
+                    Method = options.ActionOptions?.Method
                 })?.AllowAccess ?? false;
                 if (!allowAccess)
                 {
@@ -69,7 +72,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return AuthLink(htmlHelper, new AuthButtonOptions()
             {
                 Text = text,
-                AuthorizeOperation = new AuthorizeOperation(controllerCode, actionCode),
+                ActionOptions = new AuthorizationActionOptions(controllerCode, actionCode),
                 HtmlAttributes = htmlAttributes?.ObjectToDcitionary()
             });
         }
@@ -79,15 +82,15 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// </summary>
         /// <param name="htmlHelper">Html helper</param>
         /// <param name="text">Text</param>
-        /// <param name="authorizeOperation">Authorize operation</param>
+        /// <param name="authorizationActionOptions">Authorization action options</param>
         /// <param name="htmlAttributes">Html attributes</param>
         /// <returns>Return html content</returns>
-        public static IHtmlContent DropdownAuthLink(this IHtmlHelper htmlHelper, string text, AuthorizeOperation authorizeOperation, object htmlAttributes = null, object icoHtmlAttributes = null)
+        public static IHtmlContent DropdownAuthLink(this IHtmlHelper htmlHelper, string text, AuthorizationActionOptions authorizationActionOptions, object htmlAttributes = null, object icoHtmlAttributes = null)
         {
             return AuthLink(htmlHelper, new AuthButtonOptions()
             {
                 Text = text,
-                AuthorizeOperation = authorizeOperation,
+                ActionOptions = authorizationActionOptions,
                 HtmlAttributes = htmlAttributes?.ObjectToDcitionary(),
                 UseIco = icoHtmlAttributes != null,
                 IcoHtmlAttributes = icoHtmlAttributes?.ObjectToDcitionary()
@@ -105,7 +108,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent DropdownAuthLink(this IHtmlHelper htmlHelper, string text, string controllerCode, string actionCode, object htmlAttributes = null, object icoHtmlAttributes = null)
         {
-            return DropdownAuthLink(htmlHelper, text, new AuthorizeOperation(controllerCode, actionCode), htmlAttributes, icoHtmlAttributes);
+            return DropdownAuthLink(htmlHelper, text, new AuthorizationActionOptions(controllerCode, actionCode), htmlAttributes, icoHtmlAttributes);
         }
     }
 }

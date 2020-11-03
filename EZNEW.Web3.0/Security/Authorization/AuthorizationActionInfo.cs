@@ -5,24 +5,29 @@ using System.Text;
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Authorization operation info
+    /// Authorization action info
     /// </summary>
-    public class AuthorizationOperationInfo
+    public class AuthorizationActionInfo
     {
         /// <summary>
-        /// Gets or sets the operation name
+        /// Gets or sets the action name
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the controller code
         /// </summary>
-        public string ControllerCode { get; set; }
+        public string Controller { get; set; }
 
         /// <summary>
         /// Gets or sets the action code
         /// </summary>
-        public string ActionCode { get; set; }
+        public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets the area name
+        /// </summary>
+        public string Area { get; set; }
 
         /// <summary>
         /// Gets or sets whether allow access without authorized

@@ -5,9 +5,9 @@ using System.Text;
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Authorization operation group info
+    /// Authorization group info
     /// </summary>
-    public class AuthorizationOperationGroupInfo
+    public class AuthorizationGroupInfo
     {
         /// <summary>
         /// Gets or sets the group name
@@ -17,11 +17,11 @@ namespace EZNEW.Web.Security.Authorization
         /// <summary>
         /// Gets or sets the child groups
         /// </summary>
-        public List<AuthorizationOperationGroupInfo> ChildGroups { get; set; }
+        public List<AuthorizationGroupInfo> ChildGroups { get; set; }
 
         /// <summary>
         /// Gets or sets the operations
         /// </summary>
-        public List<AuthorizationOperationInfo> Operations { get; set; }
+        public List<AuthorizationActionInfo> Actions { get; set; }
     }
 }

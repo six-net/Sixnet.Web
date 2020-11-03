@@ -8,17 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using EZNEW.Application;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Operation authorize filter
+    /// Action authorize filter
     /// </summary>
-    public class OperationAuthorizeFilter : AuthorizeFilter
+    public class ActionAuthorizeFilter : AuthorizeFilter
     {
         private static readonly AuthorizationPolicy policy = new AuthorizationPolicy(new[] { new DenyAnonymousAuthorizationRequirement() }, new string[] { });
 
-        public OperationAuthorizeFilter() : base(policy)
+        public ActionAuthorizeFilter() : base(policy)
         { }
 
         private static bool HasAllowAnonymous(AuthorizationFilterContext context)
@@ -56,24 +57,26 @@ namespace EZNEW.Web.Security.Authorization
                 context.Result = new ChallengeResult();
                 return;
             }
-            var verifyResult = await AuthorizationManager.VerifyAuthorizeAsync(new VerifyAuthorizationOption()
+            var verifyResult = await AuthorizationManager.AuthorizeAsync(new AuthorizeOptions()
             {
-                ControllerCode = context.RouteData.Values["controller"]?.ToString() ?? string.Empty,
-                ActionCode = context.RouteData.Values["action"]?.ToString() ?? string.Empty,
+                Controller = context.RouteData.Values["controller"]?.ToString() ?? string.Empty,
+                Action = context.RouteData.Values["action"]?.ToString() ?? string.Empty,
+                Area = context.RouteData.Values["area"]?.ToString() ?? string.Empty,
                 Application = ApplicationManager.Current,
                 Method = context?.HttpContext?.Request?.Method,
-                Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0)
+                Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0),
+                ActionContext = context
             }).ConfigureAwait(false);
             switch (verifyResult.Status)
             {
-                case AuthorizationVerificationStatus.Challenge:
+                case AuthorizationStatus.Challenge:
                     context.Result = new ChallengeResult();
                     break;
-                case AuthorizationVerificationStatus.Forbid:
+                case AuthorizationStatus.Forbid:
                 default:
                     context.Result = new ForbidResult();
                     break;
-                case AuthorizationVerificationStatus.Success:
+                case AuthorizationStatus.Success:
                     break;
             }
         }

@@ -26,13 +26,15 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             bool allowAccess = true;
             if (!options.UseNowVerifyResult)
             {
-                allowAccess = AuthorizationManager.VerifyAuthorize(new VerifyAuthorizationOption()
+                allowAccess = AuthorizationManager.Authorize(new AuthorizeOptions()
                 {
-                    ActionCode = options.AuthorizeOperation?.ActionCode,
-                    ControllerCode = options.AuthorizeOperation?.ControllerCode,
+                    Action = options.ActionOptions?.Action,
+                    Controller = options.ActionOptions?.Controller,
+                    Area = options.ActionOptions?.Area,
                     Application = ApplicationManager.Current,
                     Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value),
-                    Method = options.AuthorizeOperation?.Method
+                    Method = options.ActionOptions?.Method,
+                    ActionContext = htmlHelper?.ViewContext
                 })?.AllowAccess ?? false;
             }
             if (!allowAccess && options.ForbidStyle != ForbidStyle.Disable)
@@ -68,15 +70,15 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// </summary>
         /// <param name="htmlHelper">Html helper</param>
         /// <param name="text">Text</param>
-        /// <param name="authorizeOperation">Authorize operation</param>
+        /// <param name="authorizationActionOptions">Authorization action options</param>
         /// <param name="htmlAttributes">Html attributes</param>
         /// <returns>Return button html content</returns>
-        public static IHtmlContent AuthButton(this IHtmlHelper htmlHelper, string text, AuthorizeOperation authorizeOperation, object htmlAttributes = null)
+        public static IHtmlContent AuthButton(this IHtmlHelper htmlHelper, string text, AuthorizationActionOptions authorizationActionOptions, object htmlAttributes = null)
         {
             return AuthButton(htmlHelper, new AuthButtonOptions()
             {
                 Text = text,
-                AuthorizeOperation = authorizeOperation,
+                ActionOptions = authorizationActionOptions,
                 HtmlAttributes = htmlAttributes?.ObjectToDcitionary()
             });
         }
@@ -92,7 +94,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return button html content</returns>
         public static IHtmlContent AuthButton(this IHtmlHelper htmlHelper, string text, string controllerCode, string actionCode, object htmlAttributes = null)
         {
-            return AuthButton(htmlHelper, text, new AuthorizeOperation(controllerCode, actionCode), htmlAttributes);
+            return AuthButton(htmlHelper, text, new AuthorizationActionOptions(controllerCode, actionCode), htmlAttributes);
         }
 
         /// <summary>
@@ -123,15 +125,15 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// </summary>
         /// <param name="htmlHelper">Html helper</param>
         /// <param name="text">Text</param>
-        /// <param name="authorizeOperation">Authorize operation</param>
+        /// <param name="authorizationActionOptions">Authorization action options</param>
         /// <param name="htmlAttributes">Html attributes</param>
         /// <returns>Return button html content</returns>
-        public static IHtmlContent AuthIcoButton(this IHtmlHelper htmlHelper, string text, AuthorizeOperation authorizeOperation, object htmlAttributes = null, object icoHtmlAttributes = null)
+        public static IHtmlContent AuthIcoButton(this IHtmlHelper htmlHelper, string text, AuthorizationActionOptions authorizationActionOptions, object htmlAttributes = null, object icoHtmlAttributes = null)
         {
             return AuthButton(htmlHelper, new AuthButtonOptions()
             {
                 Text = text,
-                AuthorizeOperation = authorizeOperation,
+                ActionOptions = authorizationActionOptions,
                 HtmlAttributes = htmlAttributes?.ObjectToDcitionary(),
                 IcoHtmlAttributes = icoHtmlAttributes?.ObjectToDcitionary(),
                 UseIco = true
@@ -149,7 +151,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return button html content</returns>
         public static IHtmlContent AuthIcoButton(this IHtmlHelper htmlHelper, string text, string controllerCode, string actionCode, object htmlAttributes = null, object icoHtmlAttributes = null)
         {
-            return AuthIcoButton(htmlHelper, text, new AuthorizeOperation(controllerCode, actionCode), htmlAttributes, icoHtmlAttributes);
+            return AuthIcoButton(htmlHelper, text, new AuthorizationActionOptions(controllerCode, actionCode), htmlAttributes, icoHtmlAttributes);
         }
 
         /// <summary>
@@ -182,13 +184,13 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// </summary>
         /// <param name="htmlHelper">Html helper</param>
         /// <param name="text">Text</param>
-        /// <param name="authorizeOperation">Authorize operation</param>
+        /// <param name="authorizationActionOptions">Authorization action options</param>
         /// <param name="attrName">Attr name</param>
         /// <param name="attrValues">Attr values</param>
         /// <param name="htmlAttributes">Html attributes</param>
         /// <param name="icoHtmlAttributes">Ico html attributes</param>
         /// <returns>Return button html content</returns>
-        public static IHtmlContent PreAttributeAuthButton(this IHtmlHelper htmlHelper, string text, AuthorizeOperation authorizeOperation, string attrName, List<string> attrValues = null, object htmlAttributes = null, object icoHtmlAttributes = null)
+        public static IHtmlContent PreAttributeAuthButton(this IHtmlHelper htmlHelper, string text, AuthorizationActionOptions authorizationActionOptions, string attrName, List<string> attrValues = null, object htmlAttributes = null, object icoHtmlAttributes = null)
         {
             var attributesDict = htmlAttributes?.ObjectToDcitionary() ?? new Dictionary<string, object>();
             if (!attrValues.IsNullOrEmpty())
@@ -205,7 +207,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return AuthButton(htmlHelper, new AuthButtonOptions()
             {
                 Text = text,
-                AuthorizeOperation = authorizeOperation,
+                ActionOptions = authorizationActionOptions,
                 HtmlAttributes = attributesDict,
                 UseIco = icoHtmlAttributes != null,
                 IcoHtmlAttributes = icoHtmlAttributes?.ObjectToDcitionary()
@@ -253,14 +255,14 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// </summary>
         /// <param name="htmlHelper">Html helper</param>
         /// <param name="text">Text</param>
-        /// <param name="authorizeOperation">Authorize operation</param>
+        /// <param name="authorizationActionOptions">Authorization action options</param>
         /// <param name="classValues">Class values</param>
         /// <param name="htmlAttributes">Html attributes</param>
         /// <param name="icoHtmlAttributes">Ico html attributes</param>
         /// <returns>Return button html content</returns>
-        public static IHtmlContent PreClassAuthButton(this IHtmlHelper htmlHelper, string text, AuthorizeOperation authorizeOperation, List<string> classValues = null, object htmlAttributes = null, object icoHtmlAttributes = null)
+        public static IHtmlContent PreClassAuthButton(this IHtmlHelper htmlHelper, string text, AuthorizationActionOptions authorizationActionOptions, List<string> classValues = null, object htmlAttributes = null, object icoHtmlAttributes = null)
         {
-            return PreAttributeAuthButton(htmlHelper, text, authorizeOperation, "class", classValues, htmlAttributes, icoHtmlAttributes);
+            return PreAttributeAuthButton(htmlHelper, text, authorizationActionOptions, "class", classValues, htmlAttributes, icoHtmlAttributes);
         }
 
         /// <summary>

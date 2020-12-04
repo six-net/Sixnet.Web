@@ -165,7 +165,7 @@ namespace EZNEW.Web.Upload
         /// <param name="files">Upload files</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> RemoteUploadAsync(RemoteServerOption remoteOption, List<UploadFile> fileOptions, Dictionary<string, byte[]> files, Dictionary<string, string> parameters = null)
+        public static async Task<UploadResult> RemoteUploadAsync(RemoteServerOptions remoteOption, List<UploadFile> fileOptions, Dictionary<string, byte[]> files, Dictionary<string, string> parameters = null)
         {
             var result = await UploadManager.RemoteUploadAsync(remoteOption, fileOptions, files, parameters).ConfigureAwait(false);
             return HandleUploadResult(result);
@@ -179,7 +179,7 @@ namespace EZNEW.Web.Upload
         /// <param name="fileBytes">File bytes</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> RemoteUploadAsync(RemoteServerOption remoteOption, UploadFile fileOption, byte[] fileBytes, object parameters = null)
+        public static async Task<UploadResult> RemoteUploadAsync(RemoteServerOptions remoteOption, UploadFile fileOption, byte[] fileBytes, object parameters = null)
         {
             return await RemoteUploadAsync(remoteOption, fileOption, fileBytes, parameters).ConfigureAwait(false);
         }
@@ -195,7 +195,7 @@ namespace EZNEW.Web.Upload
         /// <param name="fileOptions">File options</param>
         /// <param name="files">Files</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> LocalUploadAsync(UploadOption uploadOption, List<UploadFile> fileOptions, Dictionary<string, byte[]> files)
+        public static async Task<UploadResult> LocalUploadAsync(UploadOptions uploadOption, List<UploadFile> fileOptions, Dictionary<string, byte[]> files)
         {
             var result = await UploadManager.LocalUploadAsync(uploadOption, fileOptions, files).ConfigureAwait(false);
             return HandleUploadResult(result);
@@ -208,7 +208,7 @@ namespace EZNEW.Web.Upload
         /// <param name="fileOption">File option</param>
         /// <param name="fileBytes">File</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> LocalUploadAsync(UploadOption uploadOption, UploadFile fileOption, byte[] fileBytes)
+        public static async Task<UploadResult> LocalUploadAsync(UploadOptions uploadOption, UploadFile fileOption, byte[] fileBytes)
         {
             return await LocalUploadAsync(uploadOption, fileOption, fileBytes).ConfigureAwait(false);
         }

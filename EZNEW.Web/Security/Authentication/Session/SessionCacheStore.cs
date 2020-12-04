@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EZNEW.Web.Security.Authentication.Session;
-using EZNEW.Cache.String.Request;
-using EZNEW.Cache.Keys.Request;
 using EZNEW.Cache;
 using EZNEW.Serialize;
+using EZNEW.Cache.Keys;
+using EZNEW.Cache.String;
 
 namespace EZNEW.Web.SessionCacheStore
 {
@@ -52,7 +52,7 @@ namespace EZNEW.Web.SessionCacheStore
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expiresSeconds),
                 SlidingExpiration = true
             };
-            await CacheManager.String.SetAsync(new StringSetOption()
+            await CacheManager.String.SetAsync(new StringSetOptions()
             {
                 CacheObject = GetCacheObject(),
                 Items = new List<CacheEntry>()
@@ -95,7 +95,7 @@ namespace EZNEW.Web.SessionCacheStore
             {
                 return;
             }
-            await CacheManager.Keys.DeleteAsync(new DeleteOption()
+            await CacheManager.Keys.DeleteAsync(new DeleteOptions()
             {
                 CacheObject = GetCacheObject(),
                 Keys = new List<CacheKey>()
@@ -125,7 +125,7 @@ namespace EZNEW.Web.SessionCacheStore
             var session = await GetSessionBySubjectAsync(subject).ConfigureAwait(false);
             if (!(session?.AllowUse(sessionId: sessionId) ?? false))
             {
-                await CacheManager.Keys.DeleteAsync(new DeleteOption()
+                await CacheManager.Keys.DeleteAsync(new DeleteOptions()
                 {
                     CacheObject = GetCacheObject(),
                     Keys = new List<CacheKey>()

@@ -44,7 +44,7 @@ namespace EZNEW.Web.Security.Authorization
         public override async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             await base.OnAuthorizationAsync(context).ConfigureAwait(false);
-            if (context.Result != null && (context.Result is ChallengeResult || context.Result is ForbidResult))
+            if (context.Result != null && ((context.Result is ChallengeResult && !AuthorizationManager.IngoreAuthentication) || context.Result is ForbidResult))
             {
                 return;
             }

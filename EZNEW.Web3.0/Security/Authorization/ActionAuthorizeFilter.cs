@@ -59,9 +59,9 @@ namespace EZNEW.Web.Security.Authorization
             }
             var verifyResult = await AuthorizationManager.AuthorizeAsync(new AuthorizeOptions()
             {
-                Controller = context.RouteData.Values["controller"]?.ToString() ?? string.Empty,
-                Action = context.RouteData.Values["action"]?.ToString() ?? string.Empty,
-                Area = context.RouteData.Values["area"]?.ToString() ?? string.Empty,
+                Controller = context.RouteData.Values[WebConstants.Route.Controller]?.ToString() ?? string.Empty,
+                Action = context.RouteData.Values[WebConstants.Route.Action]?.ToString() ?? string.Empty,
+                Area = context.RouteData.Values[WebConstants.Route.Area]?.ToString() ?? string.Empty,
                 Application = ApplicationManager.Current,
                 Method = context?.HttpContext?.Request?.Method,
                 Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0),

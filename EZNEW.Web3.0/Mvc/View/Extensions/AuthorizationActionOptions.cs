@@ -33,7 +33,6 @@ namespace EZNEW.Web.Mvc.View.Extension
         {
             Controller = controller;
             Action = action;
-            Controller = controller;
             Area = area;
         }
     }

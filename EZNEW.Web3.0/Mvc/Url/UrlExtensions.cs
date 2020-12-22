@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EZNEW.Web;
 using Microsoft.AspNetCore.Routing;
 
 namespace Microsoft.AspNetCore.Mvc
@@ -66,7 +67,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 routeValueDictionary.Add(parameterName, newValue);
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
 
         /// <summary>
@@ -90,11 +91,11 @@ namespace Microsoft.AspNetCore.Mvc
             }
             if (!string.IsNullOrEmpty(action))
             {
-                routeValueDictionary["action"] = action;
+                routeValueDictionary[WebConstants.Route.Action] = action;
             }
             if (!string.IsNullOrEmpty(controller))
             {
-                routeValueDictionary["controller"] = controller;
+                routeValueDictionary[WebConstants.Route.Controller] = controller;
             }
             foreach (string queryKey in allQueryKeys)
             {
@@ -111,7 +112,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 routeValueDictionary.Add(parameterName, newValue);
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
 
         /// <summary>
@@ -129,17 +130,17 @@ namespace Microsoft.AspNetCore.Mvc
             string[] allQueryKeys = collection.Keys.ToArray();
             if (!string.IsNullOrEmpty(action))
             {
-                routeValueDictionary["action"] = action;
+                routeValueDictionary[WebConstants.Route.Action] = action;
             }
             if (!string.IsNullOrEmpty(controller))
             {
-                routeValueDictionary["controller"] = action;
+                routeValueDictionary[WebConstants.Route.Controller] = action;
             }
             foreach (string queryKey in allQueryKeys)
             {
                 routeValueDictionary.Add(queryKey, collection[queryKey].ToNullableString());
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
 
         /// <summary>
@@ -181,7 +182,7 @@ namespace Microsoft.AspNetCore.Mvc
                     }
                 }
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
 
         /// <summary>
@@ -206,11 +207,11 @@ namespace Microsoft.AspNetCore.Mvc
             }
             if (!string.IsNullOrEmpty(action))
             {
-                routeValueDictionary["action"] = action;
+                routeValueDictionary[WebConstants.Route.Action] = action;
             }
             if (!string.IsNullOrEmpty(controller))
             {
-                routeValueDictionary["controller"] = controller;
+                routeValueDictionary[WebConstants.Route.Controller] = controller;
             }
             foreach (string queryKey in allQueryKeys)
             {
@@ -238,7 +239,7 @@ namespace Microsoft.AspNetCore.Mvc
                     }
                 }
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
 
         /// <summary>
@@ -276,7 +277,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 routeValueDictionary.Add(parameterName, addValue);
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
 
         /// <summary>
@@ -299,11 +300,11 @@ namespace Microsoft.AspNetCore.Mvc
             }
             if (!string.IsNullOrEmpty(action))
             {
-                routeValueDictionary["action"] = action;
+                routeValueDictionary[WebConstants.Route.Action] = action;
             }
             if (!string.IsNullOrEmpty(controller))
             {
-                routeValueDictionary["controller"] = controller;
+                routeValueDictionary[WebConstants.Route.Controller] = controller;
             }
             string nowValue = string.Empty;
             if (routeValueDictionary.ContainsKey(parameterName))
@@ -318,7 +319,7 @@ namespace Microsoft.AspNetCore.Mvc
                     nowValue += addValue;
                 }
             }
-            string newUrl = urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            string newUrl = urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
             newUrl = newUrl.Trim(new char[] { '&', '?' });
             return newUrl;
         }
@@ -367,7 +368,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 routeValueDictionary.Remove(parameterName);
             }
-            return urlHelper.Action(routeValueDictionary["action"].ToNullableString(), routeValueDictionary["controller"].ToNullableString(), routeValueDictionary);
+            return urlHelper.Action(routeValueDictionary[WebConstants.Route.Action].ToNullableString(), routeValueDictionary[WebConstants.Route.Controller].ToNullableString(), routeValueDictionary);
         }
     }
 }

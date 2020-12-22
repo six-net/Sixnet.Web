@@ -98,11 +98,13 @@ namespace EZNEW.Web.Mvc
         /// <returns>Return failed result</returns>
         public static AjaxResult FailedResult(string message = "", string code = "", object data = null)
         {
-            AjaxResult result = new AjaxResult();
-            result.Success = false;
-            result.Code = code;
-            result.Data = data;
-            result.Message = string.IsNullOrWhiteSpace(message) ? failedDefaultMsg : message;
+            AjaxResult result = new AjaxResult
+            {
+                Success = false,
+                Code = code,
+                Data = data,
+                Message = string.IsNullOrWhiteSpace(message) ? failedDefaultMsg : message
+            };
             return result;
         }
 

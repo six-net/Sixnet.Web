@@ -47,6 +47,11 @@ namespace EZNEW.Web.Security.Authorization
         static Func<AuthorizeOptions, AuthorizeResult> AuthorizeProxy;
 
         /// <summary>
+        /// Whether ingore authentication
+        /// </summary>
+        public static bool IngoreAuthentication = false;
+
+        /// <summary>
         /// Configure the authorization
         /// </summary>
         /// <param name="authorizeAcion">Authorize action</param>

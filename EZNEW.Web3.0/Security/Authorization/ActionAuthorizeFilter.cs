@@ -53,7 +53,7 @@ namespace EZNEW.Web.Security.Authorization
                 return;
             }
             bool isAuthenticated = context.HttpContext.User?.Identity?.IsAuthenticated ?? false;
-            if (!isAuthenticated)
+            if (!isAuthenticated && !AuthorizationManager.IngoreAuthentication)
             {
                 context.Result = new ChallengeResult();
                 return;

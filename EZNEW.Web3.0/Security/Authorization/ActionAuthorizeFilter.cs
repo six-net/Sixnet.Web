@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using EZNEW.Application;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace EZNEW.Web.Security.Authorization
 {
@@ -67,17 +68,47 @@ namespace EZNEW.Web.Security.Authorization
                 Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0),
                 ActionContext = context
             }).ConfigureAwait(false);
-            switch (verifyResult.Status)
+            if (verifyResult.AllowAccess)
             {
-                case AuthorizationStatus.Challenge:
-                    context.Result = new ChallengeResult();
-                    break;
-                case AuthorizationStatus.Forbid:
-                default:
-                    context.Result = new ForbidResult();
-                    break;
-                case AuthorizationStatus.Success:
-                    break;
+                return;
+            }
+            if (verifyResult.RedirectType == AuthorizeRedirectType.Default)
+            {
+                switch (verifyResult.Status)
+                {
+                    case AuthorizationStatus.Success:
+                        break;
+                    case AuthorizationStatus.Challenge:
+                        context.Result = new ChallengeResult();
+                        break;
+                    case AuthorizationStatus.Forbid:
+                    default:
+                        context.Result = new ForbidResult();
+                        break;
+                }
+            }
+            else
+            {
+                switch (verifyResult.RedirectType)
+                {
+                    case AuthorizeRedirectType.RedirectToAction:
+                        context.Result = new RedirectToActionResult(verifyResult.Action, verifyResult.Controller, verifyResult.RouteValues);
+                        break;
+                    case AuthorizeRedirectType.RedirectToRoute:
+                        context.Result = new RedirectToRouteResult(verifyResult.RouteValues);
+                        break;
+                    case AuthorizeRedirectType.RedirectToUrl:
+                        UrlHelper urlHelper = new UrlHelper(context);
+                        if (urlHelper.IsLocalUrl(verifyResult.Url))
+                        {
+                            context.Result = new LocalRedirectResult(verifyResult.Url);
+                        }
+                        else
+                        {
+                            context.Result = new RedirectResult(verifyResult.Url);
+                        }
+                        break;
+                }
             }
         }
     }

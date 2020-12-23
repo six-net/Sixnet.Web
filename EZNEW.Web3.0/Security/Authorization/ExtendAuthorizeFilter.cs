@@ -14,16 +14,16 @@ using Microsoft.AspNetCore.Mvc.Routing;
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Action authorize filter
+    /// Extend authorize filter
     /// </summary>
-    public class ActionAuthorizeFilter : AuthorizeFilter
+    public class ExtendAuthorizeFilter : AuthorizeFilter
     {
         private static readonly AuthorizationPolicy policy = new AuthorizationPolicy(new[] { new DenyAnonymousAuthorizationRequirement() }, new string[] { });
 
-        public ActionAuthorizeFilter() : base(policy)
+        public ExtendAuthorizeFilter() : base(policy)
         { }
 
-        private static bool HasAllowAnonymous(AuthorizationFilterContext context)
+        internal static bool HasAllowAnonymous(AuthorizationFilterContext context)
         {
             var filters = context.Filters;
             for (var i = 0; i < filters.Count; i++)

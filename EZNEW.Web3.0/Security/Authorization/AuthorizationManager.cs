@@ -52,6 +52,11 @@ namespace EZNEW.Web.Security.Authorization
         public static bool IngoreAuthentication = false;
 
         /// <summary>
+        /// Whether ingore default authorize
+        /// </summary>
+        public static bool IngoreDefaultAuthorize = false;
+
+        /// <summary>
         /// Configure the authorization
         /// </summary>
         /// <param name="authorizeAcion">Authorize action</param>

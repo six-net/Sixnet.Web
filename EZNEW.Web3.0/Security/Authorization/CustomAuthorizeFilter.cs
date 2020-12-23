@@ -13,12 +13,11 @@ namespace EZNEW.Web.Security.Authorization
     /// <summary>
     /// Custom authorize filter
     /// </summary>
-    public class CustomAuthorizeFilter : IAsyncResourceFilter
+    public class CustomAuthorizeFilter : IAsyncAuthorizationFilter
     {
-        public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
+        public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            AuthorizationFilterContext authorizationFilterContext = new AuthorizationFilterContext(context, context.Filters);
-            if (ExtendAuthorizeFilter.HasAllowAnonymous(authorizationFilterContext))//allow anonymous access
+            if (ExtendAuthorizeFilter.HasAllowAnonymous(context))//allow anonymous access
             {
                 return;
             }

@@ -43,13 +43,16 @@ namespace EZNEW.Web.Security.Authorization
 
         public override async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var originalResult = context.Result;
-            await base.OnAuthorizationAsync(context).ConfigureAwait(false);
-            if (context.Result != null && ((context.Result is ChallengeResult && !AuthorizationManager.IngoreAuthentication) || context.Result is ForbidResult))
+            if (!AuthorizationManager.IngoreDefaultAuthorize)
             {
-                return;
+                var originalResult = context.Result;
+                await base.OnAuthorizationAsync(context).ConfigureAwait(false);
+                if (context.Result != null && ((context.Result is ChallengeResult && !AuthorizationManager.IngoreAuthentication) || context.Result is ForbidResult))
+                {
+                    return;
+                }
+                context.Result = originalResult;
             }
-            context.Result = originalResult;
             if (HasAllowAnonymous(context))//allow anonymous access
             {
                 return;

@@ -10,23 +10,26 @@ using EZNEW.Application;
 
 namespace EZNEW.Web.Security.Authorization
 {
-    public class OperationAuthorizeFilter : AuthorizeFilter
+    public class ExtendAuthorizeFilter : AuthorizeFilter
     {
         private static readonly AuthorizationPolicy policy = new AuthorizationPolicy(new[] { new DenyAnonymousAuthorizationRequirement() }, new string[] { });
 
-        public OperationAuthorizeFilter() : base(policy)
+        public ExtendAuthorizeFilter() : base(policy)
         { }
 
-        private static bool HasAllowAnonymous(IList<IFilterMetadata> filters)
+        internal static bool HasAllowAnonymous(AuthorizationFilterContext context)
         {
-            for (var i = 0; i < filters.Count; i++)
+            if (context.Filters.IsNullOrEmpty())
             {
-                if (filters[i] is IAllowAnonymousFilter)
+                return false;
+            }
+            for (var i = 0; i < context.Filters.Count; i++)
+            {
+                if (context.Filters[i] is IAllowAnonymousFilter)
                 {
                     return true;
                 }
             }
-
             return false;
         }
 
@@ -37,7 +40,7 @@ namespace EZNEW.Web.Security.Authorization
             {
                 return;
             }
-            if (HasAllowAnonymous(context.Filters))//allow anonymous access
+            if (HasAllowAnonymous(context))//allow anonymous access
             {
                 return;
             }

@@ -31,6 +31,16 @@ namespace EZNEW.Web.Security.Authorization
         /// </summary> 
         static readonly DataSelectionProvider<string> DataSelectionProvider = null;
 
+        /// <summary>
+        /// Whether ingore authentication
+        /// </summary>
+        public static bool IngoreAuthentication = false;
+
+        /// <summary>
+        /// Whether ingore default authorize
+        /// </summary>
+        public static bool IngoreDefaultAuthorize = false;
+
         static AuthorizationManager()
         {
             var authorizationConfiguration = ContainerManager.Resolve<IOptions<AuthorizationConfiguration>>()?.Value ?? new AuthorizationConfiguration();

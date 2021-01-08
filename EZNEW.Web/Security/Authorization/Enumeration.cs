@@ -21,4 +21,15 @@ namespace EZNEW.Web.Security.Authorization
         /// </summary>
         Success = 130
     }
+
+    /// <summary>
+    /// Defines authorize redirect type
+    /// </summary>
+    public enum AuthorizeRedirectType
+    {
+        Default = 0,
+        RedirectToAction = 10,
+        RedirectToRoute = 20,
+        RedirectToUrl = 30
+    }
 }

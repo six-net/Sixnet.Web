@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.IO;
+using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using EZNEW.Configuration;
@@ -11,8 +13,7 @@ using EZNEW.Serialize;
 using EZNEW.Selection;
 using EZNEW.Http;
 using EZNEW.Application;
-using EZNEW.Logging;
-using System.Reflection;
+
 
 namespace EZNEW.Web.Security.Authorization
 {
@@ -125,80 +126,90 @@ namespace EZNEW.Web.Security.Authorization
         public static List<AuthorizationGroupInfo> ResolveDefaultAuthorizations()
         {
             List<AuthorizationGroupInfo> operationGroups = new List<AuthorizationGroupInfo>();
-            try
+            var files = new DirectoryInfo(ApplicationManager.ApplicationExecutableDirectory)
+                .GetFiles("*.dll", SearchOption.AllDirectories)
+                .Select(c => c.FullName)
+                .Where(c => !ConfigurationOptions.ConfigurationExcludeFileRegex.IsMatch(c));
+            var controllerBaseType = typeof(ControllerBase);
+            IEnumerable<Type> types = Array.Empty<Type>();
+            var comparer = new TypeNameEqualityComparer();
+            foreach (var filePath in files)
             {
-                var files = new DirectoryInfo(ApplicationManager.ApplicationExecutableDirectory)
-                    .GetFiles("*.dll", SearchOption.AllDirectories)
-                    .Where(c => !ConfigurationOptions.ConfigurationExcludeFileRegex.IsMatch(c.FullName));
-                var controllerBaseType = typeof(ControllerBase);
-                foreach (var file in files)
+                types = types.Union(Assembly.LoadFrom(filePath).GetTypes(), comparer);
+            }
+            foreach (var type in types)
+            {
+                if (!controllerBaseType.IsAssignableFrom(type))
                 {
-                    foreach (var type in Assembly.LoadFrom(file.FullName).GetTypes())
+                    continue;
+                }
+                var operationGroupAttr = type.GetCustomAttribute<AuthorizationGroupAttribute>(false);
+                if (string.IsNullOrWhiteSpace(operationGroupAttr?.Name))
+                {
+                    continue;
+                }
+                var areaAttr = type.GetCustomAttribute<AreaAttribute>(true);
+                string areName = areaAttr?.RouteKey ?? string.Empty;
+                AuthorizationGroupInfo operationGroup = operationGroups.FirstOrDefault(c => c.Name == operationGroupAttr.Name) ?? new AuthorizationGroupInfo()
+                {
+                    Name = operationGroupAttr.Name,
+                };
+                operationGroup.Actions ??= new List<AuthorizationActionInfo>();
+                var actions = type.GetMethods();
+                foreach (var action in actions)
+                {
+                    var operationAttrs = action.GetCustomAttributes<AuthorizationActionAttribute>(false);
+                    if (operationAttrs.IsNullOrEmpty())
                     {
-                        if (!controllerBaseType.IsAssignableFrom(type))
+                        continue;
+                    }
+                    var firstOperationAttr = operationAttrs.First();
+                    operationGroup.Actions.Add(new AuthorizationActionInfo()
+                    {
+                        Name = firstOperationAttr.Name,
+                        Action = action.Name,
+                        Area = areName,
+                        Controller = type.Name.LSplit("Controller")[0],
+                        Public = firstOperationAttr.Public
+                    });
+                }
+                AuthorizationGroupInfo parentGroup = null;
+                if (!string.IsNullOrWhiteSpace(operationGroupAttr.Parent))
+                {
+                    parentGroup = operationGroups.FirstOrDefault(c => c.Name == operationGroupAttr.Parent);
+                    if (parentGroup == null)
+                    {
+                        parentGroup = new AuthorizationGroupInfo()
                         {
-                            continue;
-                        }
-                        var operationGroupAttr = type.GetCustomAttribute<AuthorizationGroupAttribute>(false);
-                        if (string.IsNullOrWhiteSpace(operationGroupAttr?.Name))
-                        {
-                            continue;
-                        }
-                        var areaAttr = type.GetCustomAttribute<AreaAttribute>(true);
-                        string areName = areaAttr?.RouteKey ?? string.Empty;
-                        AuthorizationGroupInfo operationGroup = operationGroups.FirstOrDefault(c => c.Name == operationGroupAttr.Name) ?? new AuthorizationGroupInfo()
-                        {
-                            Name = operationGroupAttr.Name,
+                            Name = operationGroupAttr.Parent,
+                            ChildGroups = new List<AuthorizationGroupInfo>()
                         };
-                        operationGroup.Actions ??= new List<AuthorizationActionInfo>();
-                        var actions = type.GetMethods();
-                        foreach (var action in actions)
-                        {
-                            var operationAttrs = action.GetCustomAttributes<AuthorizationActionAttribute>(false);
-                            if (operationAttrs.IsNullOrEmpty())
-                            {
-                                continue;
-                            }
-                            var firstOperationAttr = operationAttrs.First();
-                            operationGroup.Actions.Add(new AuthorizationActionInfo()
-                            {
-                                Name = firstOperationAttr.Name,
-                                Action = action.Name,
-                                Area = areName,
-                                Controller = type.Name.LSplit("Controller")[0],
-                                Public = firstOperationAttr.Public
-                            });
-                        }
-                        AuthorizationGroupInfo parentGroup = null;
-                        if (!string.IsNullOrWhiteSpace(operationGroupAttr.Parent))
-                        {
-                            parentGroup = operationGroups.FirstOrDefault(c => c.Name == operationGroupAttr.Parent);
-                            if (parentGroup == null)
-                            {
-                                parentGroup = new AuthorizationGroupInfo()
-                                {
-                                    Name = operationGroupAttr.Parent,
-                                    ChildGroups = new List<AuthorizationGroupInfo>()
-                                };
-                                operationGroups.Add(parentGroup);
-                            }
-                        }
-                        if (parentGroup != null)
-                        {
-                            parentGroup.ChildGroups.Add(operationGroup);
-                        }
-                        else
-                        {
-                            operationGroups.Add(operationGroup);
-                        }
+                        operationGroups.Add(parentGroup);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError(nameof(AuthorizationManager), ex, ex.Message);
+                if (parentGroup != null)
+                {
+                    parentGroup.ChildGroups.Add(operationGroup);
+                }
+                else
+                {
+                    operationGroups.Add(operationGroup);
+                }
             }
             return operationGroups;
+        }
+    }
+
+    class TypeNameEqualityComparer : IEqualityComparer<Type>
+    {
+        public bool Equals(Type x, Type y)
+        {
+            return x?.FullName == y?.FullName;
+        }
+
+        public int GetHashCode([DisallowNull] Type obj)
+        {
+            return obj?.GetHashCode() ?? 0;
         }
     }
 }

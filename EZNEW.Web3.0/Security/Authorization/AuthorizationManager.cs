@@ -14,7 +14,6 @@ using EZNEW.Selection;
 using EZNEW.Http;
 using EZNEW.Application;
 
-
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
@@ -123,19 +122,15 @@ namespace EZNEW.Web.Security.Authorization
         /// Resolve default authorizations
         /// </summary>
         /// <returns>Return the default authorizations</returns>
-        public static List<AuthorizationGroupInfo> ResolveDefaultAuthorizations()
+        public static List<AuthorizationGroupInfo> ResolveDefaultAuthorizations(params string[] files)
         {
             List<AuthorizationGroupInfo> operationGroups = new List<AuthorizationGroupInfo>();
-            var files = new DirectoryInfo(ApplicationManager.ApplicationExecutableDirectory)
-                .GetFiles("*.dll", SearchOption.AllDirectories)
-                .Select(c => c.FullName)
-                .Where(c => !ConfigurationOptions.ConfigurationExcludeFileRegex.IsMatch(c));
             var controllerBaseType = typeof(ControllerBase);
-            IEnumerable<Type> types = Array.Empty<Type>();
+            IEnumerable<Type> types = Assembly.GetEntryAssembly().GetTypes();
             var comparer = new TypeNameEqualityComparer();
-            foreach (var filePath in files)
+            foreach (var file in files)
             {
-                types = types.Union(Assembly.LoadFrom(filePath).GetTypes(), comparer);
+                types = types.Union(Assembly.LoadFrom(file).GetTypes(), comparer);
             }
             foreach (var type in types)
             {

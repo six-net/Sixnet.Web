@@ -140,6 +140,26 @@ namespace EZNEW.Web.Mvc
             };
         }
 
+        /// <summary>
+        /// Copy from resultcopy from result
+        /// </summary>
+        /// <param name="result">Result</param>
+        /// <returns>Return ajax result</returns>
+        public static AjaxResult CopyFromResult<T>(Result<T> result)
+        {
+            if (result == null)
+            {
+                return FailedResult("");
+            }
+            return new AjaxResult()
+            {
+                Code = result.Code,
+                Data = result.Data,
+                Message = result.Message,
+                Success = result.Success,
+            };
+        }
+
         #endregion
 
         #endregion

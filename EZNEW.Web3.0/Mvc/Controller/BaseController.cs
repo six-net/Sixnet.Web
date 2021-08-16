@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using EZNEW.Web.Security.Authentication;
+using EZNEW.Serialization.Json;
 
 namespace EZNEW.Web.Mvc
 {
@@ -32,27 +33,18 @@ namespace EZNEW.Web.Mvc
         /// Gets json result
         /// </summary>
         /// <param name="data">Data</param>
-        /// <param name="jsonSerializerOptions">Json serializer options</param>
+        /// <param name="jsonSerializationOptions">Json serialization options</param>
         /// <returns>Return json result</returns>
-        public virtual JsonResult Json(object data, JsonSerializerOptions jsonSerializerOptions)
+        [NonAction]
+        public virtual JsonResult Json(object data, JsonSerializationOptions jsonSerializationOptions)
         {
-            if (jsonSerializerOptions == null)
+            JsonSerializerOptions serializerOptions = jsonSerializationOptions?.ConvertToJsonSerializerOptions();
+            if (serializerOptions == null)
             {
                 var jsonOptions = (HttpContext.RequestServices.GetService(typeof(IOptions<JsonOptions>)) as IOptions<JsonOptions>)?.Value;
-                jsonSerializerOptions = jsonOptions?.JsonSerializerOptions;
+                serializerOptions = jsonOptions?.JsonSerializerOptions;
             }
-            return new CustomJsonResult(data, jsonSerializerOptions);
-        }
-
-        /// <summary>
-        /// Gets json result
-        /// </summary>
-        /// <param name="data">Data</param>
-        /// <returns>Return json result</returns>
-        public override JsonResult Json(object data)
-        {
-            JsonSerializerOptions jsonSerializerOptions = null;
-            return Json(data, jsonSerializerOptions);
+            return new JsonResult(data, serializerOptions);
         }
 
         #endregion

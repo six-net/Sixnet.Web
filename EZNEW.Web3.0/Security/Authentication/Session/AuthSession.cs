@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication;
-using Newtonsoft.Json;
-using IdentityModel;
 
 namespace EZNEW.Web.Security.Authentication.Session
 {
@@ -21,7 +20,7 @@ namespace EZNEW.Web.Security.Authentication.Session
         /// <summary>
         /// Gets or sets the authentication scheme
         /// </summary>
-        [JsonProperty(PropertyName = "authentication_scheme")]
+        [JsonPropertyName("authentication_scheme")]
         public string AuthenticationScheme
         {
             get; set;
@@ -30,31 +29,31 @@ namespace EZNEW.Web.Security.Authentication.Session
         /// <summary>
         /// Gets or sets the claims
         /// </summary>
-        [JsonProperty(PropertyName = "claims")]
+        [JsonPropertyName("claims")]
         public Dictionary<string, string> Claims { get; set; }
 
         /// <summary>
         /// Gets or sets the properties items
         /// </summary>
-        [JsonProperty(PropertyName = "properties_items")]
+        [JsonPropertyName("properties_items")]
         public Dictionary<string, string> PropertiesItems { get; set; }
 
         /// <summary>
         /// Gets or sets the expires
         /// </summary>
-        [JsonProperty(PropertyName = "expires")]
+        [JsonPropertyName("expires")]
         public DateTimeOffset Expires { get; set; }
 
         /// <summary>
         /// Gets or sets the session token
         /// </summary>
-        [JsonProperty(PropertyName = "session_token")]
+        [JsonPropertyName("session_token")]
         public string SessionToken { get; set; }
 
         /// <summary>
         /// Gets or sets the session id
         /// </summary>
-        [JsonProperty(PropertyName = "session_id")]
+        [JsonPropertyName("session_id")]
         public string SessionId { get; set; }
 
         /// <summary>

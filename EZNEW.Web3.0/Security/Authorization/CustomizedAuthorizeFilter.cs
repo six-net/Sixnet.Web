@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Mvc.Routing;
 namespace EZNEW.Web.Security.Authorization
 {
     /// <summary>
-    /// Custom authorize filter
+    /// Customized authorize filter
     /// </summary>
-    public class CustomAuthorizeFilter : IAsyncAuthorizationFilter
+    public class CustomizedAuthorizeFilter : IAsyncAuthorizationFilter
     {
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {

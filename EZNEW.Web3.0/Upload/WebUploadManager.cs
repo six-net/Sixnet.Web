@@ -4,10 +4,9 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using EZNEW.Serialize;
+using EZNEW.Serialization;
 using EZNEW.Upload;
 using EZNEW.Web.Utility;
-using EZNEW.Upload.Configuration;
 using EZNEW.DependencyInjection;
 
 namespace EZNEW.Web.Upload
@@ -51,7 +50,7 @@ namespace EZNEW.Web.Upload
             {
                 return UploadResult.Empty;
             }
-            var uploadParameter = JsonSerializeHelper.JsonToObject<RemoteParameter>(request.Form[RemoteParameter.RequestParameterName]);
+            var uploadParameter = JsonSerializer.Deserialize<RemoteParameter>(request.Form[RemoteParameter.RequestParameterName]);
             if (uploadParameter == null)
             {
                 return UploadResult.Empty;

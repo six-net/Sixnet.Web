@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using EZNEW.Serialize;
-using EZNEW.ExpressionUtil;
+using EZNEW.Serialization;
+using EZNEW.Expressions;
 using System.IO;
 using System.Linq;
 using EZNEW.Web.Mvc.Display.Configuration;
@@ -87,7 +87,7 @@ namespace EZNEW.Web.Mvc.Display
             {
                 return;
             }
-            DisplayConfigurationCollection typeConfigurationCollection = JsonSerializeHelper.JsonToObject<DisplayConfigurationCollection>(json);
+            DisplayConfigurationCollection typeConfigurationCollection = JsonSerializer.Deserialize<DisplayConfigurationCollection>(json);
             Configure(typeConfigurationCollection);
         }
 

@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
-using IdentityModel;
-using EZNEW.ValueType;
+using EZNEW.Model;
 
 namespace EZNEW.Web.Security.Authentication
 {

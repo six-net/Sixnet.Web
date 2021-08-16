@@ -1,5 +1,5 @@
 ﻿using System;
-using EZNEW.Response;
+using EZNEW.Model;
 
 namespace EZNEW.Web.Mvc
 {
@@ -41,26 +41,17 @@ namespace EZNEW.Web.Mvc
         /// <summary>
         /// Gets or sets whether need authentication
         /// </summary>
-        public bool NeedAuthentication
-        {
-            get; set;
-        }
+        public bool NeedAuthentication { get; set; }
 
         /// <summary>
         /// Gets or sets whether refresh page when successful
         /// </summary>
-        public bool RefreshPageWithSuccessful
-        {
-            get; set;
-        }
+        public bool RefreshPageWithSuccessful { get; set; }
 
         /// <summary>
         /// Gets or sets whether close current page when successful
         /// </summary>
-        public bool SuccessClose
-        {
-            get; set;
-        }
+        public bool SuccessClose { get; set; }
 
         #endregion
 
@@ -77,11 +68,13 @@ namespace EZNEW.Web.Mvc
         /// <returns>Return success result</returns>
         public static AjaxResult SuccessResult(string message = "", string code = "", object data = null)
         {
-            AjaxResult result = new AjaxResult();
-            result.Success = true;
-            result.Code = code;
-            result.Data = data;
-            result.Message = string.IsNullOrWhiteSpace(message) ? successDefaultMsg : message;
+            AjaxResult result = new AjaxResult
+            {
+                Success = true,
+                Code = code,
+                Data = data,
+                Message = string.IsNullOrWhiteSpace(message) ? successDefaultMsg : message
+            };
             return result;
         }
 
@@ -115,9 +108,11 @@ namespace EZNEW.Web.Mvc
         /// <returns>Return failed result</returns>
         public static AjaxResult FailedResult(Exception exception)
         {
-            AjaxResult result = new AjaxResult();
-            result.Success = false;
-            result.Message = exception.Message;
+            AjaxResult result = new AjaxResult
+            {
+                Success = false,
+                Message = exception.Message
+            };
             return result;
         }
 

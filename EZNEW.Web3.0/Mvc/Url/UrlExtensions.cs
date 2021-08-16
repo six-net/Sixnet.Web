@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EZNEW.Web;
 using Microsoft.AspNetCore.Routing;
+using EZNEW.Web;
 
 namespace Microsoft.AspNetCore.Mvc
 {

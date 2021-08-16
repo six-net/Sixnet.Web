@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using EZNEW.Web;
-using EZNEW.Web.Mvc;
+using EZNEW.Serialization.Json;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -25,21 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services?.Configure<JsonOptions>(option =>
             {
-                var defaultJsonSerializerOptions = option.JsonSerializerOptions;
-                var jsonSerializationOptions = webOptions.JsonSerializationOptions ?? new JsonSerializationOptions();
-                if (jsonSerializationOptions.UseCustomConverter)
-                {
-                    defaultJsonSerializerOptions.Converters.Add(new LongJsonConverter());
-                    defaultJsonSerializerOptions.Converters.Add(new LongAllowNullJsonConverter());
-                    defaultJsonSerializerOptions.Converters.Add(new ULongJsonConverter());
-                    defaultJsonSerializerOptions.Converters.Add(new ULongAllowNullJsonConverter());
-                    defaultJsonSerializerOptions.Converters.Add(new DecimalJsonConverter());
-                    defaultJsonSerializerOptions.Converters.Add(new DecimalAllowNullJsonConverter());
-                }
-                if (jsonSerializationOptions.UseCustomPropertyNamingPolicy)
-                {
-                    defaultJsonSerializerOptions.PropertyNamingPolicy = new DefaultJsonNamingPolicy();
-                }
+                webOptions.JsonSerializationOptions.MergeToJsonSerializerOptions(option.JsonSerializerOptions);
             });
 
             #endregion

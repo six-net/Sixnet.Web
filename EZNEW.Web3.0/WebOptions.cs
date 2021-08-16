@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EZNEW.Serialization.Json;
 
 namespace EZNEW.Web
 {
@@ -11,6 +12,6 @@ namespace EZNEW.Web
         /// <summary>
         /// Gets or sets the json serialization options
         /// </summary>
-        public JsonSerializationOptions JsonSerializationOptions { get; set; }
+        public JsonSerializationOptions JsonSerializationOptions { get; set; } = new JsonSerializationOptions();
     }
 }

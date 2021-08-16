@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace EZNEW.Web.Mvc.Display.Configuration
+﻿namespace EZNEW.Web.Mvc.Display.Configuration
 {
     /// <summary>
     /// Display info
@@ -10,7 +8,6 @@ namespace EZNEW.Web.Mvc.Display.Configuration
         /// <summary>
         /// Gets or sets the display name
         /// </summary>
-        [JsonProperty(PropertyName = "displayName")]
         public string DisplayName { get; set; }
     }
 }

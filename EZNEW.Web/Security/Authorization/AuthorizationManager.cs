@@ -7,12 +7,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using EZNEW.Configuration;
 using EZNEW.DependencyInjection;
-using EZNEW.Serialize;
 using EZNEW.Selection;
 using EZNEW.Http;
 using EZNEW.Application;
 using EZNEW.Logging;
 using System.Reflection;
+using EZNEW.Serialization;
 
 namespace EZNEW.Web.Security.Authorization
 {
@@ -91,7 +91,7 @@ namespace EZNEW.Web.Security.Authorization
             }
             var result = await HttpHelper.PostJsonAsync(server, authorizeOptions).ConfigureAwait(false);
             var stringValue = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
-            AuthorizeResult verifyResult = JsonSerializeHelper.JsonToObject<AuthorizeResult>(stringValue);
+            AuthorizeResult verifyResult = JsonSerializer.Deserialize<AuthorizeResult>(stringValue);
             return verifyResult ?? AuthorizeResult.ForbidResult();
         }
 

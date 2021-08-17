@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EZNEW.Web.Security.Authentication.Session;
 using EZNEW.Cache;
-using EZNEW.Serialize;
 using EZNEW.Cache.Keys;
 using EZNEW.Cache.String;
+using EZNEW.Serialization;
 
 namespace EZNEW.Web.SessionCacheStore
 {
@@ -67,7 +67,7 @@ namespace EZNEW.Web.SessionCacheStore
                     new CacheEntry()
                     {
                         Key=subjectId,
-                        Value=JsonSerializeHelper.ObjectToJson(sessionObject),
+                        Value=JsonSerializer.Serialize(sessionObject),
                         Expiration=expiration,
                         When=CacheSetWhen.Always
                     }
@@ -150,7 +150,7 @@ namespace EZNEW.Web.SessionCacheStore
                 return null;
             }
             string sessionValue = await CacheManager.String.GetAsync(subject, GetCacheObject()).ConfigureAwait(false);
-            var session = JsonSerializeHelper.JsonToObject<AuthSession>(sessionValue);
+            var session = JsonSerializer.Deserialize<AuthSession>(sessionValue);
             if (!(session?.AllowUse() ?? false))
             {
                 session = null;

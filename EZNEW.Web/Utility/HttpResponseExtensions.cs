@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using EZNEW.Serialization;
+using System.Text;
 using System.Threading.Tasks;
-using EZNEW.Serialize;
 
 namespace Microsoft.AspNetCore.Http
 {
@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Http
         /// <returns></returns>
         public static async Task WriteJsonAsync(this HttpResponse response, object data)
         {
-            var json = JsonSerializeHelper.ObjectToJson(data);
+            var json = JsonSerializer.Serialize(data);
             await response.WriteJsonAsync(json).ConfigureAwait(false);
         }
 

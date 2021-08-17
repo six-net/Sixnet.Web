@@ -1,5 +1,5 @@
-﻿using System;
-using EZNEW.Response;
+﻿using EZNEW.Model;
+using System;
 
 namespace EZNEW.Web.Mvc
 {

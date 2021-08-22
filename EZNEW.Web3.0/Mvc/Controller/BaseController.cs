@@ -36,7 +36,7 @@ namespace EZNEW.Web.Mvc
         /// <param name="jsonSerializationOptions">Json serialization options</param>
         /// <returns>Return json result</returns>
         [NonAction]
-        public virtual JsonResult Json(object data, JsonSerializationOptions jsonSerializationOptions)
+        public virtual JsonResult JsonResult(object data, JsonSerializationOptions jsonSerializationOptions = null)
         {
             JsonSerializerOptions serializerOptions = jsonSerializationOptions?.ConvertToJsonSerializerOptions();
             if (serializerOptions == null)

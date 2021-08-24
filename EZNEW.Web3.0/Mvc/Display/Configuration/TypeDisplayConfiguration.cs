@@ -10,11 +10,11 @@ namespace EZNEW.Web.Mvc.Display.Configuration
         /// <summary>
         /// Gets or sets the model type full name
         /// </summary>
-        public string ModelTypeFullName { get; set; }
+        public string TypeAssemblyQualifiedName { get; set; }
 
         /// <summary>
         /// Gets or sets the property display configs
         /// </summary>
-        public List<PropertyDisplay> Propertys { get; set; }
+        public List<PropertyDisplay> Properties { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace Microsoft.AspNetCore.Authentication
                         options.SessionStore = null;
                         break;
                     case CookieStorageModel.Distributed:
-                        options.SessionStore = ContainerManager.Container.Instance<ITicketDistributedStore>();
+                        options.SessionStore = ContainerManager.Resolve<ITicketDistributedStore>();
                         break;
                     case CookieStorageModel.InMemory:
                         options.SessionStore = new CookieMemoryCacheTicketStore();

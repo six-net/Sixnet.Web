@@ -19,10 +19,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="DependencyInjection\ServiceProviderConfig.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="EZNEW" Version="4.0.0" />
 		<PackageReference Include="IdentityModel" Version="4.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />

@@ -12,23 +12,20 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class WebConfigureExtensions
     {
         /// <summary>
-        /// Configure web options
+        /// Configure json behavior
         /// </summary>
-        /// <param name="services">Services</param>
-        /// <param name="configure">Web options configure action</param>
-        public static IServiceCollection ConfigureWebBehavior(this IServiceCollection services, Action<WebOptions> configure = null)
+        /// <param name="services">Service collection</param>
+        /// <param name="jsonSerializationOptions">Json serialization options</param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureJson(this IServiceCollection services, Action<JsonSerializationOptions> configureJsonSerializationOptions = null)
         {
-            WebOptions webOptions = new WebOptions();
-            configure?.Invoke(webOptions);
-
-            #region Json serialization
-
-            services?.Configure<JsonOptions>(option =>
+            services?.Configure<JsonOptions>(options =>
             {
-                webOptions.JsonSerializationOptions.MergeToJsonSerializerOptions(option.JsonSerializerOptions);
+                JsonSerializationOptions jsonSerializationOptions = new JsonSerializationOptions();
+                jsonSerializationOptions?.MergeFromJsonSerializerOptions(options.JsonSerializerOptions);
+                configureJsonSerializationOptions?.Invoke(jsonSerializationOptions);
+                jsonSerializationOptions?.ApplyToJsonSerializerOptions(options.JsonSerializerOptions);
             });
-
-            #endregion
 
             return services;
         }

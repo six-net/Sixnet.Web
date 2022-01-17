@@ -33,6 +33,10 @@
         <dependency id="IdentityModel" version="4.3.0" />
         <dependency id="EZNEW" version="4.0.0" />
       </group>
+	  <group targetFramework="net6.0">
+        <dependency id="IdentityModel" version="4.3.0" />
+        <dependency id="EZNEW" version="4.0.0" />
+      </group>
     </dependencies>
     <frameworkReferences>
       <group targetFramework=".NETCoreApp3.0">
@@ -42,6 +46,9 @@
         <frameworkReference name="Microsoft.AspNetCore.App" />
       </group>
       <group targetFramework="net5.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+      <group targetFramework="net6.0">
         <frameworkReference name="Microsoft.AspNetCore.App" />
       </group>
     </frameworkReferences>
@@ -55,5 +62,7 @@
 	<file src="EZNEW.Web3.0\bin\$configuration$\netcoreapp3.1\EZNEW.Web.pdb" target="lib\netcoreapp3.1" />
 	<file src="EZNEW.Web3.0\bin\$configuration$\net5.0\EZNEW.Web.dll" target="lib\net5.0" />
 	<file src="EZNEW.Web3.0\bin\$configuration$\net5.0\EZNEW.Web.pdb" target="lib\net5.0" />
+	<file src="EZNEW.Web3.0\bin\$configuration$\net6.0\EZNEW.Web.dll" target="lib\net6.0" />
+	<file src="EZNEW.Web3.0\bin\$configuration$\net6.0\EZNEW.Web.pdb" target="lib\net6.0" />
   </files>
 </package>

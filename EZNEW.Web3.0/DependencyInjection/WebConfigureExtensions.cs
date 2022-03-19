@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using EZNEW.Web;
 using EZNEW.Serialization.Json;
 
 namespace Microsoft.Extensions.DependencyInjection

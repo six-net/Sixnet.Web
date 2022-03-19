@@ -19,23 +19,23 @@
         <dependency id="Microsoft.AspNetCore.Authentication.Cookies" version="2.2.0" />
         <dependency id="Microsoft.AspNetCore.Mvc" version="2.2.0" />
         <dependency id="IdentityModel" version="4.3.0" />
-        <dependency id="EZNEW" version="4.0.0" />
+        <dependency id="EZNEW" version="3.5.0" />
       </group>
       <group targetFramework=".NETCoreApp3.0">
         <dependency id="IdentityModel" version="4.3.0" />
-        <dependency id="EZNEW" version="4.0.0" />
+        <dependency id="EZNEW" version="3.5.0" />
       </group>
       <group targetFramework=".NETCoreApp3.1">
         <dependency id="IdentityModel" version="4.3.0" />
-        <dependency id="EZNEW" version="4.0.0" />
+        <dependency id="EZNEW" version="3.5.0" />
       </group>
 	  <group targetFramework="net5.0">
         <dependency id="IdentityModel" version="4.3.0" />
-        <dependency id="EZNEW" version="4.0.0" />
+        <dependency id="EZNEW" version="3.5.0" />
       </group>
 	  <group targetFramework="net6.0">
         <dependency id="IdentityModel" version="4.3.0" />
-        <dependency id="EZNEW" version="4.0.0" />
+        <dependency id="EZNEW" version="3.5.0" />
       </group>
     </dependencies>
     <frameworkReferences>

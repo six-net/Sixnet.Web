@@ -115,7 +115,7 @@ namespace EZNEW.Web.Security.Authorization
             {
                 return string.Empty;
             }
-            return DataSelectionProvider.Get(AuthorizationConfiguration.ServerSelectPattern);
+            return DataSelectionProvider.Get(AuthorizationConfiguration.ServerSelectMode);
         }
 
         /// <summary>

@@ -16,9 +16,9 @@ namespace EZNEW.Web.Security.Authorization
         public List<string> Servers { get; set; }
 
         /// <summary>
-        /// Gets or sets the server select pattern
+        /// Gets or sets the server select mode
         /// </summary>
-        public SelectionMatchPattern ServerSelectPattern { get; set; } = SelectionMatchPattern.EquiprobableRandom;
+        public SelectionMatchPattern ServerSelectMode { get; set; } = SelectionMatchPattern.EquiprobableRandom;
 
         /// <summary>
         /// Gets or sets whether enable remote authorization verify

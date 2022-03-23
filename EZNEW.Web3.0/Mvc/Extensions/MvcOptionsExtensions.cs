@@ -15,10 +15,11 @@ namespace Microsoft.AspNetCore.Mvc
         /// </summary>
         /// <param name="options">Mvc options</param>
         /// <param name="routeAttribute">Route attribute</param>
-        public static void UseGlobalRoutePrefix(this MvcOptions options, IRouteTemplateProvider routeAttribute)
+        /// <param name="onlyApi">Whether only api controller</param>
+        public static void UseGlobalRoutePrefix(this MvcOptions options, IRouteTemplateProvider routeAttribute, bool onlyApi = true)
         {
             // Add our custom OuteConvention to implement the IApplication Model Convention
-            options.Conventions.Insert(0, new GlobalRouteConvention(routeAttribute));
+            options.Conventions.Insert(0, new GlobalRouteConvention(routeAttribute, onlyApi));
         }
     }
 }

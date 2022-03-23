@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
 
@@ -15,13 +16,16 @@ namespace EZNEW.Web.Mvc.ApplicationModels
         /// </summary>
         private readonly AttributeRouteModel _globalPrefix;
 
+        private readonly bool onlyApi = true;
+
         /// <summary>
         /// Input the specified routing prefix when invoked
         /// </summary>
         /// <param name="routeTemplateProvider"></param>
-        public GlobalRouteConvention(IRouteTemplateProvider routeTemplateProvider)
+        public GlobalRouteConvention(IRouteTemplateProvider routeTemplateProvider, bool onlyApi = true)
         {
             _globalPrefix = new AttributeRouteModel(routeTemplateProvider);
+            this.onlyApi = onlyApi;
         }
 
         // Apply Method of Interface
@@ -30,6 +34,11 @@ namespace EZNEW.Web.Mvc.ApplicationModels
             // Traversing through all Controllers
             foreach (var controller in application.Controllers)
             {
+                if (onlyApi && !IsApiController(controller.ControllerType))
+                {
+                    continue;
+                }
+
                 // 1. Controller that has marked RouteAttribute
                 // It is important to note that if a routing has been marked in the controller, the specified routing content will be added before the routing.
 
@@ -55,6 +64,12 @@ namespace EZNEW.Web.Mvc.ApplicationModels
                     }
                 }
             }
+        }
+
+        bool IsApiController(Type controllerType)
+        {
+            var apiAttributes = controllerType.GetCustomAttributes(true);
+            return apiAttributes?.Any(a => a is ApiControllerAttribute) ?? false;
         }
     }
 }

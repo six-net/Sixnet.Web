@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>sixnet.snk</AssemblyOriginatorKeyFile>
+		<Authors>DingBin.Li</Authors>
+		<Copyright>Copyright © DingBin.Li</Copyright>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App"></FrameworkReference>
+	</ItemGroup>
+
+	<ItemGroup>  
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="7.0.0" Condition="'$(TargetFramework)' == 'net7.0'" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.0.0" Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" Condition="'$(TargetFramework)' == 'net7.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="NSwag.AspNetCore" Version="13.20.0" />
+		<PackageReference Include="Sixnet" Version="2.0.0" />
+	</ItemGroup>
+
+</Project>

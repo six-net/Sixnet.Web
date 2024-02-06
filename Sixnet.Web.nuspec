@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Sixnet.Web</id>
+    <version>$version$</version>
+    <title></title>
+    <authors>DingBin.Li</authors>
+    <owners>DingBin.Li</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/sixnet-net</projectUrl>
+    <icon>images\nugeticon.png</icon>
+    <description>ASP.NET Core development tool library based on the Sixnet development framework</description>
+    <copyright>Copyright © DingBin.Li</copyright>
+    <tags>.NET,Sixnet,ASP.NET</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="System.Data.SqlClient" version="4.8.2" />
+        <dependency id="Sixnet" version="2.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Sixnet.Web\bin\$configuration$\netstandard2.1\Sixnet.Web.dll" target="lib\netstandard2.1" />
+	<file src="Sixnet.Web\bin\$configuration$\netstandard2.1\Sixnet.Web.pdb" target="lib\netstandard2.1" />
+	<file src=".\nugeticon.png" target="images\" />
+  </files>
+</package>

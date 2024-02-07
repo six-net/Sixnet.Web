@@ -181,7 +181,8 @@ namespace Sixnet.Web.Extensions
                         option.GroupNameFormat = "'v'V";
                         option.AssumeDefaultVersionWhenUnspecified = true;
                         option.SubstituteApiVersionInUrl = true;
-                    });
+                    })
+                    .AddMvc();
                 }
 
                 #endregion

@@ -33,7 +33,7 @@ namespace Sixnet.Web.Security.Authorization
                 Controller = context.RouteData.Values[MvcConstants.Route.Controller]?.ToString() ?? string.Empty,
                 Action = context.RouteData.Values[MvcConstants.Route.Action]?.ToString() ?? string.Empty,
                 Area = context.RouteData.Values[MvcConstants.Route.Area]?.ToString() ?? string.Empty,
-                Application = ApplicationManager.Current,
+                Application = SixnetApplication.Current,
                 Method = context?.HttpContext?.Request?.Method,
                 Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0),
                 ActionContext = context

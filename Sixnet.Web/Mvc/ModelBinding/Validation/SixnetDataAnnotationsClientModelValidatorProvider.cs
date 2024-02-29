@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
-using Sixnet.DataValidation;
+using Sixnet.Validation;
 using Sixnet.DependencyInjection;
 
 namespace Sixnet.Web.Mvc.ModelBinding.Validation
@@ -17,7 +17,7 @@ namespace Sixnet.Web.Mvc.ModelBinding.Validation
 
         public SixnetDataAnnotationsClientModelValidatorProvider()
         {
-            IServiceProvider serviceProvider = ContainerManager.ServiceProvider;
+            IServiceProvider serviceProvider = SixnetContainer.ServiceProvider;
             IValidationAttributeAdapterProvider validationAttributeAdapterProvider = serviceProvider.GetService(typeof(IValidationAttributeAdapterProvider)) as IValidationAttributeAdapterProvider;
             IOptions<MvcDataAnnotationsLocalizationOptions> options = serviceProvider.GetService(typeof(IOptions<MvcDataAnnotationsLocalizationOptions>)) as IOptions<MvcDataAnnotationsLocalizationOptions>;
             IStringLocalizerFactory stringLocalizerFactory = serviceProvider.GetService(typeof(IStringLocalizerFactory)) as IStringLocalizerFactory;
@@ -55,7 +55,7 @@ namespace Sixnet.Web.Mvc.ModelBinding.Validation
             var hasRequiredAttribute = false;
             var metadata = context.ModelMetadata;
             var isPropertyValidation = metadata.ContainerType != null && !String.IsNullOrEmpty(metadata.PropertyName);
-            var rules = ValidationManager.GetValidationRules(metadata.ContainerType, metadata.PropertyName);
+            var rules = SixnetValidations.GetValidationRules(metadata.ContainerType, metadata.PropertyName);
             if (rules == null)
             {
                 return;

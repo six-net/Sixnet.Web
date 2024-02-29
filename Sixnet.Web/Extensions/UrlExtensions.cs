@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 return new RouteValueDictionary();
             }
-            RouteValueDictionary newValue = new RouteValueDictionary();
+            var newValue = new RouteValueDictionary();
             foreach (var routeValueItem in routeValueDictionary)
             {
                 newValue.Add(routeValueItem.Key.ToNullableString(), routeValueItem.Value);
@@ -39,13 +39,13 @@ namespace Microsoft.AspNetCore.Mvc
         public static string AlterParameterValue(this IUrlHelper urlHelper, string parameterName, string newValue)
         {
             //get route values
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
 
             //get query string
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys?.ToArray();
-            if (routeValueDictionary.Keys.Contains(parameterName))
+            var allQueryKeys = collection.Keys?.ToArray();
+            if (routeValueDictionary.ContainsKey(parameterName))
             {
                 routeValueDictionary[parameterName] = newValue;
             }
@@ -80,11 +80,11 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return new url</returns>
         public static string AlterParameterValue(this IUrlHelper urlHelper, string action, string controller, string parameterName, string newValue)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
-            if (routeValueDictionary.Keys.Contains(parameterName))
+            var allQueryKeys = collection.Keys.ToArray();
+            if (routeValueDictionary.ContainsKey(parameterName))
             {
                 routeValueDictionary[parameterName] = newValue;
             }
@@ -121,12 +121,12 @@ namespace Microsoft.AspNetCore.Mvc
         /// <param name="action">Action</param>
         /// <param name="controller">Controller</param>
         /// <returns>Return new url</returns>
-        public static string SaveParameterAction(this IUrlHelper urlHelper, string action, string controller)
+        public static string RedirectToAction(this IUrlHelper urlHelper, string action, string controller)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
+            var allQueryKeys = collection.Keys.ToArray();
             if (!string.IsNullOrEmpty(action))
             {
                 routeValueDictionary[MvcConstants.Route.Action] = action;
@@ -152,11 +152,11 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return new url</returns>
         public static string AlterAndDeleteParameter(this IUrlHelper urlHelper, string alterParameterName, string newValue, params string[] deleteParameterNames)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
-            if (routeValueDictionary.Keys.Contains(alterParameterName))
+            var allQueryKeys = collection.Keys.ToArray();
+            if (routeValueDictionary.ContainsKey(alterParameterName))
             {
                 routeValueDictionary[alterParameterName] = newValue;
             }
@@ -175,7 +175,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 foreach (string deleteKey in deleteParameterNames)
                 {
-                    if (routeValueDictionary.Keys.Contains(deleteKey))
+                    if (routeValueDictionary.ContainsKey(deleteKey))
                     {
                         routeValueDictionary.Remove(deleteKey);
                     }
@@ -196,11 +196,11 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return new url</returns>
         public static string AlterAndDeleteParameter(this IUrlHelper urlHelper, string action, string controller, string alterParameterName, string newValue, params string[] deleteParameterNames)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
-            if (routeValueDictionary.Keys.Contains(alterParameterName))
+            var allQueryKeys = collection.Keys.ToArray();
+            if (routeValueDictionary.ContainsKey(alterParameterName))
             {
                 routeValueDictionary[alterParameterName] = newValue;
             }
@@ -232,7 +232,7 @@ namespace Microsoft.AspNetCore.Mvc
             {
                 foreach (string deleteKey in deleteParameterNames)
                 {
-                    if (routeValueDictionary.Keys.Contains(deleteKey))
+                    if (routeValueDictionary.ContainsKey(deleteKey))
                     {
                         routeValueDictionary.Remove(deleteKey);
                     }
@@ -251,10 +251,10 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return new url</returns>
         public static string AddAndDeleteParameterValue(this IUrlHelper urlHelper, string parameterName, string addValue, string deleteValue)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
+            var allQueryKeys = collection.Keys.ToArray();
             foreach (string qk in allQueryKeys)
             {
                 routeValueDictionary.Add(qk, collection[qk].ToNullableString());
@@ -289,10 +289,10 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return new url</returns>
         public static string AddAndDeleteParameterValue(this IUrlHelper urlHelper, string action, string controller, string parameterName, string addValue, string deleteValue)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
+            var allQueryKeys = collection.Keys.ToArray();
             foreach (string queryKey in allQueryKeys)
             {
                 routeValueDictionary.Add(queryKey, collection[queryKey].ToNullableString());
@@ -318,7 +318,8 @@ namespace Microsoft.AspNetCore.Mvc
                     nowValue += addValue;
                 }
             }
-            string newUrl = urlHelper.Action(routeValueDictionary[MvcConstants.Route.Action].ToNullableString(), routeValueDictionary[MvcConstants.Route.Controller].ToNullableString(), routeValueDictionary);
+            routeValueDictionary[parameterName] = nowValue;
+            var newUrl = urlHelper.Action(routeValueDictionary[MvcConstants.Route.Action].ToNullableString(), routeValueDictionary[MvcConstants.Route.Controller].ToNullableString(), routeValueDictionary);
             newUrl = newUrl.Trim(new char[] { '&', '?' });
             return newUrl;
         }
@@ -331,7 +332,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return parameter value</returns>
         public static string ParameterValue(this IUrlHelper urlHelper, string parameterName)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
             if (routeValueDictionary.ContainsKey(parameterName))
             {
@@ -355,10 +356,10 @@ namespace Microsoft.AspNetCore.Mvc
         /// <returns>Return new url</returns>
         public static string DeleteParameter(this IUrlHelper urlHelper, string parameterName)
         {
-            RouteValueDictionary routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
+            var routeValueDictionary = urlHelper.ActionContext.RouteData.Values;
             routeValueDictionary = CopyRouteValueDictionary(routeValueDictionary);
             var collection = urlHelper.ActionContext.HttpContext.Request.Query;
-            string[] allQueryKeys = collection.Keys.ToArray();
+            var allQueryKeys = collection.Keys.ToArray();
             foreach (string queryKey in allQueryKeys)
             {
                 routeValueDictionary.Add(queryKey, collection[queryKey].ToNullableString());

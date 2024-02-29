@@ -32,7 +32,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
                     Action = options.ActionOptions?.Action,
                     Controller = options.ActionOptions?.Controller,
                     Area = options.ActionOptions?.Area,
-                    Application = ApplicationManager.Current,
+                    Application = SixnetApplication.Current,
                     Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value),
                     Method = options.ActionOptions?.Method,
                     ActionContext = htmlHelper?.ViewContext

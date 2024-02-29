@@ -31,7 +31,7 @@ namespace Sixnet.Web.Middleware
                 var isolationDataName = claims?.FirstOrDefault(c => c.Type == SessionContext.IsolationNameKey)?.Value;
                 using (var session = SessionContext.Create(session =>
                 {
-                    session.IsolationData = new IsolationData()
+                    session.Isolation = new IsolationInfo()
                     {
                         Id = isolationDataId,
                         Code = isolationDataCode,

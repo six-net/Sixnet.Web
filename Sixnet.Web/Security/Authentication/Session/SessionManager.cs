@@ -27,7 +27,7 @@ namespace Sixnet.Web.Security.Authentication.Session
             {
                 return false;
             }
-            CookieAuthenticationOptions cookieOptions = ContainerManager.Resolve<IOptionsMonitor<CookieAuthenticationOptions>>().Get(CookieAuthenticationDefaults.AuthenticationScheme);
+            CookieAuthenticationOptions cookieOptions = SixnetContainer.GetService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(CookieAuthenticationDefaults.AuthenticationScheme);
             if (cookieOptions?.SessionStore != null)
             {
                 var sessionStore = cookieOptions.SessionStore as IAuthenticationTicketStore;
@@ -66,7 +66,7 @@ namespace Sixnet.Web.Security.Authentication.Session
             {
                 return string.Empty;
             }
-            CookieAuthenticationOptions cookieOptions = ContainerManager.Resolve<IOptionsMonitor<CookieAuthenticationOptions>>().Get(CookieAuthenticationDefaults.AuthenticationScheme);
+            CookieAuthenticationOptions cookieOptions = SixnetContainer.GetService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(CookieAuthenticationDefaults.AuthenticationScheme);
             if (cookieOptions?.SessionStore != null)
             {
                 var sessionStore = cookieOptions.SessionStore as IAuthenticationTicketStore;

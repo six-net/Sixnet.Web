@@ -29,7 +29,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
                 {
                     Action = options.ActionOptions?.Action,
                     Controller = options.ActionOptions?.Controller,
-                    Application = ApplicationManager.Current,
+                    Application = SixnetApplication.Current,
                     Claims = HttpContextHelper.Current.User.Claims.ToDictionary(c => c.Type, c => c.Value),
                     ActionContext = htmlHelper?.ViewContext,
                     Method = options.ActionOptions?.Method,

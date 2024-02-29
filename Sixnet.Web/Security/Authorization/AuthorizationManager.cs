@@ -26,15 +26,15 @@ namespace Sixnet.Web.Security.Authorization
         /// <summary>
         /// Data selection provider
         /// </summary> 
-        static readonly DataSelectionProvider<string> DataSelectionProvider = null;
+        static readonly SixnetDataSelecter<string> DataSelectionProvider = null;
 
         static AuthorizationManager()
         {
-            var authorizationConfiguration = ContainerManager.Resolve<IOptions<AuthorizationConfiguration>>()?.Value ?? new AuthorizationConfiguration();
+            var authorizationConfiguration = SixnetContainer.GetService<IOptions<AuthorizationConfiguration>>()?.Value ?? new AuthorizationConfiguration();
             AuthorizationConfiguration = authorizationConfiguration;
             if ((!authorizationConfiguration?.Servers.IsNullOrEmpty()) ?? false)
             {
-                DataSelectionProvider = new DataSelectionProvider<string>(authorizationConfiguration.Servers);
+                DataSelectionProvider = new SixnetDataSelecter<string>(authorizationConfiguration.Servers);
             }
         }
 
@@ -87,9 +87,9 @@ namespace Sixnet.Web.Security.Authorization
             {
                 throw new ArgumentNullException(nameof(AuthorizationConfiguration.Servers));
             }
-            var result = await HttpHelper.PostJsonAsync(server, authorizeOptions).ConfigureAwait(false);
+            var result = await SixnetHttp.PostJsonAsync(server, authorizeOptions).ConfigureAwait(false);
             var stringValue = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
-            AuthorizeResult verifyResult = JsonSerializer.Deserialize<AuthorizeResult>(stringValue);
+            AuthorizeResult verifyResult = SixnetJsonSerializer.Deserialize<AuthorizeResult>(stringValue);
             return verifyResult ?? AuthorizeResult.ForbidResult();
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Sixnet.DataValidation;
+using Sixnet.Validation;
 
 namespace Microsoft.AspNetCore.Mvc.Rendering
 {
@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         {
             if (string.IsNullOrWhiteSpace(validationMessage))
             {
-                validationMessage = ValidationManager.GetValidationTipMessage<TModel, TProperty>(property);
+                validationMessage = SixnetValidations.GetValidationTipMessage<TModel, TProperty>(property);
             }
             IDictionary<string, object> attributes = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
             string attrName = "class";

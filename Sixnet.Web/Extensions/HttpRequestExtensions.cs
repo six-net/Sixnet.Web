@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Primitives;
+using System.Linq;
 
 namespace Microsoft.AspNetCore.Http
 {
@@ -58,44 +59,27 @@ namespace Microsoft.AspNetCore.Http
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Return all parameters</returns>
-        public static Dictionary<string, string> GetAllParameters(this HttpRequest request)
+        public static Dictionary<string, StringValues> GetAllParameters(this HttpRequest request)
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            IEnumerable<KeyValuePair<string, StringValues>> collection;
-            if (string.Equals(request.Method, HttpMethods.Post, StringComparison.OrdinalIgnoreCase))
-            {
-                collection = request.Form;
-            }
-            else
-            {
-                collection = request.Query;
-            }
-            foreach (var item in collection)
-            {
-                if (parameters.ContainsKey(item.Key))
-                {
-                    parameters[item.Key] = item.Value;
-                }
-                else
-                {
-                    parameters.Add(item.Key, item.Value);
-                }
-            }
-            return parameters;
+            var parameters = new Dictionary<string, string>();
+            IEnumerable<KeyValuePair<string, StringValues>> collection = string.Equals(request.Method, HttpMethods.Post, StringComparison.OrdinalIgnoreCase)
+                ? request.Form
+                : request.Query;
+            return collection?.ToDictionary(item => item.Key, item => item.Value) ?? new Dictionary<string, StringValues>(0);
         }
 
         #endregion
 
-        #region Get all parameters with sorted
+        #region Get all sorted parameters 
 
         /// <summary>
         /// Get all parameters with sorted
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Return all parameters</returns>
-        public static SortedDictionary<string, string> GetAllSortedParameters(HttpRequest request)
+        public static SortedDictionary<string, StringValues> GetAllSortedParameters(HttpRequest request)
         {
-            return new SortedDictionary<string, string>(request.GetAllParameters());
+            return new SortedDictionary<string, StringValues>(request.GetAllParameters());
         }
 
         #endregion

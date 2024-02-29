@@ -117,12 +117,12 @@ namespace Sixnet.Web.Utility
             {
                 return string.Empty;
             }
-            var fileAccessOptions = FileAccessManager.GetFileAccessOptions(fileObjectName);
+            var fileAccessOptions = SixnetFileAccessor.GetFileAccessSetting(fileObjectName);
             if (fileAccessOptions?.RootPaths?.IsNullOrEmpty() ?? true)
             {
                 return GetLocalFullPath(relativePath);
             }
-            return FileAccessManager.GetFileFullPath(fileObjectName, relativePath);
+            return SixnetFileAccessor.GetFileFullPath(fileObjectName, relativePath);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Sixnet.Web.Utility
             {
                 return path;
             }
-            string virtualPath = ApplicationManager.VirtualPath?.Trim('/', '\\');
+            string virtualPath = SixnetApplication.VirtualPath?.Trim('/', '\\');
             if (!string.IsNullOrWhiteSpace(virtualPath))
             {
                 path = Path.Combine(path, virtualPath);

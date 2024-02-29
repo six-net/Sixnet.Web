@@ -12,8 +12,8 @@ namespace Sixnet.Web.Mvc.Filters
     {
         public void OnException(ExceptionContext context)
         {
-            context.Result = new JsonResult(Result.FailedResult(context.Exception));
-            LogManager.LogError(context.Exception, context.Exception?.Message);
+            context.Result = new JsonResult(SixnetResult.FailedResult(context.Exception));
+            SixnetLogger.LogError(context.Exception, context.Exception?.Message);
         }
     }
 }

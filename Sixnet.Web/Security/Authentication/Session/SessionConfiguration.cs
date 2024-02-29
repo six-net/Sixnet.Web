@@ -27,9 +27,9 @@ namespace Sixnet.Web.Security.Authentication.Session
         public static SessionConfiguration GetSessionConfiguration()
         {
             SessionConfiguration sessionConfiguration = null;
-            if (ContainerManager.IsRegister<IOptions<SessionConfiguration>>())
+            if (SixnetContainer.HasService<IOptions<SessionConfiguration>>())
             {
-                sessionConfiguration = ContainerManager.Resolve<IOptions<SessionConfiguration>>()?.Value;
+                sessionConfiguration = SixnetContainer.GetService<IOptions<SessionConfiguration>>()?.Value;
             }
             if (sessionConfiguration == null)
             {

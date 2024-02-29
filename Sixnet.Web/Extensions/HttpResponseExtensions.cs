@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Http
         /// <returns></returns>
         public static async Task WriteJsonAsync(this HttpResponse response, object data)
         {
-            var json = JsonSerializer.Serialize(data);
+            var json = SixnetJsonSerializer.Serialize(data);
             await response.WriteJsonAsync(json).ConfigureAwait(false);
         }
 
@@ -50,12 +50,9 @@ namespace Microsoft.AspNetCore.Http
             {
                 response.SetNoCache();
             }
-            else if (maxAge > 0)
+            else if (maxAge > 0 && !response.Headers.ContainsKey("Cache-Control"))
             {
-                if (!response.Headers.ContainsKey("Cache-Control"))
-                {
-                    response.Headers.Add("Cache-Control", $"max-age={maxAge}");
-                }
+                response.Headers.Add("Cache-Control", $"max-age={maxAge}");
             }
         }
 

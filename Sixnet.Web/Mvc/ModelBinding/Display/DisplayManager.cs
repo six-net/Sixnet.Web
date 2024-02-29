@@ -41,7 +41,7 @@ namespace Sixnet.Web.Mvc.ModelBinding.Display
         /// <param name="displayName">display name</param>
         public static void SetPropertyDisplay<TModel>(Expression<Func<TModel, dynamic>> property, string displayName)
         {
-            SetPropertyDisplay(typeof(TModel), ExpressionHelper.GetExpressionText(property), displayName);
+            SetPropertyDisplay(typeof(TModel), SixnetExpressionHelper.GetExpressionText(property), displayName);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Sixnet.Web.Mvc.ModelBinding.Display
             {
                 return;
             }
-            DisplayConfigurationCollection typeConfigurationCollection = JsonSerializer.Deserialize<DisplayConfigurationCollection>(json);
+            DisplayConfigurationCollection typeConfigurationCollection = SixnetJsonSerializer.Deserialize<DisplayConfigurationCollection>(json);
             Configure(typeConfigurationCollection);
         }
 

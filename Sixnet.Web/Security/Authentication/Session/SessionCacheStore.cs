@@ -52,7 +52,7 @@ namespace Sixnet.Web.SessionCacheStore
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expiresSeconds),
                 SlidingExpiration = true
             };
-            await CacheManager.String.SetAsync(new StringSetOptions()
+            await SixnetCacher.String.SetAsync(new StringSetOptions()
             {
                 CacheObject = GetCacheObject(),
                 Items = new List<CacheEntry>()
@@ -67,7 +67,7 @@ namespace Sixnet.Web.SessionCacheStore
                     new CacheEntry()
                     {
                         Key=subjectId,
-                        Value=JsonSerializer.Serialize(sessionObject),
+                        Value=SixnetJsonSerializer.Serialize(sessionObject),
                         Expiration=expiration,
                         When=CacheSetWhen.Always
                     }
@@ -90,12 +90,12 @@ namespace Sixnet.Web.SessionCacheStore
             {
                 await Task.CompletedTask.ConfigureAwait(false);
             }
-            string subject = await CacheManager.String.GetAsync(sessionKey, GetCacheObject()).ConfigureAwait(false);
+            string subject = await SixnetCacher.String.GetAsync(sessionKey, GetCacheObject()).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(subject))
             {
                 return;
             }
-            await CacheManager.Keys.DeleteAsync(new DeleteOptions()
+            await SixnetCacher.Keys.DeleteAsync(new DeleteOptions()
             {
                 CacheObject = GetCacheObject(),
                 Keys = new List<CacheKey>()
@@ -121,11 +121,11 @@ namespace Sixnet.Web.SessionCacheStore
             {
                 return null;
             }
-            string subject = await CacheManager.String.GetAsync(sessionId, GetCacheObject()).ConfigureAwait(false);
+            string subject = await SixnetCacher.String.GetAsync(sessionId, GetCacheObject()).ConfigureAwait(false);
             var session = await GetSessionBySubjectAsync(subject).ConfigureAwait(false);
             if (!(session?.AllowUse(sessionId: sessionId) ?? false))
             {
-                await CacheManager.Keys.DeleteAsync(new DeleteOptions()
+                await SixnetCacher.Keys.DeleteAsync(new DeleteOptions()
                 {
                     CacheObject = GetCacheObject(),
                     Keys = new List<CacheKey>()
@@ -149,8 +149,8 @@ namespace Sixnet.Web.SessionCacheStore
             {
                 return null;
             }
-            string sessionValue = await CacheManager.String.GetAsync(subject, GetCacheObject()).ConfigureAwait(false);
-            var session = JsonSerializer.Deserialize<AuthSession>(sessionValue);
+            string sessionValue = await SixnetCacher.String.GetAsync(subject, GetCacheObject()).ConfigureAwait(false);
+            var session = SixnetJsonSerializer.Deserialize<AuthSession>(sessionValue);
             if (!(session?.AllowUse() ?? false))
             {
                 session = null;

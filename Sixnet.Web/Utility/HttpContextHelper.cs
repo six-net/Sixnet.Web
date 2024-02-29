@@ -15,7 +15,7 @@ namespace Sixnet.Web.Utility
         {
             get
             {
-                return ContainerManager.Resolve<IHttpContextAccessor>()?.HttpContext;
+                return SixnetContainer.GetService<IHttpContextAccessor>()?.HttpContext;
             }
         }
     }

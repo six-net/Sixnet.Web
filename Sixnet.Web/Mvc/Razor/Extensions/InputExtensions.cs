@@ -176,7 +176,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent EnumToCheckBox<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, Enum enumType, object cbxHtmlAttributes = null, object lableHtmlAttributes = null, object groupHtmlAttributes = null, params string[] checkedValues)
         {
-            return EnumToCheckBox(htmlHelper, ExpressionHelper.GetExpressionText(expression), enumType, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValues);
+            return EnumToCheckBox(htmlHelper, SixnetExpressionHelper.GetExpressionText(expression), enumType, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValues);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent EnumToCheckBox<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, Enum enumType, object cbxHtmlAttributes = null, object lableHtmlAttributes = null, object groupHtmlAttributes = null, Enum checkedValue = null)
         {
-            return EnumToCheckBox(htmlHelper, ExpressionHelper.GetExpressionText(expression), enumType, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
+            return EnumToCheckBox(htmlHelper, SixnetExpressionHelper.GetExpressionText(expression), enumType, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent EnumToCheckBox<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> name, Enum enumType, object htmlAttributes = null, Enum checkedValue = null, IEnumerable<string> textAttributes = null, IEnumerable<string> valueAttributes = null)
         {
-            var nameValue = ExpressionHelper.GetExpressionText(name);
+            var nameValue = SixnetExpressionHelper.GetExpressionText(name);
             return EnumToCheckBox(htmlHelper, nameValue, enumType, htmlAttributes, checkedValue, textAttributes, valueAttributes);
         }
 
@@ -279,7 +279,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent DataTableToCheckBox<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, DataTable dataTable, string optionValueFieldName, string optionTextFieldName, object cbxHtmlAttributes = null, object lableHtmlAttributes = null, object groupHtmlAttributes = null, params string[] checkedValues)
         {
-            return DataTableToCheckBox(htmlHelper, ExpressionHelper.GetExpressionText(expression), dataTable, optionValueFieldName, optionTextFieldName, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValues);
+            return DataTableToCheckBox(htmlHelper, SixnetExpressionHelper.GetExpressionText(expression), dataTable, optionValueFieldName, optionTextFieldName, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValues);
         }
 
         #endregion
@@ -450,7 +450,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent EnumToRadio<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, Enum enumType, object rdoHtmlAttributes = null, object lableHtmlAttributes = null, object groupHtmlAttributes = null, string checkedValue = null)
         {
-            return EnumToRadio(htmlHelper, ExpressionHelper.GetExpressionText(expression), enumType, rdoHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
+            return EnumToRadio(htmlHelper, SixnetExpressionHelper.GetExpressionText(expression), enumType, rdoHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
         }
 
         /// <summary>
@@ -466,7 +466,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent EnumToRadio<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, Enum enumType, object rdoHtmlAttributes = null, object lableHtmlAttributes = null, object groupHtmlAttributes = null, Enum checkedValue = null)
         {
-            return EnumToRadio(htmlHelper, ExpressionHelper.GetExpressionText(expression), enumType, rdoHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
+            return EnumToRadio(htmlHelper, SixnetExpressionHelper.GetExpressionText(expression), enumType, rdoHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent EnumToRadio<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> name, Enum enumType, object htmlAttributes = null, Enum checkedValue = null, IEnumerable<string> textAttributes = null, IEnumerable<string> valueAttributes = null)
         {
-            var nameValue = ExpressionHelper.GetExpressionText(name);
+            var nameValue = SixnetExpressionHelper.GetExpressionText(name);
             return EnumToRadio(htmlHelper, nameValue, enumType, htmlAttributes, checkedValue, textAttributes, valueAttributes);
         }
 
@@ -552,7 +552,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <returns>Return html content</returns>
         public static IHtmlContent DataTableToRadio<TModel, TProperty>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, DataTable dataTable, string optionValueFieldName, string optionTextFieldName, object cbxHtmlAttributes = null, object lableHtmlAttributes = null, object groupHtmlAttributes = null, string checkedValue = null)
         {
-            return DataTableToRadio(htmlHelper, ExpressionHelper.GetExpressionText(expression), dataTable, optionValueFieldName, optionTextFieldName, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
+            return DataTableToRadio(htmlHelper, SixnetExpressionHelper.GetExpressionText(expression), dataTable, optionValueFieldName, optionTextFieldName, cbxHtmlAttributes, lableHtmlAttributes, groupHtmlAttributes, checkedValue);
         }
 
         #endregion

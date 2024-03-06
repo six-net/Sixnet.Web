@@ -52,7 +52,7 @@ namespace Microsoft.AspNetCore.Http
             }
             else if (maxAge > 0 && !response.Headers.ContainsKey("Cache-Control"))
             {
-                response.Headers.Add("Cache-Control", $"max-age={maxAge}");
+                response.Headers["Cache-Control"] = $"max-age={maxAge}";
             }
         }
 
@@ -68,11 +68,11 @@ namespace Microsoft.AspNetCore.Http
         {
             if (!response.Headers.ContainsKey("Cache-Control"))
             {
-                response.Headers.Add("Cache-Control", "no-store, no-cache, max-age=0");
+                response.Headers["Cache-Control"] = "no-store, no-cache, max-age=0";
             }
             if (!response.Headers.ContainsKey("Pragma"))
             {
-                response.Headers.Add("Pragma", "no-cache");
+                response.Headers["Pragma"] = "no-cache";
             }
         }
 

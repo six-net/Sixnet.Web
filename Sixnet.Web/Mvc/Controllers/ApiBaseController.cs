@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Sixnet.Model;
-using ISixnetResult = Sixnet.Model.ISixnetResult;
 
 namespace Sixnet.Web.Mvc.Controllers
 {

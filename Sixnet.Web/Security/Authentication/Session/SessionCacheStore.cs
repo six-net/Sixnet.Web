@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sixnet.Cache;
-using Sixnet.Cache.Keys.Options;
-using Sixnet.Cache.String;
+using Sixnet.Cache.Keys.Parameters;
+using Sixnet.Cache.String.Parameters;
 using Sixnet.Serialization;
-using Sixnet.Web.Security.Authentication.Session;
 
-namespace Sixnet.Web.SessionCacheStore
+namespace Sixnet.Web.Security.Authentication.Session
 {
     /// <summary>
-    /// Session存储配置
+    /// Session cache store
     /// </summary>
     public static class SessionCacheStore
     {
         /// <summary>
         /// 获取Cache Object Name
         /// </summary>
-        public const string CacheObjectName = "session_cache_store";
+        public const string CacheObjectName = "SIXNET_SESSION_CACHE_STORE";
 
-        #region 存储Session
+        #region Store Session
 
         /// <summary>
-        /// 存储Session对象
+        /// Store Session
         /// </summary>
-        /// <param name="sessionObject">session对象</param>
+        /// <param name="sessionObject">session</param>
         /// <returns></returns>
         public static async Task StoreSessionAsync(AuthSession sessionObject)
         {
@@ -52,7 +51,7 @@ namespace Sixnet.Web.SessionCacheStore
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expiresSeconds),
                 SlidingExpiration = true
             };
-            await SixnetCacher.String.SetAsync(new StringSetOptions()
+            await SixnetCacher.String.SetAsync(new StringSetParameter()
             {
                 CacheObject = GetCacheObject(),
                 Items = new List<CacheEntry>()
@@ -77,12 +76,12 @@ namespace Sixnet.Web.SessionCacheStore
 
         #endregion
 
-        #region 删除Session
+        #region Delete Session
 
         /// <summary>
-        /// 删除Session
+        /// Delete Session
         /// </summary>
-        /// <param name="sessionKey">session键值</param>
+        /// <param name="sessionKey">Session key</param>
         /// <returns></returns>
         public static async Task DeleteSessionAsync(string sessionKey)
         {
@@ -95,7 +94,7 @@ namespace Sixnet.Web.SessionCacheStore
             {
                 return;
             }
-            await SixnetCacher.Keys.DeleteAsync(new DeleteOptions()
+            await SixnetCacher.Keys.DeleteAsync(new DeleteParameter()
             {
                 CacheObject = GetCacheObject(),
                 Keys = new List<CacheKey>()
@@ -108,12 +107,12 @@ namespace Sixnet.Web.SessionCacheStore
 
         #endregion
 
-        #region 获取Session
+        #region Get session
 
         /// <summary>
-        /// 获取Session
+        /// Get session
         /// </summary>
-        /// <param name="sessionId">session key</param>
+        /// <param name="sessionId">Session key</param>
         /// <returns></returns>
         public static async Task<AuthSession> GetSessionAsync(string sessionId)
         {
@@ -125,7 +124,7 @@ namespace Sixnet.Web.SessionCacheStore
             var session = await GetSessionBySubjectAsync(subject).ConfigureAwait(false);
             if (!(session?.AllowUse(sessionId: sessionId) ?? false))
             {
-                await SixnetCacher.Keys.DeleteAsync(new DeleteOptions()
+                await SixnetCacher.Keys.DeleteAsync(new DeleteParameter()
                 {
                     CacheObject = GetCacheObject(),
                     Keys = new List<CacheKey>()
@@ -139,9 +138,9 @@ namespace Sixnet.Web.SessionCacheStore
         }
 
         /// <summary>
-        /// 根据登陆账号身份编号获取session
+        /// Get session by subject
         /// </summary>
-        /// <param name="subject">身份编号</param>
+        /// <param name="subject">Subject</param>
         /// <returns></returns>
         public static async Task<AuthSession> GetSessionBySubjectAsync(string subject)
         {
@@ -160,10 +159,10 @@ namespace Sixnet.Web.SessionCacheStore
 
         #endregion
 
-        #region 验证Session
+        #region Verify session
 
         /// <summary>
-        /// 验证Session是否有效
+        /// Verify session
         /// </summary>
         /// <param name="sessionToken">session key</param>
         /// <param name="refresh">refresh session</param>
@@ -184,9 +183,9 @@ namespace Sixnet.Web.SessionCacheStore
         }
 
         /// <summary>
-        /// 验证Session凭据是否有效
+        /// Verify session
         /// </summary>
-        /// <param name="claims">凭据</param>
+        /// <param name="claims">Claims</param>
         /// <returns></returns>
         public static async Task<bool> VerifySessionAsync(Dictionary<string, string> claims, bool refresh = true)
         {
@@ -201,10 +200,10 @@ namespace Sixnet.Web.SessionCacheStore
 
         #endregion
 
-        #region 获取CacheObject
+        #region Get cache object
 
         /// <summary>
-        /// 获取CacheObject
+        /// Get cache object
         /// </summary>
         /// <returns></returns>
         static CacheObject GetCacheObject()

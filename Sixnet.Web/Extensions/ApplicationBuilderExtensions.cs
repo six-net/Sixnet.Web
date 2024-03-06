@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         /// <param name="app">Application builder</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseSessionContext(this IApplicationBuilder app)
+        public static IApplicationBuilder UseSixnetSessionContext(this IApplicationBuilder app)
         {
             return app.UseMiddleware<ClaimSessionMiddleware>();
         }

@@ -342,7 +342,7 @@ namespace Sixnet.Web.Extensions
                 }
                 if (webOptions.UseSixnetSessionContext)
                 {
-                    app.UseSessionContext();
+                    app.UseSixnetSessionContext();
                 }
                 if (webOptions.UseSwagger)
                 {

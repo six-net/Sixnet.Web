@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Sixnet.Web.Security.Authentication.Session;
 using Sixnet.Web.Security.Authentication.Cookies.Ticket;
 
-namespace Sixnet.Web.SessionCacheStore
+namespace Sixnet.Web.Security.Authentication.Session
 {
     public class SessionCacheTicketStore : ITicketDistributedStore
     {

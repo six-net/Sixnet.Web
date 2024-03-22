@@ -113,15 +113,15 @@ namespace Sixnet.Web.Extensions
                 {
                     options.InputFormatters.Insert(0, new TextPlainInputFormatter());
                     options.ModelValidatorProviders.Add(new SixnetDataAnnotationsModelValidatorProvider());
-                    if (!webOptions.UseAuthorization)
+                    if (webOptions.UseAuthorization)
                     {
                         options.Filters.Add<ExtendAuthorizeFilter>();
                     }
-                    if (!webOptions.UseGlobalRoutePrefix)
+                    if (webOptions.UseGlobalRoutePrefix)
                     {
-                        options.UseGlobalRoutePrefix(new RouteAttribute(webOptions.UseApiVersioning ? webOptions.ApiRoutePrefix : webOptions.ApiRoutePrefix + "/v{version:apiVersion}"));
+                        options.UseGlobalRoutePrefix(new RouteAttribute(webOptions.UseApiVersioning ? webOptions.ApiRoutePrefix + "/v{version:apiVersion}" : webOptions.ApiRoutePrefix));
                     }
-                    if (!webOptions.UseExceptionFilter)
+                    if (webOptions.UseExceptionFilter)
                     {
                         options.Filters.Add<SixnetExceptionFilter>();
                     }
@@ -196,11 +196,11 @@ namespace Sixnet.Web.Extensions
                         options.AssumeDefaultVersionWhenUnspecified = true;
                         options.DefaultApiVersion = new ApiVersion(1, 0);
                     })
-                    .AddApiExplorer(option =>
+                    .AddApiExplorer(options =>
                     {
-                        option.GroupNameFormat = "'v'V";
-                        option.AssumeDefaultVersionWhenUnspecified = true;
-                        option.SubstituteApiVersionInUrl = true;
+                        options.GroupNameFormat = "'v'V";
+                        options.AssumeDefaultVersionWhenUnspecified = true;
+                        options.SubstituteApiVersionInUrl = true;
                     })
                     .AddMvc();
                 }
@@ -331,7 +331,7 @@ namespace Sixnet.Web.Extensions
                         app.UseStaticFiles(webOptions.StaticFileOptions);
                     }
                 }
-                if(webOptions.UseSpa)
+                if (webOptions.UseSpa)
                 {
                     app.UseSpaStaticFiles();
                 }

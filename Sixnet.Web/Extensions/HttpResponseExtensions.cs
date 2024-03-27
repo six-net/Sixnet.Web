@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
-using Sixnet.Serialization;
+using Sixnet.Serialization.Json;
 
 namespace Microsoft.AspNetCore.Http
 {

@@ -48,7 +48,7 @@ namespace Sixnet.Web.Mvc.Controllers
         /// <param name="jsonSerializationOptions">Json serialization options</param>
         /// <returns>Return json result</returns>
         [NonAction]
-        public virtual JsonResult JsonResult(object data, JsonSerializationOptions jsonSerializationOptions = null)
+        public virtual JsonResult JsonResult(object data, SixnetJsonSerializationOptions jsonSerializationOptions = null)
         {
             var serializerOptions = jsonSerializationOptions?.ConvertToJsonSerializerOptions();
             if (serializerOptions == null)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
 using Sixnet.Expressions.Linq;
-using Sixnet.Serialization;
+using Sixnet.Serialization.Json;
 using Sixnet.Web.Mvc.ModelBinding.Display.Configuration;
 
 namespace Sixnet.Web.Mvc.ModelBinding.Display

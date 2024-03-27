@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Sixnet.Algorithm.Selection;
 using Sixnet.DependencyInjection;
 using Sixnet.Net.Http;
-using Sixnet.Serialization;
+using Sixnet.Serialization.Json;
 
 namespace Sixnet.Web.Security.Authorization
 {

@@ -173,7 +173,7 @@ namespace Sixnet.Web.Extensions
 
                 #region Json
 
-                services.ConfigureJson(webOptions.ConfigureJson);
+                services.ConfigureJson();
 
                 #endregion
 

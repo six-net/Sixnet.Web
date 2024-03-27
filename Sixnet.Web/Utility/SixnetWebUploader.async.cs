@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Sixnet.Net.Upload;
-using Sixnet.Serialization;
+using Sixnet.Serialization.Json;
 
 namespace Sixnet.Web.Utility
 {

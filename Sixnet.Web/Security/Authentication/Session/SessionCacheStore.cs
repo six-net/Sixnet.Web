@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Sixnet.Cache;
 using Sixnet.Cache.Keys.Parameters;
 using Sixnet.Cache.String.Parameters;
-using Sixnet.Serialization;
+using Sixnet.Serialization.Json;
 
 namespace Sixnet.Web.Security.Authentication.Session
 {

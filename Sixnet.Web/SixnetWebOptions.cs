@@ -1,15 +1,16 @@
-﻿using System;
-using Asp.Versioning.ApiExplorer;
-using System.Globalization;
+﻿using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Hosting;
 using NSwag.Generation.AspNetCore;
 using Sixnet.DependencyInjection;
-using Microsoft.AspNetCore.SpaServices;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Routing;
+using Sixnet.Session;
+using System;
 
 namespace Sixnet.Web
 {
@@ -171,5 +172,10 @@ namespace Sixnet.Web
                 }
             };
         };
+
+        /// <summary>
+        /// Get isolation info
+        /// </summary>
+        public Func<HttpContext, IsolationInfo> GetIsolationInfo { get; set; }
     }
 }

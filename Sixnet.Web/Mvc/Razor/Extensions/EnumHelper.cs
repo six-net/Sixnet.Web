@@ -68,18 +68,6 @@ namespace Sixnet.Web.Mvc.Razor.Extensions
                     Selected = hasSelectedValue ? selectedValues.Contains(value) : hasSelectedValue
                 });
             }
-
-            //const BindingFlags BindingFlags = BindingFlags.DeclaredOnly | BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static;
-            //foreach (FieldInfo field in checkedType.GetFields(BindingFlags))
-            //{
-            //    string fieldValue = field.GetRawConstantValue().ToString();
-            //    selectList.Add(new SelectListItem
-            //    {
-            //        Text = GetDisplayName(field),
-            //        Value = fieldValue,
-            //        Selected = hasSelectedValue ? selectedValues.Contains(fieldValue) : hasSelectedValue
-            //    });
-            //}
             return selectList;
         }
 

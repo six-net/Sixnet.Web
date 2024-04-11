@@ -26,17 +26,9 @@ namespace Sixnet.Web.Middleware
             else
             {
                 var claims = context.User.Claims;
-                var isolationDataId = claims?.FirstOrDefault(c => c.Type == SessionContext.IsolationIdKey)?.Value;
-                var isolationDataCode = claims?.FirstOrDefault(c => c.Type == SessionContext.IsolationCodeKey)?.Value;
-                var isolationDataName = claims?.FirstOrDefault(c => c.Type == SessionContext.IsolationNameKey)?.Value;
                 using (var session = SessionContext.Create(session =>
                 {
-                    session.Isolation = new IsolationInfo()
-                    {
-                        Id = isolationDataId,
-                        Code = isolationDataCode,
-                        Name = isolationDataName
-                    };
+                    session.Isolation = SixnetWeb.Options?.GetIsolationInfo?.Invoke(context);
                     session.User = UserInfo.GetUserFromClaims(claims);
                 }))
                 {

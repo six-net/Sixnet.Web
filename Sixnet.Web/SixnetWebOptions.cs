@@ -80,6 +80,12 @@ namespace Sixnet.Web
         public bool LowercaseUrls { get; set; } = true;
 
         /// <summary>
+        /// Whether kebab-case urls
+        /// Default is true
+        /// </summary>
+        public bool KebabCaseUrls { get; set; } = true;
+
+        /// <summary>
         /// Whether use hsts
         /// Default is true.
         /// </summary>

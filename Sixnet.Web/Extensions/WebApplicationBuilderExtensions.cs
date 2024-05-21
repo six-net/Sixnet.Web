@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +25,7 @@ using Sixnet.Token.Jwt;
 using Sixnet.Web.Mvc.Filters;
 using Sixnet.Web.Mvc.Formatters;
 using Sixnet.Web.Mvc.ModelBinding.Validation;
+using Sixnet.Web.Mvc.Routing;
 using Sixnet.Web.Security.Authorization;
 
 namespace Sixnet.Web.Extensions
@@ -117,6 +119,10 @@ namespace Sixnet.Web.Extensions
                     {
                         options.Filters.Add<ExtendAuthorizeFilter>();
                     }
+                    if (webOptions.KebabCaseUrls)
+                    {
+                        options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
+                    }
                     if (webOptions.UseGlobalRoutePrefix)
                     {
                         options.UseGlobalRoutePrefix(new RouteAttribute(webOptions.UseApiVersioning ? webOptions.ApiRoutePrefix + "/v{version:apiVersion}" : webOptions.ApiRoutePrefix));
@@ -179,10 +185,10 @@ namespace Sixnet.Web.Extensions
 
                 #region Routing
 
-                if (webOptions.LowercaseUrls)
+                services.AddRouting(options =>
                 {
-                    services.AddRouting(options => options.LowercaseUrls = true);
-                }
+                    options.LowercaseUrls = webOptions.LowercaseUrls;
+                });
 
                 #endregion
 
@@ -353,10 +359,14 @@ namespace Sixnet.Web.Extensions
                 {
                     app.UseAuthorization();
                 }
-                if (webOptions.ConfigureEndpoints != null)
+                //if (webOptions.ConfigureEndpoints != null)
+                //{
+                //    app.UseEndpoints(webOptions.ConfigureEndpoints);
+                //}
+                app.UseEndpoints(endpoints =>
                 {
-                    app.UseEndpoints(webOptions.ConfigureEndpoints);
-                }
+                    endpoints.MapControllers();
+                });
                 if (webOptions.UseSpa)
                 {
                     app.UseSpa(webOptions.ConfigureSpaBuilder);

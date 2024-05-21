@@ -425,9 +425,13 @@ namespace Sixnet.Web.Extensions
                     foreach (var apiResponse in aspnetContext.ApiDescription.SupportedResponseTypes)
                     {
                         var returnType = apiResponse.Type;
-                        if (returnType != null && !typeof(ISixnetResult).IsAssignableFrom(returnType))
+                        if (returnType != null && returnType != typeof(void) && !typeof(ISixnetResult).IsAssignableFrom(returnType))
                         {
                             apiResponse.Type = typeof(SixnetResult<>).MakeGenericType(returnType);
+                        }
+                        else
+                        {
+                            apiResponse.Type = typeof(SixnetResult);
                         }
                     }
                 }

@@ -22,6 +22,10 @@ namespace Sixnet.Web.Mvc.Controllers
                     context.Result = new JsonResult(SixnetResult.SuccessResult(data: resultValue));
                 }
             }
+            else if(context.Result is EmptyResult)
+            {
+                context.Result = new JsonResult(SixnetResult.SuccessResult());
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Sixnet.App;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace Sixnet.Web.Security.Authorization
 {
@@ -45,5 +46,10 @@ namespace Sixnet.Web.Security.Authorization
         /// Gets or sets the action context
         /// </summary>
         public ActionContext ActionContext { get; set; }
+
+        /// <summary>
+        /// Gets or sets the action descriptor
+        /// </summary>
+        public ActionDescriptor ActionDescriptor { get; set; }
     }
 }

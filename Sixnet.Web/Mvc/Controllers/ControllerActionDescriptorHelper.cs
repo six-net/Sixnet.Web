@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Sixnet.DependencyInjection;
 using Sixnet.Web.Mvc.Routing;
+using Sixnet.Web.Security.Authorization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,17 +23,32 @@ namespace Sixnet.Web.Mvc.Controllers
     /// </summary>
     public static class ControllerActionDescriptorHelper
     {
-        public static List<ControllerActionInfo> GetControllerActionInfos(string xmlCommentsFilePath = "", bool kebabCase = true)
+        public static List<ControllerActionInfo> GetControllerActionInfos(Action<ControllerActionDescriptorOptions> configure = null)
         {
+            var options = new ControllerActionDescriptorOptions();
+            configure?.Invoke(options);
             var actionDescriptors = SixnetContainer.GetService<IActionDescriptorCollectionProvider>().ActionDescriptors.Items;
             var controllerActionDescriptors = actionDescriptors.OfType<ControllerActionDescriptor>().ToList();
-            var xmlComments = LoadXmlComments(xmlCommentsFilePath);
+            var xmlComments = LoadXmlComments(options);
 
             var result = new List<ControllerActionInfo>();
             foreach (var descriptor in controllerActionDescriptors)
             {
                 var controllerType = descriptor.ControllerTypeInfo;
                 var actionMethod = descriptor.MethodInfo;
+
+                var anonymousAttr = actionMethod.GetCustomAttribute<AllowAnonymousAttribute>();
+                if (anonymousAttr != null && options.IgnoreAnonymous)
+                {
+                    continue;
+                }
+
+                var superAttr = actionMethod.GetCustomAttribute<SuperActionAttribute>();
+                if (superAttr != null && options.IgnoreSuper)
+                {
+                    continue;
+                }
+
                 var apiVersions = GetApiVersions(controllerType, actionMethod);
                 var actionSummary = GetActionComment(xmlComments, actionMethod);
                 var controllerSummary = GetControllerComment(xmlComments, descriptor.ControllerTypeInfo);
@@ -44,7 +61,7 @@ namespace Sixnet.Web.Mvc.Controllers
                     ActionName = descriptor.ActionName,
                     ActionSummary = actionSummary,
                     ApiVersions = apiVersions,
-                    Route = GetRoute(descriptor)
+                    Route = GetRoute(descriptor, options)
                 });
             }
 
@@ -76,12 +93,8 @@ namespace Sixnet.Web.Mvc.Controllers
                 return string.Empty;
             }
             var memberKey = $"M:{method.DeclaringType.FullName}.{method.Name}";
-            if (method.GetParameters().Any())
-            {
-                var parameters = string.Join(",", method.GetParameters().Select(p => p.ParameterType.FullName));
-                memberKey += $"({parameters})";
-            }
-            return xmlComments.TryGetValue(memberKey, out var summary) ? summary : "";
+            KeyValuePair<string, string>? commentItem = xmlComments.FirstOrDefault(c => c.Key.StartsWith(memberKey));
+            return commentItem?.Value ?? "";
         }
 
         static string GetControllerComment(Dictionary<string, string> xmlComments, TypeInfo controller)
@@ -94,7 +107,7 @@ namespace Sixnet.Web.Mvc.Controllers
             return xmlComments.TryGetValue(memberKey, out var summary) ? summary : "";
         }
 
-        static string GetRoute(ControllerActionDescriptor descriptor, bool kebabCase = true)
+        static string GetRoute(ControllerActionDescriptor descriptor, ControllerActionDescriptorOptions options)
         {
             var controllerRouteTemplate = descriptor.ControllerTypeInfo
                 .GetCustomAttributes()
@@ -108,7 +121,7 @@ namespace Sixnet.Web.Mvc.Controllers
 
             var controllerName = descriptor.ControllerName;
             var actionName = descriptor.ActionName;
-            if (kebabCase)
+            if (options.KebabCase)
             {
                 var transformer = new KebabCaseParameterTransformer();
                 controllerName = transformer.TransformOutbound(controllerName);
@@ -123,8 +136,9 @@ namespace Sixnet.Web.Mvc.Controllers
             return route;
         }
 
-        static Dictionary<string, string> LoadXmlComments(string filePath)
+        static Dictionary<string, string> LoadXmlComments(ControllerActionDescriptorOptions options)
         {
+            var filePath = options.XmlCommentsFilePath;
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetEntryAssembly().GetName().Name}.xml");
@@ -147,6 +161,29 @@ namespace Sixnet.Web.Mvc.Controllers
             }
             return xmlComments;
         }
+    }
+
+    public class ControllerActionDescriptorOptions
+    {
+        /// <summary>
+        /// Comments file path
+        /// </summary>
+        public string XmlCommentsFilePath { get; set; }
+
+        /// <summary>
+        /// Kebab case
+        /// </summary>
+        public bool KebabCase { get; set; } = true;
+
+        /// <summary>
+        /// Ignore anonymous
+        /// </summary>
+        public bool IgnoreAnonymous { get; set; } = true;
+
+        /// <summary>
+        /// Ignore super action
+        /// </summary>
+        public bool IgnoreSuper { get; set; } = true;
     }
 
     public class ControllerActionInfo

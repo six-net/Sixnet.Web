@@ -117,7 +117,7 @@ namespace Sixnet.Web.Extensions
                     options.ModelValidatorProviders.Add(new SixnetDataAnnotationsModelValidatorProvider());
                     if (webOptions.UseAuthorization)
                     {
-                        options.Filters.Add<ExtendAuthorizeFilter>();
+                        options.Filters.Add<SixnetAuthorizeFilter>();
                     }
                     if (webOptions.KebabCaseUrls)
                     {

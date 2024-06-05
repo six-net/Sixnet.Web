@@ -72,8 +72,11 @@ namespace Sixnet.Web.Extensions
 
             var app = builder.Build();
 
-            // Configure app
+            // Configure app builder
             ConfigureApplicationBuilder(app, builder.Environment, webOptions);
+
+            // Init app
+            webOptions.InitApp?.Invoke(webOptions);
 
             return app;
         }

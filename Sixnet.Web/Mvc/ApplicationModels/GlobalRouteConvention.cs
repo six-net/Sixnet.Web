@@ -35,8 +35,15 @@ namespace Sixnet.Web.Mvc.ApplicationModels
                 {
                     continue;
                 }
+                var controllerRouteModel = _globalPrefix;
+                // 1. Area
+                var areaAttribute = controller.Attributes?.FirstOrDefault(c => c.GetType() == typeof(AreaAttribute)) as AreaAttribute;
+                if(areaAttribute!=null)
+                {
+                    controllerRouteModel = AttributeRouteModel.CombineAttributeRouteModel(controllerRouteModel, new AttributeRouteModel(new RouteAttribute(areaAttribute.RouteValue)));
+                }
 
-                // 1. Controller that has marked RouteAttribute
+                // 2. Controller that has marked RouteAttribute
                 // It is important to note that if a routing has been marked in the controller, the specified routing content will be added before the routing.
 
                 var matchedSelectors = controller.Selectors.Where(x => x.AttributeRouteModel != null).ToList();
@@ -45,19 +52,19 @@ namespace Sixnet.Web.Mvc.ApplicationModels
                     foreach (var selectorModel in matchedSelectors)
                     {
                         // Add another routing prefix to the current routing
-                        selectorModel.AttributeRouteModel = AttributeRouteModel.CombineAttributeRouteModel(_globalPrefix,
+                        selectorModel.AttributeRouteModel = AttributeRouteModel.CombineAttributeRouteModel(controllerRouteModel,
                           selectorModel.AttributeRouteModel);
                     }
                 }
 
-                // 2. Controller without RouteAttribute tag
+                // 3. Controller without RouteAttribute tag
                 var unmatchedSelectors = controller.Selectors.Where(x => x.AttributeRouteModel == null).ToList();
                 if (unmatchedSelectors.Any())
                 {
                     foreach (var selectorModel in unmatchedSelectors)
                     {
                         // Add a routing prefix
-                        selectorModel.AttributeRouteModel = _globalPrefix;
+                        selectorModel.AttributeRouteModel = controllerRouteModel;
                     }
                 }
             }

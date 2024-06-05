@@ -154,16 +154,6 @@ namespace Sixnet.Web
         public Action<CorsPolicyBuilder> ConfigureCors { get; set; }
 
         /// <summary>
-        /// Configure endpoints
-        /// </summary>
-        public Action<IEndpointRouteBuilder> ConfigureEndpoints { get; set; } = endpoints =>
-        {
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-        };
-
-        /// <summary>
         /// Configure spa builder
         /// </summary>
         public Action<ISpaBuilder> ConfigureSpaBuilder { get; set; } = spa => 
@@ -183,5 +173,10 @@ namespace Sixnet.Web
         /// Get isolation info
         /// </summary>
         public Func<HttpContext, IsolationInfo> GetIsolationInfo { get; set; }
+
+        /// <summary>
+        /// Inital application
+        /// </summary>
+        public Action<SixnetWebOptions> InitApp { get; set; }
     }
 }

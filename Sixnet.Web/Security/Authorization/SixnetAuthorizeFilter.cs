@@ -54,11 +54,11 @@ namespace Sixnet.Web.Security.Authorization
         public override async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             var authOptions = SixnetContainer.GetOptions<SixnetAuthorizationOptions>() ?? _defaultAuthorizationOptions;
-            if (!authOptions.IngoreDefaultAuthorize)
+            if (!authOptions.IgnoreDefaultAuthorize)
             {
                 var originalResult = context.Result;
                 await base.OnAuthorizationAsync(context).ConfigureAwait(false);
-                if (context.Result != null && ((context.Result is ChallengeResult && !authOptions.IngoreAuthentication) || context.Result is ForbidResult))
+                if (context.Result != null && ((context.Result is ChallengeResult && !authOptions.IgnoreAuthentication) || context.Result is ForbidResult))
                 {
                     return;
                 }
@@ -69,7 +69,7 @@ namespace Sixnet.Web.Security.Authorization
                 return;
             }
             bool isAuthenticated = context.HttpContext.User?.Identity?.IsAuthenticated ?? false;
-            if (!isAuthenticated && !authOptions.IngoreAuthentication)
+            if (!isAuthenticated && !authOptions.IgnoreAuthentication)
             {
                 context.Result = new ChallengeResult();
                 return;
@@ -80,6 +80,10 @@ namespace Sixnet.Web.Security.Authorization
             }
             var user = UserInfo.GetUserFromPrincipal(context.HttpContext.User);
             var isAdmin = user?.IsAdmin ?? false;
+            if (isAdmin && !authOptions.AdminAuthorize)
+            {
+                return;
+            }
             if (IsSuperAction(context) && !isAdmin)
             {
                 context.Result = new ForbidResult();

@@ -72,8 +72,11 @@ namespace Sixnet.Web.Extensions
 
             var app = builder.Build();
 
-            // Configure app
+            // Configure app builder
             ConfigureApplicationBuilder(app, builder.Environment, webOptions);
+
+            // Init app
+            webOptions.InitApp?.Invoke(webOptions);
 
             return app;
         }
@@ -359,13 +362,9 @@ namespace Sixnet.Web.Extensions
                 {
                     app.UseAuthorization();
                 }
-                //if (webOptions.ConfigureEndpoints != null)
-                //{
-                //    app.UseEndpoints(webOptions.ConfigureEndpoints);
-                //}
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapControllers();
+                    endpoints.MapDefaultControllerRoute();
                 });
                 if (webOptions.UseSpa)
                 {

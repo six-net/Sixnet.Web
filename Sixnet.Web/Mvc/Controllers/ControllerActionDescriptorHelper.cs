@@ -61,7 +61,8 @@ namespace Sixnet.Web.Mvc.Controllers
                     ActionName = descriptor.ActionName,
                     ActionSummary = actionSummary,
                     ApiVersions = apiVersions,
-                    Route = GetRoute(descriptor, options)
+                    Route = GetRoute(descriptor, options),
+                    FullName = GetControllerActionDescriptorFullName(descriptor)
                 });
             }
 
@@ -161,6 +162,11 @@ namespace Sixnet.Web.Mvc.Controllers
             }
             return xmlComments;
         }
+
+        internal static string GetControllerActionDescriptorFullName(ControllerActionDescriptor descriptor)
+        {
+            return $"{descriptor.ControllerTypeInfo.Namespace}.{descriptor.ControllerName}.{descriptor.ActionName}";
+        }
     }
 
     public class ControllerActionDescriptorOptions
@@ -222,5 +228,10 @@ namespace Sixnet.Web.Mvc.Controllers
         /// Route
         /// </summary>
         public string Route { get; set; }
+
+        /// <summary>
+        /// Full name
+        /// </summary>
+        public string FullName { get; set; }
     }
 }

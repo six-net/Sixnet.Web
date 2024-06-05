@@ -1,16 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Sixnet.App;
+using Sixnet.DependencyInjection;
+using Sixnet.Security.Authorization;
 using Sixnet.Session;
-using Sixnet.Web.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Sixnet.Web.Mvc.Controllers;
 
 namespace Sixnet.Web.Security.Authorization
 {
@@ -19,11 +23,13 @@ namespace Sixnet.Web.Security.Authorization
     /// </summary>
     public class SixnetAuthorizeFilter : AuthorizeFilter
     {
-        private static readonly AuthorizationPolicy policy = new AuthorizationPolicy(new[] { new DenyAnonymousAuthorizationRequirement() }, new string[] { });
+        static readonly SixnetAuthorizationOptions _defaultAuthorizationOptions = new();
+
+        static readonly AuthorizationPolicy policy = new(new[] { new DenyAnonymousAuthorizationRequirement() }, Array.Empty<string>());
 
         public SixnetAuthorizeFilter() : base(policy) { }
 
-        internal static bool HasAllowAnonymous(AuthorizationFilterContext context)
+        internal static bool AllowAnonymous(AuthorizationFilterContext context)
         {
             var filters = context.Filters;
             var anonymousFilter = filters?.Any(f => f is IAllowAnonymousFilter) ?? false;
@@ -47,22 +53,23 @@ namespace Sixnet.Web.Security.Authorization
 
         public override async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            if (!AuthorizationManager.IngoreDefaultAuthorize)
+            var authOptions = SixnetContainer.GetOptions<SixnetAuthorizationOptions>() ?? _defaultAuthorizationOptions;
+            if (!authOptions.IngoreDefaultAuthorize)
             {
                 var originalResult = context.Result;
                 await base.OnAuthorizationAsync(context).ConfigureAwait(false);
-                if (context.Result != null && ((context.Result is ChallengeResult && !AuthorizationManager.IngoreAuthentication) || context.Result is ForbidResult))
+                if (context.Result != null && ((context.Result is ChallengeResult && !authOptions.IngoreAuthentication) || context.Result is ForbidResult))
                 {
                     return;
                 }
                 context.Result = originalResult;
             }
-            if (HasAllowAnonymous(context))//allow anonymous access
+            if (AllowAnonymous(context))//allow anonymous access
             {
                 return;
             }
             bool isAuthenticated = context.HttpContext.User?.Identity?.IsAuthenticated ?? false;
-            if (!isAuthenticated && !AuthorizationManager.IngoreAuthentication)
+            if (!isAuthenticated && !authOptions.IngoreAuthentication)
             {
                 context.Result = new ChallengeResult();
                 return;
@@ -78,24 +85,26 @@ namespace Sixnet.Web.Security.Authorization
                 context.Result = new ForbidResult();
                 return;
             }
-            var verifyResult = await AuthorizationManager.AuthorizeAsync(new AuthorizeOptions()
+
+            var authorizationResult = SixnetAuthorizationResult.SuccessResult();
+            if (authOptions.AuthorizeAsync != null && context.ActionDescriptor is ControllerActionDescriptor actionDescriptor)
             {
-                Controller = context.RouteData.Values[MvcConstants.Route.Controller]?.ToString() ?? string.Empty,
-                Action = context.RouteData.Values[MvcConstants.Route.Action]?.ToString() ?? string.Empty,
-                Area = context.RouteData.Values[MvcConstants.Route.Area]?.ToString() ?? string.Empty,
-                Application = SixnetApplication.Current,
-                Method = context?.HttpContext?.Request?.Method,
-                Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0),
-                ActionContext = context,
-                ActionDescriptor = context.ActionDescriptor
-            }).ConfigureAwait(false);
-            if (verifyResult.AllowAccess)
+                var authorizationContext = new SixnetAuthorizationContext()
+                {
+                    Application = SixnetApplication.Current,
+                    Claims = context.HttpContext.User?.Claims?.ToDictionary(c => c.Type, c => c.Value) ?? new Dictionary<string, string>(0),
+                    Operation = ControllerActionDescriptorHelper.GetControllerActionDescriptorFullName(actionDescriptor),
+                    User = user
+                };
+                authorizationResult = await authOptions.AuthorizeAsync(authorizationContext).ConfigureAwait(false);
+            }
+            if (authorizationResult.AllowAccess)
             {
                 return;
             }
-            if (verifyResult.RedirectType == AuthorizeRedirectType.Default)
+            if (authorizationResult.RedirectType == AuthorizeRedirectType.Default)
             {
-                switch (verifyResult.Status)
+                switch (authorizationResult.Status)
                 {
                     case AuthorizationStatus.Success:
                         break;
@@ -110,23 +119,23 @@ namespace Sixnet.Web.Security.Authorization
             }
             else
             {
-                switch (verifyResult.RedirectType)
+                switch (authorizationResult.RedirectType)
                 {
                     case AuthorizeRedirectType.RedirectToAction:
-                        context.Result = new RedirectToActionResult(verifyResult.Action, verifyResult.Controller, verifyResult.RouteValues);
+                        context.Result = new RedirectToActionResult(authorizationResult.Action, authorizationResult.Controller, authorizationResult.RouteValues);
                         break;
                     case AuthorizeRedirectType.RedirectToRoute:
-                        context.Result = new RedirectToRouteResult(verifyResult.RouteValues);
+                        context.Result = new RedirectToRouteResult(authorizationResult.RouteValues);
                         break;
                     case AuthorizeRedirectType.RedirectToUrl:
                         UrlHelper urlHelper = new UrlHelper(context);
-                        if (urlHelper.IsLocalUrl(verifyResult.Url))
+                        if (urlHelper.IsLocalUrl(authorizationResult.Url))
                         {
-                            context.Result = new LocalRedirectResult(verifyResult.Url);
+                            context.Result = new LocalRedirectResult(authorizationResult.Url);
                         }
                         else
                         {
-                            context.Result = new RedirectResult(verifyResult.Url);
+                            context.Result = new RedirectResult(authorizationResult.Url);
                         }
                         break;
                 }

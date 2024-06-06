@@ -80,7 +80,7 @@ namespace Sixnet.Web.Security.Authorization
             }
             var user = UserInfo.GetUserFromPrincipal(context.HttpContext.User);
             var isAdmin = user?.IsAdmin ?? false;
-            if (isAdmin && !authOptions.AdminAuthorize)
+            if (isAdmin && !authOptions.ValidationAdmin)
             {
                 return;
             }

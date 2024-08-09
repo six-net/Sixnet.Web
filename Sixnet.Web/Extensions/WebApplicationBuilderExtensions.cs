@@ -117,7 +117,14 @@ namespace Sixnet.Web.Extensions
                 services.AddControllersWithViews(options =>
                 {
                     options.InputFormatters.Insert(0, new TextPlainInputFormatter());
-                    options.ModelValidatorProviders.Add(new SixnetDataAnnotationsModelValidatorProvider());
+                    if (webOptions.DisableRemoveModelValidator)
+                    {
+                        options.ModelValidatorProviders.Clear();
+                    }
+                    if (webOptions.UseCustomModelValidator)
+                    {
+                        options.ModelValidatorProviders.Add(new SixnetDataAnnotationsModelValidatorProvider());
+                    }
                     if (webOptions.UseAuthorization)
                     {
                         options.Filters.Add<SixnetAuthorizeFilter>();

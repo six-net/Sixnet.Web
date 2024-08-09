@@ -119,6 +119,16 @@ namespace Sixnet.Web
         public bool UseSpa { get; set; }
 
         /// <summary>
+        /// Disable remove model validator
+        /// </summary>
+        public bool DisableRemoveModelValidator { get; set; }
+
+        /// <summary>
+        /// Use custom cmodel validator
+        /// </summary>
+        public bool UseCustomModelValidator { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets the spa app root path
         /// </summary>
         public string SpaRootPath { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sixnet.Web.Security.Authorization
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class SuperActionAttribute : Attribute, IFilterMetadata
     {
     }

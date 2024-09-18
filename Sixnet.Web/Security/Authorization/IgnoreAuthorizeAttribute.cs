@@ -10,6 +10,7 @@ namespace Sixnet.Web.Security.Authorization
     /// <summary>
     /// Defines ignore authorize attribute
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class IgnoreAuthorizeAttribute : Attribute, IFilterMetadata
     {
     }

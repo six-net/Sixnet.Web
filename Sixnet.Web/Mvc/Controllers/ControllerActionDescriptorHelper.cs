@@ -1,20 +1,18 @@
-﻿using Asp.Versioning;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
-using Sixnet.DependencyInjection;
-using Sixnet.Web.Mvc.Routing;
-using Sixnet.Web.Security.Authorization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Sixnet.DependencyInjection;
+using Sixnet.Web.Mvc.Routing;
+using Sixnet.Web.Security.Authorization;
 
 namespace Sixnet.Web.Mvc.Controllers
 {
@@ -37,14 +35,26 @@ namespace Sixnet.Web.Mvc.Controllers
                 var controllerType = descriptor.ControllerTypeInfo;
                 var actionMethod = descriptor.MethodInfo;
 
-                var anonymousAttr = actionMethod.GetCustomAttribute<AllowAnonymousAttribute>();
+                // super admin
+                var superAttr = controllerType.GetCustomAttribute<SuperActionAttribute>()
+                                ?? actionMethod.GetCustomAttribute<SuperActionAttribute>();
+                if (superAttr != null)
+                {
+                    continue;
+                }
+
+                // anonymous
+                var anonymousAttr = controllerType.GetCustomAttribute<AllowAnonymousAttribute>()
+                                    ?? actionMethod.GetCustomAttribute<AllowAnonymousAttribute>();
                 if (anonymousAttr != null && options.IgnoreAnonymous)
                 {
                     continue;
                 }
 
-                var superAttr = actionMethod.GetCustomAttribute<SuperActionAttribute>();
-                if (superAttr != null && options.IgnoreSuper)
+                // ignore authorize
+                var ignoreAuth = controllerType.GetCustomAttribute<IgnoreAuthorizeAttribute>()
+                                ?? actionMethod.GetCustomAttribute<IgnoreAuthorizeAttribute>();
+                if (ignoreAuth != null && options.IgnoreNotAuth)
                 {
                     continue;
                 }
@@ -190,6 +200,11 @@ namespace Sixnet.Web.Mvc.Controllers
         /// Ignore super action
         /// </summary>
         public bool IgnoreSuper { get; set; } = true;
+
+        /// <summary>
+        /// Ignore not auth
+        /// </summary>
+        public bool IgnoreNotAuth { get; set; } = true;
     }
 
     public class ControllerActionInfo

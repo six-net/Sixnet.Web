@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <returns></returns>
         public static IApplicationBuilder UseSixnetSessionContext(this IApplicationBuilder app)
         {
-            return app.UseMiddleware<ClaimSessionMiddleware>();
+            return app.UseMiddleware<SixnetClaimSessionMiddleware>();
         }
     }
 }

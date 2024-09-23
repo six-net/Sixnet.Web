@@ -1,16 +1,15 @@
-﻿using Asp.Versioning.ApiExplorer;
+﻿using System;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Hosting;
 using NSwag.Generation.AspNetCore;
 using Sixnet.DependencyInjection;
 using Sixnet.Session;
-using System;
 
 namespace Sixnet.Web
 {
@@ -56,12 +55,6 @@ namespace Sixnet.Web
         public string ApiRoutePrefix { get; set; } = "api";
 
         /// <summary>
-        /// Whether use exception filter
-        /// Default is true.
-        /// </summary>
-        public bool UseExceptionFilter { get; set; } = true;
-
-        /// <summary>
         /// Whether use https redirection
         /// Default is true.
         /// </summary>
@@ -92,10 +85,22 @@ namespace Sixnet.Web
         public bool UseHsts { get; set; } = true;
 
         /// <summary>
-        /// Whether use statice files
+        /// Whether use static files
         /// Default is true
         /// </summary>
         public bool UseStaticFile { get; set; } = true;
+
+        /// <summary>
+        /// Whether use http logging
+        /// Default is true
+        /// </summary>
+        public bool UseHttpLogging { get; set; } = true;
+
+        /// <summary>
+        /// Whether intercept all exception then response SixnetResult
+        /// Default is true
+        /// </summary>
+        public bool WrapExceptionResult {  get; set; } = true;
 
         /// <summary>
         /// Gets or sets the static file options
@@ -127,6 +132,12 @@ namespace Sixnet.Web
         /// Use custom cmodel validator
         /// </summary>
         public bool UseCustomModelValidator { get; set; } = true;
+
+        /// <summary>
+        /// Unify action result.
+        /// Default is true
+        /// </summary>
+        public bool UnifyActionResult {  get; set; } = true;
 
         /// <summary>
         /// Gets or sets the spa app root path

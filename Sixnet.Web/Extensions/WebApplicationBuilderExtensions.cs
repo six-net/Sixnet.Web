@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Asp.Versioning;
@@ -9,7 +7,6 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +19,7 @@ using Sixnet.App;
 using Sixnet.DependencyInjection;
 using Sixnet.Model;
 using Sixnet.Token.Jwt;
+using Sixnet.Web.Middleware;
 using Sixnet.Web.Mvc.Filters;
 using Sixnet.Web.Mvc.Formatters;
 using Sixnet.Web.Mvc.ModelBinding.Validation;
@@ -137,10 +135,7 @@ namespace Sixnet.Web.Extensions
                     {
                         options.UseGlobalRoutePrefix(new RouteAttribute(webOptions.UseApiVersioning ? webOptions.ApiRoutePrefix + "/v{version:apiVersion}" : webOptions.ApiRoutePrefix));
                     }
-                    if (webOptions.UseExceptionFilter)
-                    {
-                        options.Filters.Add<SixnetExceptionFilter>();
-                    }
+                    options.Filters.Add<SixnetActionFilter>();
                     webOptions.ConfigureMvc?.Invoke(options);
                 });
 
@@ -296,7 +291,7 @@ namespace Sixnet.Web.Extensions
         /// <param name="app">Application builder</param>
         /// <param name="env">Host environment</param>
         /// <param name="webOptions">Web options</param>
-        static void ConfigureApplicationBuilder(IApplicationBuilder app, IWebHostEnvironment env, SixnetWebOptions webOptions)
+        static async void ConfigureApplicationBuilder(IApplicationBuilder app, IWebHostEnvironment env, SixnetWebOptions webOptions)
         {
             if (webOptions.ConfigureApplicationBuilder != null)
             {
@@ -319,6 +314,14 @@ namespace Sixnet.Web.Extensions
                         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                         app.UseHsts();
                     }
+                }
+                if (webOptions.WrapExceptionResult)
+                {
+                    app.UseMiddleware<SixnetWrapExceptionMiddleware>();
+                }
+                if (webOptions.UseHttpLogging)
+                {
+                    app.UseMiddleware<SixnetHttpLoggingMiddleware>();
                 }
                 if (webOptions.ConfigureRequestLocalization != null)
                 {

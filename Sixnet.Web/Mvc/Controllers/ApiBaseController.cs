@@ -12,20 +12,5 @@ namespace Sixnet.Web.Mvc.Controllers
     [ApiController]
     public class ApiBaseController : BaseController
     {
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            if (context.Result is ObjectResult objectResult && (objectResult.StatusCode == null || objectResult.StatusCode == StatusCodes.Status200OK))
-            {
-                var resultValue = objectResult.Value;
-                if (resultValue is not ISixnetResult)
-                {
-                    context.Result = new JsonResult(SixnetResult.SuccessResult(data: resultValue));
-                }
-            }
-            else if(context.Result is EmptyResult)
-            {
-                context.Result = new JsonResult(SixnetResult.SuccessResult());
-            }
-        }
     }
 }

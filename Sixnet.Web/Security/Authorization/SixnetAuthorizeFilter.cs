@@ -84,11 +84,13 @@ namespace Sixnet.Web.Security.Authorization
 
             // validate token
             var user = UserInfo.GetUserFromPrincipal(context.HttpContext.User);
+            var authenOptions = SixnetContainer.GetOptions<SixnetAuthenticationOptions>();
             var tokenValidated = await SixnetAuthenticationManager.ValidateAuthenticationTokenAsync(setting =>
             {
                 setting.AppTag = user.AppTag;
                 setting.UserId = user.Id;
                 setting.Token = user.Token;
+                setting.Score = authenOptions?.Score ?? AuthenticationScore.Unlimited;
             }).ConfigureAwait(false);
             if (!tokenValidated)
             {

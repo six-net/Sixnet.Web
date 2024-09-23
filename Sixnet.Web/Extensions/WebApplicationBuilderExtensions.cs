@@ -143,7 +143,7 @@ namespace Sixnet.Web.Extensions
 
                 #region Jwt
 
-                var jwtOptions = SixnetContainer.GetOptions<JwtOptions>();
+                var jwtOptions = SixnetContainer.GetOptions<JwtSetting>();
                 if (webOptions.UseJwtAuthentication)
                 {
                     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

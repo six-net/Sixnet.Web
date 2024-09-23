@@ -124,9 +124,9 @@ namespace Sixnet.Web
         public bool UseSpa { get; set; }
 
         /// <summary>
-        /// Disable remove model validator
+        /// Remove default model validator
         /// </summary>
-        public bool DisableRemoveModelValidator { get; set; }
+        public bool RemoveDefaultModelValidator { get; set; }
 
         /// <summary>
         /// Use custom cmodel validator

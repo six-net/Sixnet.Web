@@ -116,7 +116,7 @@ namespace Sixnet.Web.Extensions
                 services.AddControllersWithViews(options =>
                 {
                     options.InputFormatters.Insert(0, new TextPlainInputFormatter());
-                    if (webOptions.DisableRemoveModelValidator)
+                    if (webOptions.RemoveDefaultModelValidator)
                     {
                         options.ModelValidatorProviders.Clear();
                     }

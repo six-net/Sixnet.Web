@@ -18,6 +18,7 @@ using NSwag.Generation.AspNetCore;
 using Sixnet.App;
 using Sixnet.DependencyInjection;
 using Sixnet.Model;
+using Sixnet.Security.Authentication;
 using Sixnet.Token.Jwt;
 using Sixnet.Web.Middleware;
 using Sixnet.Web.Mvc.Filters;
@@ -143,7 +144,7 @@ namespace Sixnet.Web.Extensions
 
                 #region Jwt
 
-                var jwtOptions = SixnetContainer.GetOptions<JwtSetting>();
+                var authenOptions = SixnetContainer.GetOptions<SixnetAuthenticationOptions>();
                 if (webOptions.UseJwtAuthentication)
                 {
                     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -154,17 +155,17 @@ namespace Sixnet.Web.Extensions
                                 NameClaimType = JwtClaimTypes.Name,
                                 RoleClaimType = JwtClaimTypes.Role
                             };
-                            if (jwtOptions != null)
+                            if (authenOptions != null)
                             {
-                                tokenValidationParameters.ValidIssuer = jwtOptions.ValidIssuer;
-                                tokenValidationParameters.ValidAudience = jwtOptions.ValidAudience;
-                                if (!string.IsNullOrWhiteSpace(jwtOptions.IssuerSigningKey))
+                                tokenValidationParameters.ValidIssuer = authenOptions.JwtValidIssuer;
+                                tokenValidationParameters.ValidAudience = authenOptions.JwtValidAudience;
+                                if (!string.IsNullOrWhiteSpace(authenOptions.JwtIssuerSigningKey))
                                 {
-                                    tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.IssuerSigningKey));
+                                    tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenOptions.JwtIssuerSigningKey));
                                 }
-                                if (jwtOptions.ClockSkewSeconds > 0)
+                                if (authenOptions.JwtClockSkewSeconds > 0)
                                 {
-                                    tokenValidationParameters.ClockSkew = TimeSpan.FromSeconds(jwtOptions.ClockSkewSeconds);
+                                    tokenValidationParameters.ClockSkew = TimeSpan.FromSeconds(authenOptions.JwtClockSkewSeconds);
                                 }
                             }
                             jwtBearOptions.TokenValidationParameters = tokenValidationParameters;
@@ -291,7 +292,7 @@ namespace Sixnet.Web.Extensions
         /// <param name="app">Application builder</param>
         /// <param name="env">Host environment</param>
         /// <param name="webOptions">Web options</param>
-        static async void ConfigureApplicationBuilder(IApplicationBuilder app, IWebHostEnvironment env, SixnetWebOptions webOptions)
+        static void ConfigureApplicationBuilder(IApplicationBuilder app, IWebHostEnvironment env, SixnetWebOptions webOptions)
         {
             if (webOptions.ConfigureApplicationBuilder != null)
             {

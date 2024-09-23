@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Sixnet.App;
 using Sixnet.DependencyInjection;
+using Sixnet.Security.Authentication;
 using Sixnet.Security.Authorization;
 using Sixnet.Session;
 using Sixnet.Web.Mvc.Controllers;
@@ -54,6 +55,8 @@ namespace Sixnet.Web.Security.Authorization
         public override async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             var authOptions = SixnetContainer.GetOptions<SixnetAuthorizationOptions>() ?? _defaultAuthorizationOptions;
+
+            // default authorize
             if (!authOptions.IgnoreDefaultAuthorize)
             {
                 var originalResult = context.Result;
@@ -64,32 +67,56 @@ namespace Sixnet.Web.Security.Authorization
                 }
                 context.Result = originalResult;
             }
-            if (AllowAnonymous(context))//allow anonymous access
+
+            // allow anonymous access
+            if (AllowAnonymous(context))
             {
                 return;
             }
+
+            // is authenticated
             bool isAuthenticated = context.HttpContext.User?.Identity?.IsAuthenticated ?? false;
             if (!isAuthenticated && !authOptions.IgnoreAuthentication)
             {
                 context.Result = new ChallengeResult();
                 return;
             }
+
+            // validate token
+            var user = UserInfo.GetUserFromPrincipal(context.HttpContext.User);
+            var tokenValidated = await SixnetAuthenticationManager.ValidateAuthenticationTokenAsync(setting =>
+            {
+                setting.AppTag = user.AppTag;
+                setting.UserId = user.Id;
+                setting.Token = user.Token;
+            }).ConfigureAwait(false);
+            if (!tokenValidated)
+            {
+                context.Result = new ChallengeResult();
+                return;
+            }
+
+            // ignore authorize
             if (IgnoreAuthorize(context))
             {
                 return;
             }
-            var user = UserInfo.GetUserFromPrincipal(context.HttpContext.User);
+
+            // admin
             var isAdmin = user?.IsAdmin ?? false;
             if (isAdmin && !authOptions.ValidationAdmin)
             {
                 return;
             }
+
+            // super action
             if (IsSuperAction(context) && !isAdmin)
             {
                 context.Result = new ForbidResult();
                 return;
             }
 
+            // validate auth
             var authorizationResult = SixnetAuthorizationResult.SuccessResult();
             if (authOptions.AuthorizeAsync != null && context.ActionDescriptor is ControllerActionDescriptor actionDescriptor)
             {

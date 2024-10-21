@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Sixnet.Net.Upload;
+using Sixnet.IO;
 using Sixnet.Serialization.Json;
 
 namespace Sixnet.Web.Utility
@@ -20,7 +20,7 @@ namespace Sixnet.Web.Utility
         /// Upload by current http request
         /// </summary>
         /// <returns>Return upload result</returns>
-        public static Task<UploadResult> UploadAsync()
+        public static Task<SixnetUploadResult> UploadAsync()
         {
             return UploadAsync(HttpContextHelper.Current.Request);
         }
@@ -30,14 +30,14 @@ namespace Sixnet.Web.Utility
         /// </summary>
         /// <param name="request">Http request</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> UploadAsync(HttpRequest request)
+        public static async Task<SixnetUploadResult> UploadAsync(HttpRequest request)
         {
-            var uploadParameter = SixnetJsonSerializer.Deserialize<RemoteUploadParameter>(request?.Form[RemoteUploadParameter.RequestParameterName] ?? "");
+            var uploadParameter = SixnetJsonSerializer.Deserialize<SixnetRemoteUploadParameter>(request?.Form[SixnetRemoteUploadParameter.RequestParameterName] ?? "");
             if (uploadParameter == null)
             {
-                return UploadResult.FailResult();
+                return SixnetUploadResult.FailResult();
             }
-            uploadParameter.Files ??= new List<UploadFile>();
+            uploadParameter.Files ??= new List<SixnetUploadFile>();
             var files = new Dictionary<string, byte[]>();
             if (!request.Form.Files.IsNullOrEmpty())
             {
@@ -46,7 +46,7 @@ namespace Sixnet.Web.Utility
                     var fileSetting = uploadParameter.Files.FirstOrDefault(c => c.FileName == file.FileName);
                     if (fileSetting == null)
                     {
-                        uploadParameter.Files.Add(new UploadFile()
+                        uploadParameter.Files.Add(new SixnetUploadFile()
                         {
                             FileName = file.FileName,
                             FileContent = file.OpenReadStream().ToBytes()
@@ -67,7 +67,7 @@ namespace Sixnet.Web.Utility
         /// <param name="files">File</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> UploadAsync(IEnumerable<UploadFile> files, object parameters = null)
+        public static async Task<SixnetUploadResult> UploadAsync(IEnumerable<SixnetUploadFile> files, object parameters = null)
         {
             return await UploadAsync(files, parameters?.ToStringDictionary()).ConfigureAwait(false);
         }
@@ -78,13 +78,13 @@ namespace Sixnet.Web.Utility
         /// <param name="file">File</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> UploadAsync(UploadFile file, Dictionary<string, string> parameters = null)
+        public static async Task<SixnetUploadResult> UploadAsync(SixnetUploadFile file, Dictionary<string, string> parameters = null)
         {
             if (file is null)
             {
                 throw new ArgumentNullException(nameof(file));
             }
-            return await UploadAsync(new List<UploadFile>(1) { file }, parameters).ConfigureAwait(false);
+            return await UploadAsync(new List<SixnetUploadFile>(1) { file }, parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace Sixnet.Web.Utility
         /// <param name="files">Upload files</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static async Task<UploadResult> UploadAsync(IEnumerable<UploadFile> files, Dictionary<string, string> parameters = null)
+        public static async Task<SixnetUploadResult> UploadAsync(IEnumerable<SixnetUploadFile> files, Dictionary<string, string> parameters = null)
         {
-            var result = await SixnetUploader.UploadAsync(files, parameters).ConfigureAwait(false);
+            var result = await SixnetFileManager.UploadAsync(files, parameters).ConfigureAwait(false);
             return HandleUploadResult(result);
         }
 

@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.AspNetCore.Http.Extensions;
 using Sixnet.App;
-using Sixnet.IO.FileAccess;
+using Sixnet.IO;
 
 namespace Sixnet.Web.Utility
 {
@@ -117,12 +117,12 @@ namespace Sixnet.Web.Utility
             {
                 return string.Empty;
             }
-            var fileAccessOptions = SixnetFileAccessor.GetFileAccessSetting(fileObjectName);
-            if (fileAccessOptions?.RootPaths?.IsNullOrEmpty() ?? true)
+            var fileSetting = SixnetFileManager.GetFileSetting(fileObjectName);
+            if (fileSetting?.AccessRootPaths?.IsNullOrEmpty() ?? true)
             {
                 return GetLocalFullPath(relativePath);
             }
-            return SixnetFileAccessor.GetFileFullPath(fileObjectName, relativePath);
+            return SixnetFileManager.GetFileAccessPath(fileObjectName, relativePath);
         }
 
         /// <summary>

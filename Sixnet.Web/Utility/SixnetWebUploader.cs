@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Sixnet.Net.Upload;
+using Sixnet.IO;
 using Sixnet.Serialization.Json;
 
 namespace Sixnet.Web.Utility
@@ -29,7 +28,7 @@ namespace Sixnet.Web.Utility
         /// Upload by current http request
         /// </summary>
         /// <returns>Return upload result</returns>
-        public static UploadResult Upload()
+        public static SixnetUploadResult Upload()
         {
             return Upload(HttpContextHelper.Current.Request);
         }
@@ -39,14 +38,14 @@ namespace Sixnet.Web.Utility
         /// </summary>
         /// <param name="request">Http request</param>
         /// <returns>Return upload result</returns>
-        public static UploadResult Upload(HttpRequest request)
+        public static SixnetUploadResult Upload(HttpRequest request)
         {
-            var uploadParameter = SixnetJsonSerializer.Deserialize<RemoteUploadParameter>(request?.Form[RemoteUploadParameter.RequestParameterName] ?? "");
+            var uploadParameter = SixnetJsonSerializer.Deserialize<SixnetRemoteUploadParameter>(request?.Form[SixnetRemoteUploadParameter.RequestParameterName] ?? "");
             if (uploadParameter == null)
             {
-                return UploadResult.FailResult();
+                return SixnetUploadResult.FailResult();
             }
-            uploadParameter.Files ??= new List<UploadFile>();
+            uploadParameter.Files ??= new List<SixnetUploadFile>();
             var files = new Dictionary<string, byte[]>();
             if (!request.Form.Files.IsNullOrEmpty())
             {
@@ -55,7 +54,7 @@ namespace Sixnet.Web.Utility
                     var fileSetting = uploadParameter.Files.FirstOrDefault(c => c.FileName == file.FileName);
                     if (fileSetting == null)
                     {
-                        uploadParameter.Files.Add(new UploadFile()
+                        uploadParameter.Files.Add(new SixnetUploadFile()
                         {
                             FileName = file.FileName,
                             FileContent = file.OpenReadStream().ToBytes()
@@ -76,7 +75,7 @@ namespace Sixnet.Web.Utility
         /// <param name="files">File</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static UploadResult Upload(IEnumerable<UploadFile> files, object parameters = null)
+        public static SixnetUploadResult Upload(IEnumerable<SixnetUploadFile> files, object parameters = null)
         {
             return Upload(files, parameters?.ToStringDictionary());
         }
@@ -87,13 +86,13 @@ namespace Sixnet.Web.Utility
         /// <param name="file">File</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static UploadResult Upload(UploadFile file, Dictionary<string, string> parameters = null)
+        public static SixnetUploadResult Upload(SixnetUploadFile file, Dictionary<string, string> parameters = null)
         {
             if (file is null)
             {
                 throw new ArgumentNullException(nameof(file));
             }
-            return Upload(new List<UploadFile>(1) { file }, parameters);
+            return Upload(new List<SixnetUploadFile>(1) { file }, parameters);
         }
 
         /// <summary>
@@ -102,9 +101,9 @@ namespace Sixnet.Web.Utility
         /// <param name="files">Upload files</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static UploadResult Upload(IEnumerable<UploadFile> files, Dictionary<string, string> parameters = null)
+        public static SixnetUploadResult Upload(IEnumerable<SixnetUploadFile> files, Dictionary<string, string> parameters = null)
         {
-            var result = SixnetUploader.Upload(files, parameters);
+            var result = SixnetFileManager.Upload(files, parameters);
             return HandleUploadResult(result);
         }
 
@@ -117,7 +116,7 @@ namespace Sixnet.Web.Utility
         /// </summary>
         /// <param name="result">Original result</param>
         /// <returns>Return the newest upload result</returns>
-        internal static UploadResult HandleUploadResult(UploadResult result)
+        internal static SixnetUploadResult HandleUploadResult(SixnetUploadResult result)
         {
             if (result == null)
             {

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Hosting;
 using NSwag.Generation.AspNetCore;
-using Sixnet.DependencyInjection;
 using Sixnet.Session;
 
 namespace Sixnet.Web

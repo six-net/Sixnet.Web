@@ -39,7 +39,7 @@ namespace Sixnet.Web.Middleware
         {
             var requestTime = DateTimeOffset.Now;
 
-            var loggingOptions = SixnetContainer.GetOptions<SixnetLoggingOptions>(OptionsStyle.Monitor)?.Http ?? _defaultLoggingOptions;
+            var loggingOptions = SixnetContainer.GetOptions<SixnetLoggingOptions>(SixnetOptionsStyle.Monitor)?.Http ?? _defaultLoggingOptions;
 
             // path
             var path = (httpContext.Request.Path.ToString() ?? string.Empty).ToLower();

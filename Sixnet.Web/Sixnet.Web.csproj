@@ -21,7 +21,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.0" Condition="'$(TargetFramework)' == 'net8.0'" />
 		<PackageReference Include="NSwag.AspNetCore" Version="13.20.0" />
-		<PackageReference Include="Sixnet" Version="2.0.0" />
+		<PackageReference Include="Sixnet" Version="2.1.0" />
 	</ItemGroup>
 
 </Project>

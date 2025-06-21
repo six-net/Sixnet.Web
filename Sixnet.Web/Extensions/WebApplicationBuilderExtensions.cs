@@ -367,7 +367,7 @@ namespace Sixnet.Web.Extensions
                 if (webOptions.UseSwagger)
                 {
                     app.UseOpenApi();
-                    app.UseSwaggerUi3();
+                    app.UseSwaggerUi();
                 }
                 if (webOptions.UseAuthorization)
                 {
@@ -416,8 +416,8 @@ namespace Sixnet.Web.Extensions
                 Type = OpenApiSecuritySchemeType.Http,
                 Scheme = "bearer"
             });
-            config.GenerateEnumMappingDescription = true;
-            config.AllowReferencesWithProperties = true;
+            config.SchemaSettings.GenerateEnumMappingDescription = true;
+            config.SchemaSettings.AllowReferencesWithProperties = true;
             config.DocumentName = docName;
             config.ApiGroupNames = apiVersionDescription == null ? null : new string[] { version };
             config.AddOperationFilter(context =>

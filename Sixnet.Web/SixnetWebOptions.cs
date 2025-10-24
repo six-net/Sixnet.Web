@@ -195,8 +195,12 @@ namespace Sixnet.Web
         public Func<HttpContext, IsolationInfo> GetIsolationInfo { get; set; }
 
         /// <summary>
-        /// Inital application
+        /// Set host builder
         /// </summary>
-        public Action<SixnetWebOptions> InitApp { get; set; }
+        /// <param name="hostBuilder"></param>
+        public void SetHostBuilder(IHostBuilder hostBuilder)
+        {
+            this.HostBuilder = hostBuilder;
+        }
     }
 }

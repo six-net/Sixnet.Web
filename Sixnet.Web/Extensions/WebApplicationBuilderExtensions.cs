@@ -74,9 +74,6 @@ namespace Sixnet.Web.Extensions
             // Configure app builder
             ConfigureApplicationBuilder(app, builder.Environment, webOptions);
 
-            // Init app
-            webOptions.InitApp?.Invoke(webOptions);
-
             return app;
         }
 
@@ -281,6 +278,7 @@ namespace Sixnet.Web.Extensions
                 configureHostServices(services);
                 optionsConfigureServices?.Invoke(services);
             };
+            webOptions.SetHostBuilder(builder);
             builder.UseServiceProviderFactory(new SixnetServiceProviderFactory(webOptions));
             webOptions?.ConfigureHostBuilder?.Invoke(builder);
             SixnetWeb.Options = webOptions;

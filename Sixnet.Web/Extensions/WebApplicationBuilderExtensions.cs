@@ -278,6 +278,7 @@ namespace Sixnet.Web.Extensions
                 configureHostServices(services);
                 optionsConfigureServices?.Invoke(services);
             };
+            webOptions.ConfigureHostBuilder?.Invoke(builder);
             webOptions.SetHostBuilder(builder);
             builder.UseServiceProviderFactory(new SixnetServiceProviderFactory(webOptions));
             webOptions?.ConfigureHostBuilder?.Invoke(builder);

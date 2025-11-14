@@ -48,6 +48,12 @@ namespace Sixnet.Web
         public bool UseSwagger { get; set; } = true;
 
         /// <summary>
+        /// Whether remove tag from operation id.
+        /// Default is true
+        /// </summary>
+        public bool RemoveTagFromSwaggerOperationId { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets the api route prefix
         /// Default is "api"
         /// </summary>
@@ -125,7 +131,7 @@ namespace Sixnet.Web
         /// <summary>
         /// Remove default model validator
         /// </summary>
-        public bool RemoveDefaultModelValidator { get; set; }
+        public bool RemoveDefaultModelValidator { get; set; } = true;
 
         /// <summary>
         /// Use custom cmodel validator

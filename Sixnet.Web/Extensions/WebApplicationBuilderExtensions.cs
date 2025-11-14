@@ -1,20 +1,26 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+
 using NSwag;
 using NSwag.Generation.AspNetCore;
+
 using Sixnet.App;
 using Sixnet.DependencyInjection;
 using Sixnet.Model;
@@ -26,6 +32,7 @@ using Sixnet.Web.Mvc.Formatters;
 using Sixnet.Web.Mvc.ModelBinding.Validation;
 using Sixnet.Web.Mvc.Routing;
 using Sixnet.Web.Security.Authorization;
+using Sixnet.Web.Swagger.Processors;
 
 namespace Sixnet.Web.Extensions
 {
@@ -228,7 +235,7 @@ namespace Sixnet.Web.Extensions
                         {
                             services.AddOpenApiDocument(config =>
                             {
-                                ConfigSwaggerDoc(config, description);
+                                ConfigSwaggerDoc(webOptions, config, description);
                                 webOptions.ConfigureSwagger?.Invoke(description, config);
                             });
                         }
@@ -237,7 +244,7 @@ namespace Sixnet.Web.Extensions
                     {
                         services.AddOpenApiDocument(config =>
                         {
-                            ConfigSwaggerDoc(config, null);
+                            ConfigSwaggerDoc(webOptions, config, null);
                             webOptions.ConfigureSwagger?.Invoke(null, config);
                         });
                     }
@@ -323,10 +330,13 @@ namespace Sixnet.Web.Extensions
                 {
                     app.UseMiddleware<SixnetHttpLoggingMiddleware>();
                 }
-                if (webOptions.ConfigureRequestLocalization != null)
+                app.UseRequestLocalization(rdlOptions =>
                 {
-                    app.UseRequestLocalization(webOptions.ConfigureRequestLocalization);
-                }
+                    rdlOptions.DefaultRequestCulture = new RequestCulture("zh");
+                    rdlOptions.SupportedCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+                    rdlOptions.SupportedUICultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+                    webOptions.ConfigureRequestLocalization?.Invoke(rdlOptions);
+                });
                 if (webOptions.UseHttpsRedirection)
                 {
                     app.UseHttpsRedirection();
@@ -388,7 +398,7 @@ namespace Sixnet.Web.Extensions
         /// </summary>
         /// <param name="config"></param>
         /// <param name="apiVersionDescription"></param>
-        static void ConfigSwaggerDoc(AspNetCoreOpenApiDocumentGeneratorSettings config, ApiVersionDescription apiVersionDescription)
+        static void ConfigSwaggerDoc(SixnetWebOptions options, AspNetCoreOpenApiDocumentGeneratorSettings config, ApiVersionDescription apiVersionDescription)
         {
             var title = SixnetApplication.Current.Title;
             var version = SixnetApplication.Current.Version;
@@ -426,7 +436,7 @@ namespace Sixnet.Web.Extensions
                     Name = "Accept-Language",
                     Kind = OpenApiParameterKind.Header,
                     Type = NJsonSchema.JsonObjectType.String,
-                    IsRequired = true,
+                    IsRequired = false,
                     Default = "zh-Hans"
                 });
                 if (context is AspNetCoreOperationProcessorContext aspnetContext)
@@ -446,6 +456,11 @@ namespace Sixnet.Web.Extensions
                 }
                 return true;
             });
+
+            if (options.RemoveTagFromSwaggerOperationId)
+            {
+                config.OperationProcessors.Add(new RemoveTagFromOperationIdProcessor());
+            }
         }
 
         /// <summary>

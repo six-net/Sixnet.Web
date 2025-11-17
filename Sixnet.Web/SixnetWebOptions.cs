@@ -51,7 +51,7 @@ namespace Sixnet.Web
         /// Whether remove tag from operation id.
         /// Default is true
         /// </summary>
-        public bool RemoveTagFromSwaggerOperationId { get; set; } = true;
+        public bool RemoveTagFromSwaggerOperationId { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the api route prefix

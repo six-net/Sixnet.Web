@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using Microsoft.AspNetCore.Http;
+
+using Sixnet.Exceptions;
 using Sixnet.IO;
 using Sixnet.Serialization.Json;
 
@@ -25,85 +28,21 @@ namespace Sixnet.Web.Utility
         #region Upload
 
         /// <summary>
-        /// Upload by current http request
-        /// </summary>
-        /// <returns>Return upload result</returns>
-        public static SixnetUploadResult Upload()
-        {
-            return Upload(HttpContextHelper.Current.Request);
-        }
-
-        /// <summary>
-        /// Upload by http request
-        /// </summary>
-        /// <param name="request">Http request</param>
-        /// <returns>Return upload result</returns>
-        public static SixnetUploadResult Upload(HttpRequest request)
-        {
-            var uploadParameter = SixnetJsonSerializer.Deserialize<SixnetRemoteUploadParameter>(request?.Form[SixnetRemoteUploadParameter.RequestParameterName] ?? "");
-            if (uploadParameter == null)
-            {
-                return SixnetUploadResult.FailResult();
-            }
-            uploadParameter.Files ??= new List<SixnetUploadFile>();
-            var files = new Dictionary<string, byte[]>();
-            if (!request.Form.Files.IsNullOrEmpty())
-            {
-                foreach (var file in request.Form.Files)
-                {
-                    var fileSetting = uploadParameter.Files.FirstOrDefault(c => c.FileName == file.FileName);
-                    if (fileSetting == null)
-                    {
-                        uploadParameter.Files.Add(new SixnetUploadFile()
-                        {
-                            FileName = file.FileName,
-                            FileContent = file.OpenReadStream().ToBytes()
-                        });
-                    }
-                    else
-                    {
-                        fileSetting.FileContent = file.OpenReadStream().ToBytes();
-                    }
-                }
-            }
-            return Upload(uploadParameter.Files, request.GetAllParameters());
-        }
-
-        /// <summary>
         /// Upload file
         /// </summary>
-        /// <param name="files">File</param>
+        /// <param name="parameter">Upload files</param>
         /// <param name="parameters">Parameters</param>
         /// <returns>Return upload result</returns>
-        public static SixnetUploadResult Upload(IEnumerable<SixnetUploadFile> files, object parameters = null)
+        public static SixnetUploadResult Upload(SixnetWebUploadParameter parameter, Dictionary<string, string> parameters = null)
         {
-            return Upload(files, parameters?.ToStringDictionary());
-        }
-
-        /// <summary>
-        /// Upload file
-        /// </summary>
-        /// <param name="file">File</param>
-        /// <param name="parameters">Parameters</param>
-        /// <returns>Return upload result</returns>
-        public static SixnetUploadResult Upload(SixnetUploadFile file, Dictionary<string, string> parameters = null)
-        {
-            if (file is null)
+            SixnetThrower.ThrowArgNullIf(parameter?.Items.IsNullOrEmpty() ?? true, "Files is null or empty");
+            var result = SixnetFileManager.Upload(parameter.Items.Select(c => new SixnetUploadFile()
             {
-                throw new ArgumentNullException(nameof(file));
-            }
-            return Upload(new List<SixnetUploadFile>(1) { file }, parameters);
-        }
-
-        /// <summary>
-        /// Upload file
-        /// </summary>
-        /// <param name="files">Upload files</param>
-        /// <param name="parameters">Parameters</param>
-        /// <returns>Return upload result</returns>
-        public static SixnetUploadResult Upload(IEnumerable<SixnetUploadFile> files, Dictionary<string, string> parameters = null)
-        {
-            var result = SixnetFileManager.Upload(files, parameters);
+                FileName = c.FileName,
+                ObjectName = c.ObjectName,
+                Suffix = c.Suffix,
+                Content = c.Content.OpenReadStream().ToBytes()
+            }), parameters);
             return HandleUploadResult(result);
         }
 
@@ -131,5 +70,42 @@ namespace Sixnet.Web.Utility
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Web upload parameter
+    /// </summary>
+    public class SixnetWebUploadParameter
+    {
+        /// <summary>
+        /// Gets or sets the file items
+        /// </summary>
+        public List<SixnetWebUploadFile> Items { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class SixnetWebUploadFile
+    {
+        /// <summary>
+        /// Gets or sets the file object name
+        /// </summary>
+        public string ObjectName { get; set; }
+
+        /// <summary>
+        /// Gets or sets file name
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// Gets or sets file suffix
+        /// </summary>
+        public string Suffix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file
+        /// </summary>
+        public IFormFile Content { get; set; }
     }
 }

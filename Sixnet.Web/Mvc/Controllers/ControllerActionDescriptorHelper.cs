@@ -5,11 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+
 using Asp.Versioning;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+
 using Sixnet.DependencyInjection;
 using Sixnet.Web.Mvc.Routing;
 using Sixnet.Web.Security.Authorization;
@@ -66,7 +69,7 @@ namespace Sixnet.Web.Mvc.Controllers
                 result.Add(new ControllerActionInfo
                 {
                     Namespace = descriptor.ControllerTypeInfo.Namespace,
-                    ControllerName = descriptor.ControllerName,
+                    ControllerName = descriptor.ControllerTypeInfo.Name,
                     ControllerSummary = controllerSummary,
                     ActionName = descriptor.ActionName,
                     ActionSummary = actionSummary,
@@ -175,7 +178,7 @@ namespace Sixnet.Web.Mvc.Controllers
 
         internal static string GetControllerActionDescriptorFullName(ControllerActionDescriptor descriptor)
         {
-            return $"{descriptor.ControllerTypeInfo.Namespace}.{descriptor.ControllerName}.{descriptor.ActionName}";
+            return $"{descriptor.ControllerTypeInfo.FullName}.{descriptor.ActionName}";
         }
     }
 

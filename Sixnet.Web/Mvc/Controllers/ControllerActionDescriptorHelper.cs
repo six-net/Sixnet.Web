@@ -71,7 +71,7 @@ namespace Sixnet.Web.Mvc.Controllers
                     Namespace = descriptor.ControllerTypeInfo.Namespace,
                     ControllerName = descriptor.ControllerTypeInfo.Name,
                     ControllerSummary = controllerSummary,
-                    ActionName = descriptor.ActionName,
+                    ActionName = descriptor.MethodInfo.Name,
                     ActionSummary = actionSummary,
                     ApiVersions = apiVersions,
                     Route = GetRoute(descriptor, options),
@@ -178,7 +178,7 @@ namespace Sixnet.Web.Mvc.Controllers
 
         internal static string GetControllerActionDescriptorFullName(ControllerActionDescriptor descriptor)
         {
-            return $"{descriptor.ControllerTypeInfo.FullName}.{descriptor.ActionName}";
+            return $"{descriptor.ControllerTypeInfo.FullName}.{descriptor.MethodInfo.Name}";
         }
     }
 

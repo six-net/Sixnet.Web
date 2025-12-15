@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
+
 using Sixnet.App;
 using Sixnet.DependencyInjection;
 using Sixnet.Security.Authentication;
@@ -91,6 +93,7 @@ namespace Sixnet.Web.Security.Authorization
                 setting.UserId = user.Id;
                 setting.Token = user.Token;
                 setting.Score = authenOptions?.Score ?? AuthenticationScore.Unlimited;
+                setting.IgnoreServerValidation = authenOptions?.IgnoreServerValidation ?? false;
             }).ConfigureAwait(false);
             if (!tokenValidated)
             {

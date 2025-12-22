@@ -1,12 +1,28 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+
+using Sixnet.App;
+using Sixnet.Exceptions;
 using Sixnet.Model;
 
 namespace Sixnet.Web.Mvc.Filters
 {
-    public class SixnetActionFilter : IResultFilter
+    public class SixnetActionFilter : IActionFilter, IResultFilter
     {
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (SixnetApplication.Current.License != null)
+            {
+                var licenseResult = SixnetApplication.Current.License.Validate();
+                SixnetThrower.ThrowAppExceptionIf(!licenseResult.IsAvailable, licenseResult.Message);
+            }
+        }
+
         public void OnResultExecuted(ResultExecutedContext context)
         {
         }

@@ -22,7 +22,7 @@ namespace Sixnet.Web.Middleware
             var claims = context.User?.Claims;
             using (var session = SessionContext.Create(session =>
             {
-                session.Isolation = SixnetWeb.Options?.GetIsolationInfo?.Invoke(context);
+                session.Isolation = SixnetWeb.Options?.GetIsolationInfo(context);
                 session.User = UserInfo.GetUserFromClaims(claims);
             }))
             {

@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Asp.Versioning.ApiExplorer;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +9,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.Hosting;
+
 using NSwag.Generation.AspNetCore;
+
 using Sixnet.Session;
 
 namespace Sixnet.Web
@@ -17,6 +21,8 @@ namespace Sixnet.Web
     /// </summary>
     public class SixnetWebOptions : SixnetOptions
     {
+        #region Properties
+
         /// <summary>
         /// Whether use jwt authentication.
         /// Default is true.
@@ -105,7 +111,7 @@ namespace Sixnet.Web
         /// Whether intercept all exception then response SixnetResult
         /// Default is true
         /// </summary>
-        public bool WrapExceptionResult {  get; set; } = true;
+        public bool WrapExceptionResult { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the static file options
@@ -142,71 +148,225 @@ namespace Sixnet.Web
         /// Unify action result.
         /// Default is true
         /// </summary>
-        public bool UnifyActionResult {  get; set; } = true;
+        public bool UnifyActionResult { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the spa app root path
         /// </summary>
         public string SpaRootPath { get; set; }
 
-        /// <summary>
-        /// Configure host builder
-        /// </summary>
-        public Action<IHostBuilder> ConfigureHostBuilder { get; set; }
+        #endregion
+
+        #region Method
+
+        #region Configure mvc
+
+        internal Action<MvcOptions> ConfigureMvcAction;
 
         /// <summary>
-        /// Gets or sets the configure json
+        /// Configure mvc
         /// </summary>
-        public Action<MvcOptions> ConfigureMvc { get; set; }
-
-        /// <summary>
-        /// Gets or sets configure swagger
-        /// </summary>
-        public Action<ApiVersionDescription, AspNetCoreOpenApiDocumentGeneratorSettings> ConfigureSwagger { get; set; }
-
-        /// <summary>
-        /// Gets or sets configure application builder
-        /// </summary>
-        public Action<IApplicationBuilder, IWebHostEnvironment> ConfigureApplicationBuilder { get; set; }
-
-        /// <summary>
-        /// Configure request localization
-        /// </summary>
-        public Action<RequestLocalizationOptions> ConfigureRequestLocalization { get; set; }
-
-        /// <summary>
-        /// Configure cors
-        /// </summary>
-        public Action<CorsPolicyBuilder> ConfigureCors { get; set; }
-
-        /// <summary>
-        /// Configure spa builder
-        /// </summary>
-        public Action<ISpaBuilder> ConfigureSpaBuilder { get; set; } = spa => 
+        public SixnetWebOptions ConfigureMvc(Action<MvcOptions> configure, bool toFirst = false)
         {
-            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+            ConfigureMvcAction = toFirst
+                ? configure + ConfigureMvcAction
+                : ConfigureMvcAction + configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Configure mvc
+        /// </summary>
+        /// <param name="options"></param>
+        internal void ConfigureMvc(MvcOptions options)
+        {
+            ConfigureMvcAction?.Invoke(options);
+        }
+
+        #endregion
+
+        #region Configure swagger
+
+        internal Action<ApiVersionDescription, AspNetCoreOpenApiDocumentGeneratorSettings> ConfigureSwaggerAction;
+
+        /// <summary>
+        /// Register configure swagger action
+        /// </summary>
+        public SixnetWebOptions ConfigureSwagger(Action<ApiVersionDescription, AspNetCoreOpenApiDocumentGeneratorSettings> configure, bool toFirst = false)
+        {
+            ConfigureSwaggerAction = toFirst
+                ? configure + ConfigureSwaggerAction
+                : ConfigureSwaggerAction + configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Invoke the registered configure swagger action
+        /// </summary>
+        internal void ConfigureSwagger(
+            ApiVersionDescription apiVersion,
+            AspNetCoreOpenApiDocumentGeneratorSettings settings)
+        {
+            ConfigureSwaggerAction?.Invoke(apiVersion, settings);
+        }
+
+        #endregion
+
+        #region Configure application builder
+
+        internal Action<IApplicationBuilder, IWebHostEnvironment> ConfigureApplicationBuilderAction;
+
+        /// <summary>
+        /// Register configure application builder action
+        /// </summary>
+        public SixnetWebOptions ConfigureApplicationBuilder(
+            Action<IApplicationBuilder, IWebHostEnvironment> configure, bool toFirst = false)
+        {
+            ConfigureApplicationBuilderAction = toFirst
+                ? configure + ConfigureApplicationBuilderAction
+                : ConfigureApplicationBuilderAction + configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Invoke the registered configure application builder action
+        /// </summary>
+        internal void ConfigureApplicationBuilder(
+            IApplicationBuilder app,
+            IWebHostEnvironment environment)
+        {
+            ConfigureApplicationBuilderAction?.Invoke(app, environment);
+        }
+
+        #endregion
+
+        #region Configure request localization
+
+        internal Action<RequestLocalizationOptions> ConfigureRequestLocalizationAction;
+
+        /// <summary>
+        /// Register configure request localization action
+        /// </summary>
+        public SixnetWebOptions ConfigureRequestLocalization(Action<RequestLocalizationOptions> configure, bool toFirst = false)
+        {
+            ConfigureRequestLocalizationAction = toFirst
+                ? configure + ConfigureRequestLocalizationAction
+                : ConfigureRequestLocalizationAction + configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Invoke the registered configure request localization action
+        /// </summary>
+        internal void ConfigureRequestLocalization(RequestLocalizationOptions options)
+        {
+            ConfigureRequestLocalizationAction?.Invoke(options);
+        }
+
+        #endregion
+
+        #region Configure cors
+
+        internal Action<CorsPolicyBuilder> ConfigureCorsAction;
+
+        /// <summary>
+        /// Register configure cors action
+        /// </summary>
+        public SixnetWebOptions ConfigureCors(Action<CorsPolicyBuilder> configure, bool toFirst = false)
+        {
+            ConfigureCorsAction = toFirst
+                ? configure + ConfigureCorsAction
+                : ConfigureCorsAction + configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Invoke the registered configure cors action
+        /// </summary>
+        internal void ConfigureCors(CorsPolicyBuilder builder)
+        {
+            ConfigureCorsAction?.Invoke(builder);
+        }
+
+        #endregion
+
+        #region Configure spa builder
+
+        internal Action<ISpaBuilder> ConfigureSpaBuilderAction
+            = spa =>
             {
-                OnPrepareResponse = fileCtx =>
+                spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
                 {
-                    fileCtx.Context.Response.Headers.Remove("cache-control");
-                    fileCtx.Context.Response.Headers.Add(
-                        "cache-control", "no-store, no-cache, must-revalidate");
-                }
+                    OnPrepareResponse = fileCtx =>
+                    {
+                        fileCtx.Context.Response.Headers.Remove("cache-control");
+                        fileCtx.Context.Response.Headers.Add(
+                            "cache-control", "no-store, no-cache, must-revalidate");
+                    }
+                };
             };
-        };
+
+        /// <summary>
+        /// Register configure spa builder action
+        /// </summary>
+        public SixnetWebOptions ConfigureSpaBuilder(Action<ISpaBuilder> configure, bool toFirst = false)
+        {
+            ConfigureSpaBuilderAction = toFirst
+                ? configure + ConfigureSpaBuilderAction
+                : ConfigureSpaBuilderAction + configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Invoke the registered configure spa builder action
+        /// </summary>
+        internal void ConfigureSpaBuilder(ISpaBuilder spaBuilder)
+        {
+            ConfigureSpaBuilderAction?.Invoke(spaBuilder);
+        }
+
+        #endregion
+
+        #region Configure isolation
+
+        internal Func<HttpContext, IsolationInfo> GetIsolationInfoAction;
+
+        /// <summary>
+        /// Configure isolation info
+        /// </summary>
+        public SixnetWebOptions ConfigureIsolationInfo(Func<HttpContext, IsolationInfo> getIsolationInfo)
+        {
+            GetIsolationInfoAction = getIsolationInfo;
+            return this;
+        }
 
         /// <summary>
         /// Get isolation info
         /// </summary>
-        public Func<HttpContext, IsolationInfo> GetIsolationInfo { get; set; }
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IsolationInfo GetIsolationInfo(HttpContext context)
+        {
+            return GetIsolationInfoAction?.Invoke(context);
+        }
+
+        #endregion
+
+        #region Host builder
 
         /// <summary>
         /// Set host builder
         /// </summary>
         /// <param name="hostBuilder"></param>
-        public void SetHostBuilder(IHostBuilder hostBuilder)
+        public SixnetWebOptions SetHostBuilder(IHostBuilder hostBuilder)
         {
-            this.HostBuilder = hostBuilder;
+            ConfigureHostBuilder(hostBuilder);
+            HostBuilder = hostBuilder;
+            return this;
         }
+
+        #endregion
+
+        #endregion
     }
 }

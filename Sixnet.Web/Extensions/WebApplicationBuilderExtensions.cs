@@ -141,7 +141,7 @@ namespace Sixnet.Web.Extensions
                         options.UseGlobalRoutePrefix(new RouteAttribute(webOptions.UseApiVersioning ? webOptions.ApiRoutePrefix + "/v{version:apiVersion}" : webOptions.ApiRoutePrefix));
                     }
                     options.Filters.Add<SixnetActionFilter>();
-                    webOptions.ConfigureMvc?.Invoke(options);
+                    webOptions.ConfigureMvc(options);
                 });
 
                 #endregion
@@ -236,7 +236,7 @@ namespace Sixnet.Web.Extensions
                             services.AddOpenApiDocument(config =>
                             {
                                 ConfigSwaggerDoc(webOptions, config, description);
-                                webOptions.ConfigureSwagger?.Invoke(description, config);
+                                webOptions.ConfigureSwagger(description, config);
                             });
                         }
                     }
@@ -245,7 +245,7 @@ namespace Sixnet.Web.Extensions
                         services.AddOpenApiDocument(config =>
                         {
                             ConfigSwaggerDoc(webOptions, config, null);
-                            webOptions.ConfigureSwagger?.Invoke(null, config);
+                            webOptions.ConfigureSwagger(null, config);
                         });
                     }
                 }
@@ -279,16 +279,10 @@ namespace Sixnet.Web.Extensions
 
                 #endregion
             }
-            var optionsConfigureServices = webOptions.ConfigureService;
-            webOptions.ConfigureService = (services) =>
-            {
-                configureHostServices(services);
-                optionsConfigureServices?.Invoke(services);
-            };
-            webOptions.ConfigureHostBuilder?.Invoke(builder);
+            webOptions.ConfigureService(configureHostServices, true);
             webOptions.SetHostBuilder(builder);
             builder.UseServiceProviderFactory(new SixnetServiceProviderFactory(webOptions));
-            webOptions?.ConfigureHostBuilder?.Invoke(builder);
+            webOptions.SetHostBuilder(builder);
             SixnetWeb.Options = webOptions;
         }
 
@@ -300,7 +294,7 @@ namespace Sixnet.Web.Extensions
         /// <param name="webOptions">Web options</param>
         static void ConfigureApplicationBuilder(IApplicationBuilder app, IWebHostEnvironment env, SixnetWebOptions webOptions)
         {
-            if (webOptions.ConfigureApplicationBuilder != null)
+            if (webOptions.ConfigureApplicationBuilderAction != null)
             {
                 webOptions.ConfigureApplicationBuilder(app, env);
             }
@@ -335,7 +329,7 @@ namespace Sixnet.Web.Extensions
                     rdlOptions.DefaultRequestCulture = new RequestCulture("zh");
                     rdlOptions.SupportedCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
                     rdlOptions.SupportedUICultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-                    webOptions.ConfigureRequestLocalization?.Invoke(rdlOptions);
+                    webOptions.ConfigureRequestLocalization(rdlOptions);
                 });
                 if (webOptions.UseHttpsRedirection)
                 {
@@ -345,9 +339,12 @@ namespace Sixnet.Web.Extensions
                 {
                     app.UseCors();
                 }
-                else if (webOptions.ConfigureCors != null)
+                else
                 {
-                    app.UseCors(webOptions.ConfigureCors);
+                    app.UseCors(corsBuilder =>
+                    {
+                        webOptions.ConfigureCors(corsBuilder);
+                    });
                 }
                 if (webOptions.UseStaticFile)
                 {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +12,12 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -214,7 +219,7 @@ namespace Sixnet.Web.Extensions
                     })
                     .AddApiExplorer(options =>
                     {
-                        options.GroupNameFormat = "'v'V";
+                        options.GroupNameFormat = "'v'VVV";
                         options.AssumeDefaultVersionWhenUnspecified = true;
                         options.SubstituteApiVersionInUrl = true;
                     })
@@ -227,26 +232,30 @@ namespace Sixnet.Web.Extensions
 
                 if (webOptions.UseSwagger)
                 {
-                    if (webOptions.UseApiVersioning)
+                    var areas = GetAllAreas();
+                    foreach (var area in areas)
                     {
-                        var serviceProvider = services.BuildServiceProvider();
-                        var apiDocProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
-                        foreach (var description in apiDocProvider.ApiVersionDescriptions)
+                        if (webOptions.UseApiVersioning)
+                        {
+                            var serviceProvider = services.BuildServiceProvider();
+                            var apiDocProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
+                            foreach (var description in apiDocProvider.ApiVersionDescriptions)
+                            {
+                                services.AddOpenApiDocument(config =>
+                                {
+                                    ConfigSwaggerDoc(webOptions, config, area, description);
+                                    webOptions.ConfigureSwagger(description, config);
+                                });
+                            }
+                        }
+                        else
                         {
                             services.AddOpenApiDocument(config =>
                             {
-                                ConfigSwaggerDoc(webOptions, config, description);
-                                webOptions.ConfigureSwagger(description, config);
+                                ConfigSwaggerDoc(webOptions, config, area, null);
+                                webOptions.ConfigureSwagger(null, config);
                             });
                         }
-                    }
-                    else
-                    {
-                        services.AddOpenApiDocument(config =>
-                        {
-                            ConfigSwaggerDoc(webOptions, config, null);
-                            webOptions.ConfigureSwagger(null, config);
-                        });
                     }
                 }
 
@@ -395,19 +404,25 @@ namespace Sixnet.Web.Extensions
         /// </summary>
         /// <param name="config"></param>
         /// <param name="apiVersionDescription"></param>
-        static void ConfigSwaggerDoc(SixnetWebOptions options, AspNetCoreOpenApiDocumentGeneratorSettings config, ApiVersionDescription apiVersionDescription)
+        static void ConfigSwaggerDoc(SixnetWebOptions options, AspNetCoreOpenApiDocumentGeneratorSettings config
+            , string area, ApiVersionDescription apiVersionDescription)
         {
             var title = SixnetApplication.Current.Title;
             var version = SixnetApplication.Current.Version;
             var docName = SixnetApplication.Current.Title;
+            var groupNames = new List<string>();
+            if (!string.IsNullOrWhiteSpace(area))
+            {
+                groupNames.Add(area);
+            }
 
             if (apiVersionDescription != null)
             {
-                title = $"{title}_{apiVersionDescription.GroupName}";
+                groupNames.Add(apiVersionDescription.GroupName);
+                title = $"{title}_{string.Join("_", groupNames)}";
                 docName = title;
                 version = apiVersionDescription.GroupName;
             }
-
             config.PostProcess = doc =>
             {
                 doc.Info.Title = title;
@@ -425,7 +440,8 @@ namespace Sixnet.Web.Extensions
             config.SchemaSettings.GenerateEnumMappingDescription = true;
             config.SchemaSettings.AllowReferencesWithProperties = true;
             config.DocumentName = docName;
-            config.ApiGroupNames = apiVersionDescription == null ? null : new string[] { version };
+            var apiGroupName = string.Join("_", groupNames);
+            config.ApiGroupNames = new string[1] { version };
             config.AddOperationFilter(context =>
             {
                 context.OperationDescription.Operation.Parameters.Add(new OpenApiParameter()
@@ -456,11 +472,8 @@ namespace Sixnet.Web.Extensions
                 }
                 return true;
             });
-
-            if (options.RemoveTagFromSwaggerOperationId)
-            {
-                config.OperationProcessors.Add(new RemoveTagFromOperationIdProcessor());
-            }
+            config.DocumentProcessors.Add(new SixnetDocumentProcessor());
+            config.OperationProcessors.Add(new SixnetOperationProcessor(options.RemoveTagFromSwaggerOperationId, area, version));
         }
 
         /// <summary>
@@ -470,6 +483,32 @@ namespace Sixnet.Web.Extensions
         static SixnetWebOptions GetDefaultWebOptions()
         {
             return new SixnetWebOptions();
+        }
+
+        /// <summary>
+        /// Get all areas
+        /// </summary>
+        /// <returns></returns>
+        static HashSet<string> GetAllAreas()
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            var areaNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            areaNames.Add(string.Empty);
+            var areaAttributes = assembly.GetTypes()
+                .Where(type =>
+                    type.IsClass
+                    && !type.IsAbstract
+                    && typeof(ControllerBase).IsAssignableFrom(type))
+                .Select(type => type.GetCustomAttribute<AreaAttribute>())
+                .Where(aa => aa != null);
+            foreach (var areaAttr in areaAttributes)
+            {
+                if (!string.IsNullOrWhiteSpace(areaAttr.RouteValue))
+                {
+                    areaNames.Add(areaAttr.RouteValue.Trim());
+                }
+            }
+            return areaNames;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Sixnet.Web.Mvc.ApplicationModels
                 var areaAttribute = controller.Attributes?.FirstOrDefault(c => c.GetType() == typeof(AreaAttribute)) as AreaAttribute;
                 if(areaAttribute!=null)
                 {
-                    controllerRouteModel = AttributeRouteModel.CombineAttributeRouteModel(controllerRouteModel, new AttributeRouteModel(new RouteAttribute(areaAttribute.RouteValue)));
+                    controllerRouteModel = AttributeRouteModel.CombineAttributeRouteModel(new AttributeRouteModel(new RouteAttribute(areaAttribute.RouteValue)), controllerRouteModel);
                 }
 
                 // 2. Controller that has marked RouteAttribute

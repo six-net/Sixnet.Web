@@ -27,6 +27,7 @@ using NSwag;
 using NSwag.Generation.AspNetCore;
 
 using Sixnet.App;
+using Sixnet.Cache.String.Parameters;
 using Sixnet.DependencyInjection;
 using Sixnet.Model;
 using Sixnet.Security.Authentication;
@@ -232,30 +233,16 @@ namespace Sixnet.Web.Extensions
 
                 if (webOptions.UseSwagger)
                 {
-                    var areas = GetAllAreas();
-                    foreach (var area in areas)
+                    var serviceProvider = services.BuildServiceProvider();
+                    var apiDocProvider = serviceProvider?.GetService<IApiVersionDescriptionProvider>();
+                    var apiGroups = GetAllGroups(apiDocProvider?.ApiVersionDescriptions);
+                    foreach (var group in apiGroups)
                     {
-                        if (webOptions.UseApiVersioning)
+                        services.AddOpenApiDocument(config =>
                         {
-                            var serviceProvider = services.BuildServiceProvider();
-                            var apiDocProvider = serviceProvider.GetService<IApiVersionDescriptionProvider>();
-                            foreach (var description in apiDocProvider.ApiVersionDescriptions)
-                            {
-                                services.AddOpenApiDocument(config =>
-                                {
-                                    ConfigSwaggerDoc(webOptions, config, area, description);
-                                    webOptions.ConfigureSwagger(description, config);
-                                });
-                            }
-                        }
-                        else
-                        {
-                            services.AddOpenApiDocument(config =>
-                            {
-                                ConfigSwaggerDoc(webOptions, config, area, null);
-                                webOptions.ConfigureSwagger(null, config);
-                            });
-                        }
+                            ConfigSwaggerDoc(webOptions, config, group);
+                            webOptions.ConfigureSwagger(group.ApiVersionDescription, config);
+                        });
                     }
                 }
 
@@ -405,23 +392,20 @@ namespace Sixnet.Web.Extensions
         /// <param name="config"></param>
         /// <param name="apiVersionDescription"></param>
         static void ConfigSwaggerDoc(SixnetWebOptions options, AspNetCoreOpenApiDocumentGeneratorSettings config
-            , string area, ApiVersionDescription apiVersionDescription)
+            , ApiDocGroupItem groupItem)
         {
             var title = SixnetApplication.Current.Title;
             var version = SixnetApplication.Current.Version;
             var docName = SixnetApplication.Current.Title;
-            var groupNames = new List<string>();
-            if (!string.IsNullOrWhiteSpace(area))
-            {
-                groupNames.Add(area);
-            }
 
-            if (apiVersionDescription != null)
+            if (!string.IsNullOrWhiteSpace(groupItem.GroupName))
             {
-                groupNames.Add(apiVersionDescription.GroupName);
-                title = $"{title}_{string.Join("_", groupNames)}";
+                title = $"{title}_{groupItem.GroupName}";
                 docName = title;
-                version = apiVersionDescription.GroupName;
+            }
+            if (!string.IsNullOrWhiteSpace(groupItem.Version))
+            {
+                version = groupItem.Version;
             }
             config.PostProcess = doc =>
             {
@@ -440,7 +424,6 @@ namespace Sixnet.Web.Extensions
             config.SchemaSettings.GenerateEnumMappingDescription = true;
             config.SchemaSettings.AllowReferencesWithProperties = true;
             config.DocumentName = docName;
-            var apiGroupName = string.Join("_", groupNames);
             config.ApiGroupNames = new string[1] { version };
             config.AddOperationFilter(context =>
             {
@@ -472,8 +455,8 @@ namespace Sixnet.Web.Extensions
                 }
                 return true;
             });
-            config.DocumentProcessors.Add(new SixnetDocumentProcessor());
-            config.OperationProcessors.Add(new SixnetOperationProcessor(options.RemoveTagFromSwaggerOperationId, area, version));
+            config.DocumentProcessors.Add(new SixnetDocumentProcessor(groupItem));
+            config.OperationProcessors.Add(new SixnetOperationProcessor(options.RemoveTagFromSwaggerOperationId, groupItem));
         }
 
         /// <summary>
@@ -510,5 +493,54 @@ namespace Sixnet.Web.Extensions
             }
             return areaNames;
         }
+
+        /// <summary>
+        /// Get all groups
+        /// </summary>
+        /// <returns></returns>
+        static HashSet<ApiDocGroupItem> GetAllGroups(IEnumerable<ApiVersionDescription> versions)
+        {
+            var areas = GetAllAreas();
+            if (versions.IsNullOrEmpty())
+            {
+                return new HashSet<ApiDocGroupItem>(areas.Select(c => new ApiDocGroupItem()
+                {
+                    Area = c,
+                    GroupName = c,
+                    Version = string.Empty
+                }));
+            }
+            var groups = new HashSet<ApiDocGroupItem>();
+            foreach (var area in areas)
+            {
+                foreach (var vd in versions)
+                {
+                    var groupName = vd.GroupName;
+                    if (!string.IsNullOrWhiteSpace(area))
+                    {
+                        groupName = $"{area}_{vd.GroupName}";
+                    }
+                    groups.Add(new ApiDocGroupItem() 
+                    {
+                        Area = area,
+                        Version = vd.GroupName,
+                        GroupName = groupName,
+                        ApiVersionDescription = vd
+                    });
+                }
+            }
+            return groups;
+        }
+    }
+
+    public class ApiDocGroupItem
+    {
+        public string Area { get; set; }
+
+        public string Version { get; set; }
+
+        public string GroupName { get; set; }
+
+        public ApiVersionDescription ApiVersionDescription { get; set; }
     }
 }

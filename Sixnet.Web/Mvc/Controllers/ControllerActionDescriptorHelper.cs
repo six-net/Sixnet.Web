@@ -24,10 +24,22 @@ namespace Sixnet.Web.Mvc.Controllers
     /// </summary>
     public static class ControllerActionDescriptorHelper
     {
-        public static List<ControllerActionInfo> GetControllerActionInfos(Action<ControllerActionDescriptorOptions> configure = null)
+        public static List<ControllerActionInfo> GetControllerAuthActionInfos(Action<ControllerActionDescriptorOptions> configure = null)
         {
             var options = new ControllerActionDescriptorOptions();
             configure?.Invoke(options);
+            return GetControllerAuthActionInfosCore(options, null);
+        }
+
+        public static List<ControllerActionInfo> GetControllerAuthActionInfos<TController>(Action<ControllerActionDescriptorOptions> configure = null)
+        {
+            var options = new ControllerActionDescriptorOptions();
+            configure?.Invoke(options);
+            return GetControllerAuthActionInfosCore(options, new List<Type>() { typeof(TController) });
+        }
+
+        static List<ControllerActionInfo> GetControllerAuthActionInfosCore(ControllerActionDescriptorOptions options, IEnumerable<Type> controllerTypes)
+        {
             var actionDescriptors = SixnetContainer.GetService<IActionDescriptorCollectionProvider>().ActionDescriptors.Items;
             var controllerActionDescriptors = actionDescriptors.OfType<ControllerActionDescriptor>().ToList();
             var xmlComments = LoadXmlComments(options);
@@ -37,6 +49,11 @@ namespace Sixnet.Web.Mvc.Controllers
             {
                 var controllerType = descriptor.ControllerTypeInfo;
                 var actionMethod = descriptor.MethodInfo;
+
+                if (!controllerTypes.IsNullOrEmpty() && !controllerTypes.Contains(controllerType))
+                {
+                    continue;
+                }
 
                 // super admin
                 var superAttr = controllerType.GetCustomAttribute<SuperActionAttribute>()

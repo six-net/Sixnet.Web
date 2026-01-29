@@ -46,24 +46,24 @@ namespace Sixnet.Web.Security.Authentication.Session
             var expiresDate = nowDate.Add(sessionConfig.Expires);
             sessionObject.Expires = expiresDate;
             var expiresSeconds = Convert.ToInt64((expiresDate - nowDate).TotalSeconds);
-            var expiration = new CacheExpiration()
+            var expiration = new SixnetCacheExpiration()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expiresSeconds),
                 SlidingExpiration = true
             };
-            await SixnetCacher.String.SetAsync(new StringSetParameter()
+            await SixnetCacher.String.SetAsync(new SixnetStringSetParameter()
             {
                 CacheObject = GetCacheObject(),
-                Items = new List<CacheEntry>()
+                Items = new List<SixnetCacheEntry>()
                 {
-                    new CacheEntry()
+                    new SixnetCacheEntry()
                     {
                         Key=sessionId,
                         Value=subjectId,
                         When=CacheSetWhen.Always,
                         Expiration=expiration
                     },
-                    new CacheEntry()
+                    new SixnetCacheEntry()
                     {
                         Key=subjectId,
                         Value=SixnetJsonSerializer.Serialize(sessionObject),
@@ -94,10 +94,10 @@ namespace Sixnet.Web.Security.Authentication.Session
             {
                 return;
             }
-            await SixnetCacher.Keys.DeleteAsync(new DeleteParameter()
+            await SixnetCacher.Keys.DeleteAsync(new SixnetDeleteParameter()
             {
                 CacheObject = GetCacheObject(),
-                Keys = new List<CacheKey>()
+                Keys = new List<SixnetCacheKey>()
                 {
                     ConstantCacheKey.Create(sessionKey),
                     ConstantCacheKey.Create(subject)
@@ -124,10 +124,10 @@ namespace Sixnet.Web.Security.Authentication.Session
             var session = await GetSessionBySubjectAsync(subject).ConfigureAwait(false);
             if (!(session?.AllowUse(sessionId: sessionId) ?? false))
             {
-                await SixnetCacher.Keys.DeleteAsync(new DeleteParameter()
+                await SixnetCacher.Keys.DeleteAsync(new SixnetDeleteParameter()
                 {
                     CacheObject = GetCacheObject(),
-                    Keys = new List<CacheKey>()
+                    Keys = new List<SixnetCacheKey>()
                     {
                         ConstantCacheKey.Create(sessionId)
                     }
@@ -206,9 +206,9 @@ namespace Sixnet.Web.Security.Authentication.Session
         /// Get cache object
         /// </summary>
         /// <returns></returns>
-        static CacheObject GetCacheObject()
+        static SixnetCacheObject GetCacheObject()
         {
-            return new CacheObject()
+            return new SixnetCacheObject()
             {
                 ObjectName = CacheObjectName
             };

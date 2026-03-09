@@ -352,21 +352,6 @@ namespace Sixnet.Web
 
         #endregion
 
-        #region Host builder
-
-        /// <summary>
-        /// Set host builder
-        /// </summary>
-        /// <param name="hostBuilder"></param>
-        public SixnetWebOptions SetHostBuilder(IHostBuilder hostBuilder)
-        {
-            ConfigureHostBuilder(hostBuilder);
-            HostBuilder = hostBuilder;
-            return this;
-        }
-
-        #endregion
-
         #endregion
     }
 }

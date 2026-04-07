@@ -352,6 +352,35 @@ namespace Sixnet.Web
 
         #endregion
 
+        #region Configure web host
+
+        internal Action<ConfigureWebHostBuilder> ConfigureWebHostBuilderAction;
+
+        /// <summary>
+        /// Configure web host
+        /// </summary>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        public SixnetWebOptions ConfigureWebHost(Action<ConfigureWebHostBuilder> configure)
+        {
+            ConfigureWebHostBuilderAction = configure;
+            return this;
+        }
+
+        /// <summary>
+        /// Configure web host
+        /// </summary>
+        /// <param name="configureWebHostBuilder"></param>
+        internal void ConfigureWebHost(ConfigureWebHostBuilder configureWebHostBuilder)
+        {
+            if (configureWebHostBuilder != null)
+            {
+                ConfigureWebHostBuilderAction?.Invoke(configureWebHostBuilder);
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }

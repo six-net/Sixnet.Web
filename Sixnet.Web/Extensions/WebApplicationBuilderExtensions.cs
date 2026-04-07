@@ -12,12 +12,9 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +24,6 @@ using NSwag;
 using NSwag.Generation.AspNetCore;
 
 using Sixnet.App;
-using Sixnet.Cache.String.Parameters;
 using Sixnet.DependencyInjection;
 using Sixnet.Model;
 using Sixnet.Security.Authentication;
@@ -78,6 +74,9 @@ namespace Sixnet.Web.Extensions
         {
             var webOptions = GetDefaultWebOptions();
             configure?.Invoke(webOptions);
+
+            // Configure web host
+            webOptions.ConfigureWebHost(builder.WebHost);
 
             // Configure host builder
             ConfigureHostBuilder(builder.Host, webOptions);
@@ -520,7 +519,7 @@ namespace Sixnet.Web.Extensions
                     {
                         groupName = $"{area}_{vd.GroupName}";
                     }
-                    groups.Add(new ApiDocGroupItem() 
+                    groups.Add(new ApiDocGroupItem()
                     {
                         Area = area,
                         Version = vd.GroupName,

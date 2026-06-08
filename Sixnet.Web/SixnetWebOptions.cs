@@ -329,12 +329,12 @@ namespace Sixnet.Web
 
         #region Configure isolation
 
-        internal Func<HttpContext, IsolationInfo> GetIsolationInfoAction;
+        internal Func<HttpContext, SixnetIsolationInfo> GetIsolationInfoAction;
 
         /// <summary>
         /// Configure isolation info
         /// </summary>
-        public SixnetWebOptions ConfigureIsolationInfo(Func<HttpContext, IsolationInfo> getIsolationInfo)
+        public SixnetWebOptions ConfigureIsolationInfo(Func<HttpContext, SixnetIsolationInfo> getIsolationInfo)
         {
             GetIsolationInfoAction = getIsolationInfo;
             return this;
@@ -345,7 +345,7 @@ namespace Sixnet.Web
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public IsolationInfo GetIsolationInfo(HttpContext context)
+        public SixnetIsolationInfo GetIsolationInfo(HttpContext context)
         {
             return GetIsolationInfoAction?.Invoke(context);
         }

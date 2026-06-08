@@ -60,7 +60,7 @@ namespace Sixnet.Web.Security.Authentication.Session
                     {
                         Key=sessionId,
                         Value=subjectId,
-                        When=CacheSetWhen.Always,
+                        When=SixnetCacheSetWhen.Always,
                         Expiration=expiration
                     },
                     new SixnetCacheEntry()
@@ -68,7 +68,7 @@ namespace Sixnet.Web.Security.Authentication.Session
                         Key=subjectId,
                         Value=SixnetJsonSerializer.Serialize(sessionObject),
                         Expiration=expiration,
-                        When=CacheSetWhen.Always
+                        When=SixnetCacheSetWhen.Always
                     }
                 }
             }).ConfigureAwait(false);

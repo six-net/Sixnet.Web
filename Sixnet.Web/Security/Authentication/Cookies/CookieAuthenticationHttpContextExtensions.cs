@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Http
         /// <param name="user">User</param>
         /// <param name="properties">Properties</param>
         /// <returns></returns>
-        public static async Task SignInAsync<TIdentityKey>(this HttpContext context, UserInfo user, AuthenticationProperties properties = null)
+        public static async Task SignInAsync<TIdentityKey>(this HttpContext context, SixnetUserInfo user, AuthenticationProperties properties = null)
         {
             var claimIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             claimIdentity.AddClaims(user.GetClaims());

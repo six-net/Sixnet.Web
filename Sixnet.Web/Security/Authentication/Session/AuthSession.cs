@@ -71,9 +71,9 @@ namespace Sixnet.Web.Security.Authentication.Session
             {
                 return Claims[ClaimTypes.NameIdentifier];
             }
-            if (Claims.ContainsKey(JwtClaimTypes.Subject))
+            if (Claims.ContainsKey(SixnetJwtClaimTypes.Subject))
             {
-                return Claims[JwtClaimTypes.Subject];
+                return Claims[SixnetJwtClaimTypes.Subject];
             }
             return string.Empty;
         }
@@ -178,9 +178,9 @@ namespace Sixnet.Web.Security.Authentication.Session
             {
                 return values[ClaimTypes.NameIdentifier];
             }
-            if (values.ContainsKey(JwtClaimTypes.Subject))
+            if (values.ContainsKey(SixnetJwtClaimTypes.Subject))
             {
-                return values[JwtClaimTypes.Subject];
+                return values[SixnetJwtClaimTypes.Subject];
             }
             return string.Empty;
         }

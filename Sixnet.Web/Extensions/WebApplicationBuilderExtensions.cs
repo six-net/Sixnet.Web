@@ -161,8 +161,8 @@ namespace Sixnet.Web.Extensions
                         {
                             var tokenValidationParameters = new TokenValidationParameters()
                             {
-                                NameClaimType = JwtClaimTypes.Name,
-                                RoleClaimType = JwtClaimTypes.Role
+                                NameClaimType = SixnetJwtClaimTypes.Name,
+                                RoleClaimType = SixnetJwtClaimTypes.Role
                             };
                             if (authenOptions != null)
                             {
@@ -432,7 +432,7 @@ namespace Sixnet.Web.Extensions
                     Kind = OpenApiParameterKind.Header,
                     Type = NJsonSchema.JsonObjectType.String,
                     IsRequired = false,
-                    Default = "zh-Hans"
+                    Default = "zh"
                 });
                 if (context is AspNetCoreOperationProcessorContext aspnetContext)
                 {

@@ -27,12 +27,12 @@ namespace Sixnet.Web.Mvc.Controllers
         /// <summary>
         /// Gets the request user
         /// </summary>
-        public new UserInfo User
+        public new SixnetUserInfo User
         {
             get
             {
-                var currentUser = SessionContext.Current?.User;
-                currentUser ??= UserInfo.GetUserFromClaims(HttpContext.User.Claims);
+                var currentUser = SixnetSessionContext.Current?.User;
+                currentUser ??= SixnetUserInfo.GetUserFromClaims(HttpContext.User.Claims);
                 return currentUser;
             }
         }

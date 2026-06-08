@@ -20,10 +20,10 @@ namespace Sixnet.Web.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var claims = context.User?.Claims;
-            using (var session = SessionContext.Create(session =>
+            using (var session = SixnetSessionContext.Create(session =>
             {
                 session.Isolation = SixnetWeb.Options?.GetIsolationInfo(context);
-                session.User = UserInfo.GetUserFromClaims(claims);
+                session.User = SixnetUserInfo.GetUserFromClaims(claims);
             }))
             {
                 await _next(context).ConfigureAwait(false);

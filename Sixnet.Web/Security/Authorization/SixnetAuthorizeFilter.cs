@@ -85,7 +85,7 @@ namespace Sixnet.Web.Security.Authorization
             }
 
             // validate token
-            var user = UserInfo.GetUserFromPrincipal(context.HttpContext.User);
+            var user = SixnetUserInfo.GetUserFromPrincipal(context.HttpContext.User);
             var authenOptions = SixnetContainer.GetOptions<SixnetAuthenticationOptions>();
             var tokenValidated = await SixnetAuthenticationManager.ValidateAuthenticationTokenAsync(setting =>
             {
@@ -138,16 +138,16 @@ namespace Sixnet.Web.Security.Authorization
             {
                 return;
             }
-            if (authorizationResult.RedirectType == AuthorizeRedirectType.Default)
+            if (authorizationResult.RedirectType == SixnetAuthorizeRedirectType.Default)
             {
                 switch (authorizationResult.Status)
                 {
-                    case AuthorizationStatus.Success:
+                    case SixnetAuthorizationStatus.Success:
                         break;
-                    case AuthorizationStatus.Challenge:
+                    case SixnetAuthorizationStatus.Challenge:
                         context.Result = new ChallengeResult();
                         break;
-                    case AuthorizationStatus.Forbid:
+                    case SixnetAuthorizationStatus.Forbid:
                     default:
                         context.Result = new ForbidResult();
                         break;
@@ -157,13 +157,13 @@ namespace Sixnet.Web.Security.Authorization
             {
                 switch (authorizationResult.RedirectType)
                 {
-                    case AuthorizeRedirectType.RedirectToAction:
+                    case SixnetAuthorizeRedirectType.RedirectToAction:
                         context.Result = new RedirectToActionResult(authorizationResult.Action, authorizationResult.Controller, authorizationResult.RouteValues);
                         break;
-                    case AuthorizeRedirectType.RedirectToRoute:
+                    case SixnetAuthorizeRedirectType.RedirectToRoute:
                         context.Result = new RedirectToRouteResult(authorizationResult.RouteValues);
                         break;
-                    case AuthorizeRedirectType.RedirectToUrl:
+                    case SixnetAuthorizeRedirectType.RedirectToUrl:
                         UrlHelper urlHelper = new UrlHelper(context);
                         if (urlHelper.IsLocalUrl(authorizationResult.Url))
                         {

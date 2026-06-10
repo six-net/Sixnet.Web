@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net8.0;net10.0</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>sixnet.snk</AssemblyOriginatorKeyFile>
@@ -13,14 +13,25 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App"></FrameworkReference>
 	</ItemGroup>
 
-	<ItemGroup>  
-		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.4.0" Condition="'$(TargetFramework)' == 'net6.0'" />
-		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" Condition="'$(TargetFramework)' == 'net8.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" Condition="'$(TargetFramework)' == 'net6.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.21" Condition="'$(TargetFramework)' == 'net8.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.36" Condition="'$(TargetFramework)' == 'net6.0'" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.21" Condition="'$(TargetFramework)' == 'net8.0'" />
-		<PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.36" />
+		<PackageReference Include="NSwag.AspNetCore" Version="14.7.1" />
+		<PackageReference Include="Sixnet" Version="2.1.1" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.21" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.21" />
+		<PackageReference Include="NSwag.AspNetCore" Version="14.7.1" />
+		<PackageReference Include="Sixnet" Version="2.1.1" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="10.0.9" />
+		<PackageReference Include="NSwag.AspNetCore" Version="14.7.1" />
 		<PackageReference Include="Sixnet" Version="2.1.1" />
 	</ItemGroup>
 

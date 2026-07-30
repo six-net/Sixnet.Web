@@ -16,11 +16,6 @@ namespace Sixnet.Web.Mvc.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (SixnetApplication.Current.License != null)
-            {
-                var licenseResult = SixnetApplication.Current.License.Validate();
-                SixnetThrower.ThrowAppExceptionIf(!licenseResult.IsAvailable, licenseResult.Message);
-            }
         }
 
         public void OnResultExecuted(ResultExecutedContext context)
